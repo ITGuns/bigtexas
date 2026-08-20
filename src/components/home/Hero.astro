@@ -2,8 +2,8 @@
 import { site } from '@/data/site'
 import { adVideos } from '@/data/videos'
 
-/** The American Standard promo runs muted and looping behind the headline. */
-const film = adVideos.find((v) => v.id === 'air-promo')!
+/** The American Standard commercial runs muted and looping behind the headline. */
+const film = adVideos.find((v) => v.id === 'raccoon-commercial')!
 ---
 
 <section class="hero on-night" aria-label="Introduction">
@@ -11,12 +11,11 @@ const film = adVideos.find((v) => v.id === 'air-promo')!
     <!-- poster paints instantly and stays put for reduced-motion visitors -->
     <img class="hero-poster" src={film.poster} alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
     <!--
-      The American Standard promo is domain-restricted on Vimeo and refuses to
-      play anywhere except bigtexascomfort.com, where it shows a "privacy
-      settings" notice instead. So the promo is used only on that domain and
-      the company's own footage plays everywhere else.
+      Self-hosted so it plays on every domain: the Vimeo original is
+      embed-restricted to bigtexascomfort.com. Silent by design, since a
+      background film is muted anyway.
     -->
-    <div class="hero-film" data-hero-film data-vimeo-id={film.vimeoId} data-fallback="/video/sky-loop.mp4"></div>
+    <div class="hero-film" data-hero-film data-src="/video/hero-promo.mp4"></div>
     <div class="hero-scrim"></div>
   </div>
 
@@ -281,38 +280,24 @@ const film = adVideos.find((v) => v.id === 'air-promo')!
   const saveData = navigator.connection?.saveData === true
 
   if (holder && motionOK && !saveData) {
-    /* The promo is only licensed to play on the company's own domain. */
-    const promoAllowed = /(^|\.)bigtexascomfort\.com$/.test(location.hostname)
-
-    const startPromo = () => {
-      const iframe = document.createElement('iframe')
-      // background=1 gives a chromeless, muted, looping player
-      iframe.src = `https://player.vimeo.com/video/${holder.dataset.vimeoId}?background=1&autoplay=1&loop=1&muted=1&autopause=0`
-      iframe.allow = 'autoplay; picture-in-picture'
-      iframe.setAttribute('tabindex', '-1')
-      iframe.setAttribute('aria-hidden', 'true')
-      iframe.title = 'Background film'
-      iframe.addEventListener('load', () => holder.classList.add('is-ready'))
-      holder.appendChild(iframe)
-    }
-
-    const startFallback = () => {
+    const start = () => {
       const video = document.createElement('video')
-      video.src = holder.dataset.fallback ?? ''
+      video.src = holder.dataset.src ?? ''
       video.muted = true
       video.loop = true
       video.playsInline = true
+      video.preload = 'auto'
       video.setAttribute('aria-hidden', 'true')
       video.addEventListener('loadeddata', () => holder.classList.add('is-ready'))
       holder.appendChild(video)
       void video.play().catch(() => {})
+
+      // do not burn battery or bandwidth while the tab is in the background
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) video.pause()
         else void video.play().catch(() => {})
       })
     }
-
-    const start = promoAllowed ? startPromo : startFallback
     if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1200 })
     else setTimeout(start, 300)
   }

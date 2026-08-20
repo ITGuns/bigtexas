@@ -220,10 +220,10 @@ const ok = (cond, msg) => (cond ? null : fails.push(msg))
       w: v?.videoWidth ?? 0,
     }
   })
-  ok(film.kind === 'video', `hero: expected the local clip off-domain, got ${film.kind}`)
-  ok(film.src.includes('sky-loop.mp4'), `hero: wrong fallback clip ${film.src}`)
-  ok(film.paused === false, 'hero: fallback clip not playing')
-  ok(film.w > 0, 'hero: fallback clip has no frames')
+  ok(film.kind === 'video', `hero: expected a local clip, got ${film.kind}`)
+  ok(film.src.includes('hero-promo.mp4'), `hero: wrong hero clip ${film.src}`)
+  ok(film.paused === false, 'hero: clip not playing')
+  ok(film.w > 0, 'hero: clip has no frames')
   await page.close()
 }
 
