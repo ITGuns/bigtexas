@@ -82,6 +82,24 @@ const testName = `QA${stamp}`
   await page.close()
 }
 
+/* ---------- 5a. no built-in password can ever authenticate ---------- */
+{
+  // regression guard: a hardcoded dev fallback once let 'bigtexas' into
+  // production. No literal may ever be accepted; only the configured value.
+  const commonDefaults = ['bigtexas', 'admin', 'password', 'changeme', 'change-me', '']
+  for (const guess of commonDefaults) {
+    if (guess === PW) continue
+    const res = await fetch(`${base}/admin/login/`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', origin: base, referer: `${base}/admin/login/` },
+      body: new URLSearchParams({ password: guess }),
+      redirect: 'manual',
+    })
+    ok(res.status !== 302, `auth: built-in password "${guess}" was accepted`)
+    ok(!(res.headers.get('set-cookie') ?? '').includes('btc_admin='), `auth: "${guess}" issued a session`)
+  }
+}
+
 /* ---------- 5. wrong password is refused ---------- */
 {
   const page = await browser.newPage()

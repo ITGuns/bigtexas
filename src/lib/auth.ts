@@ -2,45 +2,39 @@
  * Minimal session auth for the admin area: one shared password, an
  * HMAC-signed cookie, no user table.
  *
- * In production both ADMIN_PASSWORD and ADMIN_SECRET are required. If either
- * is missing the panel refuses every login rather than falling back to a
- * default, because this repository is public and a known default would be no
- * protection at all. A missing ADMIN_SECRET is equally fatal on serverless:
- * each instance would sign cookies with a different random key, so sessions
- * would appear to work and then break at random.
+ * ADMIN_PASSWORD and ADMIN_SECRET are required in every environment. There is
+ * deliberately no built-in fallback password: this repository is public, so a
+ * default would be a published credential, and relying on an environment check
+ * to disable it is exactly the kind of thing that fails silently in one
+ * deployment target. If either variable is missing the panel refuses every
+ * login instead.
  *
- * In development the defaults below are allowed so the panel is usable
- * straight after clone, and the UI shows a warning while they are in use.
+ * A missing ADMIN_SECRET is equally fatal on serverless: each instance would
+ * sign cookies with a different random key, so sessions would appear to work
+ * and then break at random.
  */
-import { createHmac, timingSafeEqual, randomBytes } from 'node:crypto'
+import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { AstroCookies } from 'astro'
 
 const COOKIE = 'btc_admin'
 const MAX_AGE = 60 * 60 * 12 // 12 hours
 
-const isProd = import.meta.env.PROD
-
 /** Astro serves .env via import.meta.env; Vercel and Node use process.env. */
 const readEnv = (name: string): string | undefined =>
   (import.meta.env as Record<string, string | undefined>)[name] ?? process.env[name]
 
-const envPassword = readEnv('ADMIN_PASSWORD')
-const envSecret = readEnv('ADMIN_SECRET')
-
-const DEV_PASSWORD = 'bigtexas'
-
-const password = envPassword ?? (isProd ? null : DEV_PASSWORD)
-const secret = envSecret ?? (isProd ? null : randomBytes(32).toString('hex'))
-
-/** True when the deployment is still on the built-in development defaults. */
-export const usingDefaultPassword = !envPassword
+const password = readEnv('ADMIN_PASSWORD')
+const secret = readEnv('ADMIN_SECRET')
 
 /** True when the panel cannot accept a login because config is missing. */
-export const authUnconfigured = isProd && (!envPassword || !envSecret)
+export const authUnconfigured = !password || !secret
+
+/** Kept for the layout banner; unconfigured is the only unsafe state now. */
+export const usingDefaultPassword = false
 
 if (authUnconfigured) {
   console.error(
-    '[auth] ADMIN_PASSWORD and ADMIN_SECRET must both be set in production. The admin panel is locked until they are.',
+    '[auth] ADMIN_PASSWORD and ADMIN_SECRET must both be set. The admin panel is locked until they are.',
   )
 }
 
@@ -56,7 +50,7 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 export function checkPassword(candidate: string): boolean {
-  if (!password || authUnconfigured) return false
+  if (authUnconfigured || !password) return false
   return safeEqual(candidate, password)
 }
 
@@ -68,7 +62,7 @@ export function issueSession(cookies: AstroCookies) {
     sameSite: 'lax',
     path: '/',
     maxAge: MAX_AGE,
-    secure: isProd,
+    secure: import.meta.env.PROD,
   })
 }
 
