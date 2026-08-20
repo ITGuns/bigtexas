@@ -10,7 +10,13 @@ const film = adVideos.find((v) => v.id === 'air-promo')!
   <div class="hero-visual" aria-hidden="true">
     <!-- poster paints instantly and stays put for reduced-motion visitors -->
     <img class="hero-poster" src={film.poster} alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
-    <div class="hero-film" data-hero-film data-vimeo-id={film.vimeoId}></div>
+    <!--
+      The American Standard promo is domain-restricted on Vimeo and refuses to
+      play anywhere except bigtexascomfort.com, where it shows a "privacy
+      settings" notice instead. So the promo is used only on that domain and
+      the company's own footage plays everywhere else.
+    -->
+    <div class="hero-film" data-hero-film data-vimeo-id={film.vimeoId} data-fallback="/video/sky-loop.mp4"></div>
     <div class="hero-scrim"></div>
   </div>
 
@@ -114,6 +120,16 @@ const film = adVideos.find((v) => v.id === 'air-promo')!
     border: 0;
     pointer-events: none;
     filter: saturate(0.82) contrast(1.03);
+  }
+  /* the local fallback clip can simply cover, no letterbox to dodge */
+  .hero-film :global(video) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    filter: saturate(0.78) contrast(1.04);
   }
 
   /* readability scrim over the footage */
@@ -265,11 +281,13 @@ const film = adVideos.find((v) => v.id === 'air-promo')!
   const saveData = navigator.connection?.saveData === true
 
   if (holder && motionOK && !saveData) {
-    const start = () => {
-      const id = holder.dataset.vimeoId
+    /* The promo is only licensed to play on the company's own domain. */
+    const promoAllowed = /(^|\.)bigtexascomfort\.com$/.test(location.hostname)
+
+    const startPromo = () => {
       const iframe = document.createElement('iframe')
       // background=1 gives a chromeless, muted, looping player
-      iframe.src = `https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1&autopause=0`
+      iframe.src = `https://player.vimeo.com/video/${holder.dataset.vimeoId}?background=1&autoplay=1&loop=1&muted=1&autopause=0`
       iframe.allow = 'autoplay; picture-in-picture'
       iframe.setAttribute('tabindex', '-1')
       iframe.setAttribute('aria-hidden', 'true')
@@ -277,6 +295,24 @@ const film = adVideos.find((v) => v.id === 'air-promo')!
       iframe.addEventListener('load', () => holder.classList.add('is-ready'))
       holder.appendChild(iframe)
     }
+
+    const startFallback = () => {
+      const video = document.createElement('video')
+      video.src = holder.dataset.fallback ?? ''
+      video.muted = true
+      video.loop = true
+      video.playsInline = true
+      video.setAttribute('aria-hidden', 'true')
+      video.addEventListener('loadeddata', () => holder.classList.add('is-ready'))
+      holder.appendChild(video)
+      void video.play().catch(() => {})
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) video.pause()
+        else void video.play().catch(() => {})
+      })
+    }
+
+    const start = promoAllowed ? startPromo : startFallback
     if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1200 })
     else setTimeout(start, 300)
   }

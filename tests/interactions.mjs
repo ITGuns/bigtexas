@@ -207,22 +207,23 @@ const ok = (cond, msg) => (cond ? null : fails.push(msg))
   ok(poster?.w > 600, `hero: poster did not load (${poster?.w}px)`)
 
   await page.waitForTimeout(4000)
+  // off the licensed domain the hero uses the local clip, so assert on that
   const film = await page.evaluate(() => {
-    const f = document.querySelector('.hero-film iframe')
     const holder = document.querySelector('.hero-film')
+    const v = holder?.querySelector('video')
+    const f = holder?.querySelector('iframe')
     return {
-      present: !!f,
+      kind: v ? 'video' : f ? 'iframe' : 'none',
       ready: holder?.classList.contains('is-ready') ?? false,
-      src: f?.src ?? '',
-      w: f ? Math.round(f.getBoundingClientRect().width) : 0,
-      h: f ? Math.round(f.getBoundingClientRect().height) : 0,
+      src: (v?.currentSrc || f?.src) ?? '',
+      paused: v ? v.paused : null,
+      w: v?.videoWidth ?? 0,
     }
   })
-  ok(film.present, 'hero: background film not injected')
-  ok(film.src.includes('player.vimeo.com/video/569953090'), `hero: wrong film ${film.src}`)
-  ok(film.src.includes('background=1'), 'hero: film should use chromeless background mode')
-  // the 16:9 player must be oversized enough to cover the viewport
-  ok(film.w >= 1440 && film.h >= 900, `hero: film ${film.w}x${film.h} does not cover the viewport`)
+  ok(film.kind === 'video', `hero: expected the local clip off-domain, got ${film.kind}`)
+  ok(film.src.includes('sky-loop.mp4'), `hero: wrong fallback clip ${film.src}`)
+  ok(film.paused === false, 'hero: fallback clip not playing')
+  ok(film.w > 0, 'hero: fallback clip has no frames')
   await page.close()
 }
 
