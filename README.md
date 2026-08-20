@@ -62,6 +62,50 @@ Until those are set the marketing pages are fully live, the admin panel stays lo
 
 Row level security is enabled on both tables with no policies, so anonymous and authenticated clients are denied outright. The app reaches the tables only from server-rendered routes using the service-role key, which bypasses RLS. Keep that key server-side; never give it a `PUBLIC_` prefix.
 
+## Videos
+
+The nine videos embedded on the old site live on a Vimeo account owned by
+**Select on Site**, the previous web vendor, and are embed-restricted to
+`bigtexascomfort.com`. Anywhere else Vimeo renders a "privacy settings"
+notice instead of the film.
+
+The site handles all three cases:
+
+| Situation | Behaviour |
+| --- | --- |
+| A self-hosted file is set on the video | Plays it directly with a native player. No Vimeo request at all. |
+| On bigtexascomfort.com, no local file | Embeds the Vimeo player inline, as before. |
+| Any other domain, no local file | Poster and runtime still show; pressing play opens the video on vimeo.com in a new tab. |
+
+The hero behaves the same way: the American Standard promo on the licensed
+domain, the company's own sky footage everywhere else.
+
+### Serving the films yourself
+
+This is the durable fix. It removes the domain restriction and the dependency
+on the old vendor's account.
+
+1. Obtain properly licensed copies. The American Standard and Mitsubishi
+   Electric spots are dealer marketing assets available through the respective
+   dealer portals. For anything Big Texas Comfort paid Select On Site to
+   produce, request the source files.
+2. Drop the files into `public/video/`.
+3. Add a `src` to the matching entry in `src/data/videos.ts`:
+
+```ts
+{
+  id: 'air-promo',
+  title: 'American Standard Air Promo',
+  vimeoId: '569953090',
+  duration: 30,
+  poster: '/images/video/air-promo.jpg',
+  blurb: '...',
+  src: '/video/air-promo.mp4',   // add this line
+}
+```
+
+That one line switches the card to the local file everywhere, on every domain.
+
 ## Admin panel
 
 `/admin/` is protected by one shared password and an HMAC-signed, httpOnly session cookie lasting 12 hours. It is excluded from `robots.txt` and the sitemap, and every page sends `noindex`.

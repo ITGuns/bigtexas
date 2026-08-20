@@ -51,7 +51,13 @@ const list: SiteVideo[] = isAds ? adVideos : videos
     <div class="videos-grid" data-reveal-group>
       {
         list.map((v) => (
-          <article class="video-card" data-video={v.vimeoId} data-video-title={v.title} data-reveal-child>
+          <article
+            class="video-card"
+            data-video={v.vimeoId}
+            data-video-title={v.title}
+            data-src={v.src}
+            data-reveal-child
+          >
             <div class="video-shot">
               <img class="video-poster" src={v.poster} alt="" width="1280" height="720" loading="lazy" decoding="async" />
               <span class="video-veil" aria-hidden="true" />
@@ -269,13 +275,18 @@ const list: SiteVideo[] = isAds ? adVideos : videos
   }
   /* the iframe is created in JS, so it never carries Astro's scope attribute:
      it has to be targeted globally or it falls back to the default 300x150 */
-  .video-shot :global(iframe) {
+  .video-shot :global(iframe),
+  .video-shot :global(video) {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     border: 0;
     display: block;
+    background: #000;
+  }
+  .video-shot :global(video) {
+    object-fit: cover;
   }
   /* while playing, the overlay caption would sit on top of the picture */
   .videos--ads .video-card.is-playing .video-meta,
@@ -297,12 +308,46 @@ const list: SiteVideo[] = isAds ? adVideos : videos
 </style>
 
 <script>
+  /**
+   * These videos are embed-restricted to the company's own domain. They are
+   * still public on vimeo.com, so anywhere else the play button opens the
+   * video there instead of embedding a player that would only render Vimeo's
+   * "privacy settings" notice.
+   */
+  const canEmbed = /(^|\.)bigtexascomfort\.com$/.test(location.hostname) || location.hostname === 'localhost'
+
   for (const card of document.querySelectorAll<HTMLElement>('[data-video]')) {
     const btn = card.querySelector('button')
+    const selfHosted = card.dataset.src
+
+    // a self-hosted file plays anywhere, so it never needs the Vimeo path
+    if (!selfHosted && !canEmbed) {
+      btn?.setAttribute('title', 'Opens on Vimeo in a new tab')
+    }
+
     btn?.addEventListener('click', () => {
       if (card.classList.contains('is-playing')) return
       const shot = card.querySelector('.video-shot')
       if (!shot) return
+
+      if (selfHosted) {
+        const video = document.createElement('video')
+        video.src = selfHosted
+        video.controls = true
+        video.autoplay = true
+        video.playsInline = true
+        video.preload = 'auto'
+        video.setAttribute('poster', card.querySelector('img')?.getAttribute('src') ?? '')
+        shot.replaceChildren(video)
+        card.classList.add('is-playing')
+        void video.play().catch(() => {})
+        return
+      }
+
+      if (!canEmbed) {
+        window.open(`https://vimeo.com/${card.dataset.video}`, '_blank', 'noopener')
+        return
+      }
 
       const iframe = document.createElement('iframe')
       iframe.src = `https://player.vimeo.com/video/${card.dataset.video}?byline=0&portrait=0&autoplay=1`

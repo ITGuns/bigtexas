@@ -72,7 +72,7 @@ const hero = getProductImage(page.slug)
             <div class="prod-video" data-reveal>
               <h2 class="type-h3">How does it work?</h2>
               <p class="prod-video-blurb">{video.blurb}</p>
-              <div class="video-card" data-video={video.vimeoId} data-video-title={video.title}>
+              <div class="video-card" data-video={video.vimeoId} data-video-title={video.title} data-src={video.src}>
                 <div class="video-shot">
                   <img
                     class="video-poster"
@@ -280,7 +280,8 @@ const hero = getProductImage(page.slug)
     display: none;
   }
   /* injected by JS, so it never carries Astro's scope attribute */
-  .video-shot :global(iframe) {
+  .video-shot :global(iframe),
+  .video-shot :global(video) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -344,10 +345,31 @@ const hero = getProductImage(page.slug)
 </style>
 
 <script>
+  // embed-restricted to the company's domain; elsewhere open on vimeo.com
+  const canEmbed = /(^|\.)bigtexascomfort\.com$/.test(location.hostname) || location.hostname === 'localhost'
+
   for (const card of document.querySelectorAll<HTMLElement>('[data-video]')) {
     const btn = card.querySelector('button')
     btn?.addEventListener('click', () => {
       if (card.classList.contains('is-playing')) return
+      const selfHosted = card.dataset.src
+      if (selfHosted) {
+        const shotEl = card.querySelector('.video-shot')
+        if (!shotEl) return
+        const v = document.createElement('video')
+        v.src = selfHosted
+        v.controls = true
+        v.autoplay = true
+        v.playsInline = true
+        shotEl.replaceChildren(v)
+        card.classList.add('is-playing')
+        void v.play().catch(() => {})
+        return
+      }
+      if (!canEmbed) {
+        window.open(`https://vimeo.com/${card.dataset.video}`, '_blank', 'noopener')
+        return
+      }
       const shot = card.querySelector('.video-shot')
       if (!shot) return
       const id = card.dataset.video
