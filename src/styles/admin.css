@@ -602,3 +602,71 @@
   gap: 0.6rem;
   margin-top: 1.25rem;
 }
+
+/* ---------- recommendations ---------- */
+.rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.rec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.05rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, #0d1120 55%, transparent);
+  border: 1px solid var(--color-night-line);
+  border-left-width: 3px;
+}
+.rec--urgent {
+  border-left-color: var(--color-heat);
+}
+.rec--due {
+  border-left-color: var(--color-warn);
+}
+.rec--idea {
+  border-left-color: var(--color-success);
+}
+.rec-title {
+  font-weight: 640;
+  font-size: 0.95rem;
+}
+.rec-detail {
+  margin-top: 0.25rem;
+  font-size: 0.84rem;
+  color: var(--color-night-ink-soft);
+  max-width: 70ch;
+}
+.rec-cta {
+  flex-shrink: 0;
+}
+
+/* ---------- email actions ---------- */
+.mail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.mail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, #0d1120 55%, transparent);
+  border: 1px solid var(--color-night-line);
+}
+.mail-name {
+  font-weight: 640;
+  font-size: 0.94rem;
+}
+.mail-note {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--color-night-ink-soft);
+  max-width: 46ch;
+}

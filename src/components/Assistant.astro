@@ -1,0 +1,468 @@
+---
+/**
+ * Website assistant: answers from the site's own content and captures a lead
+ * into the same pipeline as the contact form. No third-party widget, no
+ * generative model, so it cannot invent a price or a promise.
+ */
+import { site } from '@/data/site'
+import { intents, suggestions, greeting } from '@/data/assistant'
+
+// hand the browser a plain lookup table built from the same source the pages use
+const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.answer() }))
+---
+
+<div class="assistant" data-assistant>
+  <button class="asst-launcher" type="button" data-asst-open aria-expanded="false" aria-controls="asst-panel">
+    <span class="asst-launcher-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.3-.6L3 21l1.8-5A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </span>
+    <span class="asst-launcher-text">Ask a question</span>
+  </button>
+
+  <section class="asst-panel" id="asst-panel" data-asst-panel hidden aria-label="Big Texas Comfort assistant">
+    <header class="asst-head">
+      <div>
+        <p class="asst-title">Big Texas Comfort</p>
+        <p class="asst-sub"><span class="asst-dot" aria-hidden="true"></span>Answers from our own service info</p>
+      </div>
+      <button class="asst-close" type="button" data-asst-close aria-label="Close assistant">
+        <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 2l14 14M16 2L2 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <div class="asst-log" data-asst-log role="log" aria-live="polite"></div>
+
+    <div class="asst-chips" data-asst-chips>
+      {suggestions.map((s) => <button type="button" class="asst-chip" data-asst-chip>{s}</button>)}
+    </div>
+
+    <form class="asst-form" data-asst-form>
+      <label class="visually-hidden" for="asst-input">Your question</label>
+      <input
+        id="asst-input"
+        class="asst-input"
+        type="text"
+        autocomplete="off"
+        placeholder="Type your question"
+        data-asst-input
+      />
+      <button class="asst-send" type="submit" aria-label="Send">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M1.7 7.2 13.4 2a.6.6 0 0 1 .8.8L9 14.4a.6.6 0 0 1-1.1 0L6.2 9.9 1.7 8.3a.6.6 0 0 1 0-1.1Z" />
+        </svg>
+      </button>
+    </form>
+
+    <p class="asst-foot">
+      Prefer a person? <a href={site.phoneHref}>{site.phoneDisplay}</a>
+    </p>
+  </section>
+</div>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .assistant {
+    position: fixed;
+    right: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 3vw, 2rem);
+    z-index: 70;
+  }
+
+  /* ---- launcher ---- */
+  .asst-launcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.3rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--color-night-ink) 16%, transparent);
+    background: var(--grad-heat);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 0.94rem;
+    font-weight: 640;
+    cursor: pointer;
+    box-shadow: 0 16px 40px -18px rgba(191, 31, 46, 0.7);
+    transition: transform 0.35s var(--ease-out-expo), box-shadow 0.35s var(--ease-out-expo);
+  }
+  .asst-launcher:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 46px -18px rgba(191, 31, 46, 0.8);
+  }
+  .assistant.is-open .asst-launcher {
+    display: none;
+  }
+  @media (max-width: 30rem) {
+    .asst-launcher-text {
+      display: none;
+    }
+    .asst-launcher {
+      padding: 0.95rem;
+    }
+  }
+
+  /* ---- panel ---- */
+  .asst-panel {
+    width: min(23rem, calc(100vw - 2rem));
+    height: min(32rem, calc(100vh - 6rem));
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--color-night-line);
+    background: linear-gradient(168deg, #1a2138 0%, var(--color-night) 60%);
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.85);
+    color: var(--color-night-ink);
+  }
+  .asst-panel[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .asst-panel:not([hidden]) {
+      animation: asst-in 0.35s var(--ease-out-expo);
+    }
+  }
+  @keyframes asst-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+    }
+  }
+
+  .asst-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--color-night-line);
+    background: color-mix(in srgb, #0d1120 55%, transparent);
+  }
+  .asst-title {
+    font-family: var(--font-display);
+    font-weight: 640;
+    font-size: 1rem;
+  }
+  .asst-sub {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
+    font-size: 0.76rem;
+    color: var(--color-night-ink-soft);
+  }
+  .asst-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ea86a;
+  }
+  .asst-close {
+    background: none;
+    border: 1px solid var(--color-night-line);
+    border-radius: var(--radius-pill);
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    color: inherit;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .asst-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    scrollbar-width: thin;
+  }
+  .asst-msg {
+    max-width: 88%;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .asst-msg--bot {
+    align-self: flex-start;
+    background: color-mix(in srgb, var(--color-night-ink) 9%, transparent);
+    border: 1px solid var(--color-night-line);
+    border-bottom-left-radius: 6px;
+  }
+  .asst-msg--user {
+    align-self: flex-end;
+    background: var(--grad-heat);
+    color: #fff;
+    border-bottom-right-radius: 6px;
+  }
+  .asst-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.55rem;
+  }
+  .asst-links a {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.35rem 0.7rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-cool-bright);
+    color: var(--color-cool-bright);
+    text-decoration: none;
+  }
+  .asst-links a:hover {
+    background: color-mix(in srgb, var(--color-cool-bright) 18%, transparent);
+  }
+
+  .asst-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0 1.1rem 0.75rem;
+  }
+  .asst-chips[hidden] {
+    display: none;
+  }
+  .asst-chip {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-night-line);
+    background: none;
+    color: var(--color-night-ink-soft);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .asst-chip:hover {
+    border-color: var(--color-heat);
+    color: var(--color-night-ink);
+  }
+
+  .asst-form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 1.1rem;
+    border-top: 1px solid var(--color-night-line);
+  }
+  .asst-input {
+    flex: 1;
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-night-line);
+    background: #0f1424;
+    color: var(--color-night-ink);
+  }
+  .asst-input:focus-visible {
+    outline: none;
+    border-color: var(--color-cool-bright);
+  }
+  .asst-send {
+    width: 2.4rem;
+    border-radius: var(--radius-pill);
+    border: 0;
+    background: var(--grad-heat);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .asst-foot {
+    padding: 0 1.1rem 0.9rem;
+    font-size: 0.76rem;
+    color: var(--color-night-ink-soft);
+  }
+  .asst-foot a {
+    color: var(--color-cool-bright);
+  }
+</style>
+
+<script define:vars={{ knowledge, greeting, phone: site.phone, phoneHref: site.phoneHref }}>
+  const root = document.querySelector('[data-assistant]')
+  if (root) {
+    const panel = root.querySelector('[data-asst-panel]')
+    const log = root.querySelector('[data-asst-log]')
+    const chips = root.querySelector('[data-asst-chips]')
+    const form = root.querySelector('[data-asst-form]')
+    const input = root.querySelector('[data-asst-input]')
+
+    /** lead capture state machine, null when not collecting */
+    let capture = null
+    let greeted = false
+
+    const esc = (s) => {
+      const d = document.createElement('div')
+      d.textContent = s ?? ''
+      return d.innerHTML
+    }
+
+    function say(text, links) {
+      const el = document.createElement('div')
+      el.className = 'asst-msg asst-msg--bot'
+      el.innerHTML =
+        esc(text) +
+        (links?.length
+          ? `<span class="asst-links">${links
+              .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`)
+              .join('')}</span>`
+          : '')
+      log.appendChild(el)
+      log.scrollTop = log.scrollHeight
+    }
+
+    function you(text) {
+      const el = document.createElement('div')
+      el.className = 'asst-msg asst-msg--user'
+      el.textContent = text
+      log.appendChild(el)
+      log.scrollTop = log.scrollHeight
+    }
+
+    function match(q) {
+      const s = q.toLowerCase().trim()
+      let best = null
+      for (const k of knowledge) {
+        let score = 0
+        for (const p of k.patterns) if (s.includes(p)) score += p.length
+        if (score > 0 && (!best || score > best.score)) best = { k, score }
+      }
+      return best?.k ?? null
+    }
+
+    function startCapture(prompt) {
+      capture = { step: 'name', data: {} }
+      say(prompt ?? 'Happy to arrange a call back. What name should we use?')
+    }
+
+    async function submitLead(d) {
+      try {
+        const res = await fetch('/api/leads/', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            firstName: d.name,
+            phone: d.phone,
+            message: d.issue ?? 'Requested a call back through the website assistant.',
+            source: 'website assistant',
+            urgency: d.urgent ? 'emergency' : 'normal',
+          }),
+        })
+        const json = await res.json().catch(() => ({}))
+        if (res.ok && json.ok) {
+          say(`Thank you. Your request is logged and a coordinator will call you on ${d.phone}. If it cannot wait, ring ${phone} and someone will pick up.`, [
+            { label: `Call ${phone}`, href: phoneHref },
+          ])
+        } else {
+          throw new Error(json.error || 'could not save')
+        }
+      } catch {
+        say(`I could not save that from here. Please call ${phone} and we will take the details directly.`, [
+          { label: `Call ${phone}`, href: phoneHref },
+        ])
+      }
+    }
+
+    function handleCapture(text) {
+      if (capture.step === 'name') {
+        capture.data.name = text.slice(0, 80)
+        capture.step = 'phone'
+        say(`Thanks ${capture.data.name}. What is the best number to reach you on?`)
+        return
+      }
+      if (capture.step === 'phone') {
+        const digits = text.replace(/\D/g, '')
+        if (digits.length < 7) {
+          say('That does not look like a full phone number. Could you type it again?')
+          return
+        }
+        capture.data.phone = text.slice(0, 40)
+        capture.step = 'issue'
+        say('Got it. In a sentence, what is going on with the system?')
+        return
+      }
+      capture.data.issue = text.slice(0, 600)
+      const d = capture.data
+      capture = null
+      say('One moment, logging that now.')
+      void submitLead(d)
+    }
+
+    function ask(text) {
+      you(text)
+      chips.hidden = true
+
+      if (capture) {
+        handleCapture(text)
+        return
+      }
+
+      const hit = match(text)
+      if (!hit) {
+        say(
+          `I am not sure about that one, and I would rather not guess. A coordinator can answer properly on ${phone}.`,
+          [{ label: `Call ${phone}`, href: phoneHref }],
+        )
+        startCapture('If you would like a call back, what name should we use?')
+        return
+      }
+
+      say(hit.reply, hit.links)
+      if (hit.capture) {
+        capture = { step: 'name', data: { urgent: hit.id === 'emergency' } }
+        setTimeout(() => say('What name should we use?'), 350)
+      }
+    }
+
+    function setOpen(open) {
+      panel.hidden = !open
+      root.classList.toggle('is-open', open)
+      root.querySelector('[data-asst-open]').setAttribute('aria-expanded', String(open))
+      if (open) {
+        if (!greeted) {
+          say(greeting)
+          greeted = true
+        }
+        input.focus()
+      }
+    }
+
+    root.querySelector('[data-asst-open]').addEventListener('click', () => setOpen(true))
+    root.querySelector('[data-asst-close]').addEventListener('click', () => setOpen(false))
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) setOpen(false)
+    })
+
+    for (const chip of chips.querySelectorAll('[data-asst-chip]')) {
+      chip.addEventListener('click', () => ask(chip.textContent.trim()))
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      const v = input.value.trim()
+      if (!v) return
+      input.value = ''
+      ask(v)
+    })
+  }
+</script>

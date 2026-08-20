@@ -34,6 +34,10 @@ export interface Lead {
   urgency: string
   status: LeadStatus
   notes: string
+  /** when a follow-up email was last sent */
+  follow_up_at: string | null
+  /** when a review request was sent */
+  review_sent_at: string | null
 }
 
 export interface Booking {
@@ -46,6 +50,7 @@ export interface Booking {
   preferred_slot: string
   status: BookingStatus
   tech_notes: string
+  completed_at: string | null
 }
 
 export interface BookingRow extends Booking {
@@ -77,8 +82,8 @@ export interface NewBooking {
 }
 
 /** Fields callers are allowed to change. */
-type LeadPatch = Partial<Pick<Lead, 'status' | 'notes' | 'service' | 'urgency'>>
-type BookingPatch = Partial<Pick<Booking, 'status' | 'tech_notes' | 'preferred_date' | 'preferred_slot'>>
+type LeadPatch = Partial<Pick<Lead, 'status' | 'notes' | 'service' | 'urgency' | 'follow_up_at' | 'review_sent_at'>>
+type BookingPatch = Partial<Pick<Booking, 'status' | 'tech_notes' | 'preferred_date' | 'preferred_slot' | 'completed_at'>>
 
 interface Store {
   createLead(input: NewLead): Promise<number>
@@ -374,7 +379,13 @@ const iso = (v: unknown): string =>
   v instanceof Date ? v.toISOString() : typeof v === 'string' ? v : ''
 
 function normaliseLead<T extends Lead>(l: T): T {
-  return { ...l, created_at: iso(l.created_at), updated_at: iso(l.updated_at) }
+  return {
+    ...l,
+    created_at: iso(l.created_at),
+    updated_at: iso(l.updated_at),
+    follow_up_at: l.follow_up_at ? iso(l.follow_up_at) : null,
+    review_sent_at: l.review_sent_at ? iso(l.review_sent_at) : null,
+  }
 }
 
 function normaliseBooking<T extends Booking>(b: T): T {

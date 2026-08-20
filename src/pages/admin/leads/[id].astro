@@ -6,6 +6,7 @@ import { isAuthed, LOGIN_PATH } from '@/lib/auth'
 import { getLead, bookingsForLead, LEAD_STATUSES, BOOKING_STATUSES } from '@/lib/db'
 import { fmtDate, fmtDateTime, statusLabel } from '@/lib/format'
 import { services } from '@/data/services'
+import { followUpDraft, reviewRequestDraft } from '@/lib/followups'
 
 if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
 
@@ -15,9 +16,8 @@ if (!lead) return new Response('Lead not found', { status: 404 })
 
 const bookings = await bookingsForLead(lead.id)
 const telHref = `tel:${lead.phone.replace(/\D/g, '')}`
-const smsBody = encodeURIComponent(
-  `Hi ${lead.first_name}, this is Big Texas Comfort following up on your service request.`,
-)
+const followUp = lead.email ? followUpDraft(lead) : null
+const review = lead.email ? reviewRequestDraft(lead) : null
 ---
 
 <Admin title={`${lead.first_name} ${lead.last_name}`} active="leads">
@@ -35,7 +35,6 @@ const smsBody = encodeURIComponent(
     </div>
     <div class="admin-actions" style="margin:0">
       {lead.phone && <a href={telHref} class="btn btn--primary btn--sm">Call {lead.phone}</a>}
-      {lead.phone && <a href={`sms:${lead.phone.replace(/\D/g, '')}?&body=${smsBody}`} class="btn btn--ghost btn--sm">Text</a>}
       {lead.email && <a href={`mailto:${lead.email}`} class="btn btn--ghost btn--sm">Email</a>}
     </div>
   </div>
@@ -52,6 +51,57 @@ const smsBody = encodeURIComponent(
           <div class="detail-row"><dt>Source</dt><dd>{lead.source || 'website'}</dd></div>
         </dl>
         {lead.message && <div class="detail-message">{lead.message}</div>}
+      </section>
+
+      <section class="admin-panel" style="margin-top:1.25rem">
+        <h2 class="admin-panel-title">Email</h2>
+        {
+          !lead.email ? (
+            <p class="cell-muted">
+              No email address on this lead, so only the phone is available.
+            </p>
+          ) : (
+            <div class="mail-actions">
+              <div class="mail-row">
+                <div>
+                  <p class="mail-name">Follow-up</p>
+                  <p class="mail-note">
+                    {lead.follow_up_at
+                      ? `Sent ${fmtDateTime(lead.follow_up_at)}`
+                      : 'Not sent yet. Opens in your mail app, prefilled.'}
+                  </p>
+                </div>
+                <form method="POST" action="/api/admin/update/" class="inline-form">
+                  <input type="hidden" name="action" value="lead-followup-sent" />
+                  <input type="hidden" name="id" value={lead.id} />
+                  <a href={followUp!.href} class="btn btn--primary btn--sm" target="_blank" rel="noopener">
+                    Compose
+                  </a>
+                  <button type="submit" class="btn btn--ghost btn--sm">Mark sent</button>
+                </form>
+              </div>
+
+              <div class="mail-row">
+                <div>
+                  <p class="mail-name">Review request</p>
+                  <p class="mail-note">
+                    {lead.review_sent_at
+                      ? `Sent ${fmtDateTime(lead.review_sent_at)}`
+                      : 'Send once the job is finished. Links to Google, Facebook and Yelp.'}
+                  </p>
+                </div>
+                <form method="POST" action="/api/admin/update/" class="inline-form">
+                  <input type="hidden" name="action" value="lead-review-sent" />
+                  <input type="hidden" name="id" value={lead.id} />
+                  <a href={review!.href} class="btn btn--primary btn--sm" target="_blank" rel="noopener">
+                    Compose
+                  </a>
+                  <button type="submit" class="btn btn--ghost btn--sm">Mark sent</button>
+                </form>
+              </div>
+            </div>
+          )
+        }
       </section>
 
       <section class="admin-panel" style="margin-top:1.25rem">

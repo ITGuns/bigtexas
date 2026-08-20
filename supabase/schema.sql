@@ -67,3 +67,15 @@ drop trigger if exists bookings_touch_updated_at on public.bookings;
 create trigger bookings_touch_updated_at
   before update on public.bookings
   for each row execute function public.touch_updated_at();
+
+-- ---------------------------------------------------------------------------
+-- Follow-up and review tracking (added after launch)
+-- ---------------------------------------------------------------------------
+alter table public.leads
+  add column if not exists follow_up_at   timestamptz,
+  add column if not exists review_sent_at timestamptz;
+
+alter table public.bookings
+  add column if not exists completed_at timestamptz;
+
+create index if not exists idx_leads_followup on public.leads (follow_up_at);

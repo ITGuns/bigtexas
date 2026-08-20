@@ -5,6 +5,8 @@ import Admin from '@/layouts/Admin.astro'
 import { isAuthed, LOGIN_PATH } from '@/lib/auth'
 import { listLeads, leadCounts, bookingCounts, listBookings, countLeadsSince, LEAD_STATUSES } from '@/lib/db'
 import { fmtDate, fmtWhen, statusLabel } from '@/lib/format'
+import { recommendations } from '@/lib/followups'
+import AdminAssistant from '@/components/AdminAssistant.astro'
 
 if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
 
@@ -20,6 +22,31 @@ const upcoming = bookings
   .filter((b) => b.status === 'requested' || b.status === 'confirmed')
   .slice(0, 6)
 const recent = leads.slice(0, 8)
+const nextActions = recommendations(leads, bookings)
+
+/** compact view of the pipeline handed to the assistant */
+const snapshot = {
+  leads: leads.map((l) => ({
+    id: l.id,
+    name: `${l.first_name} ${l.last_name}`.trim(),
+    city: l.city,
+    service: l.service,
+    status: l.status,
+    urgency: l.urgency,
+    created_at: l.created_at,
+    email: l.email,
+    phone: l.phone,
+    follow_up_at: l.follow_up_at,
+    review_sent_at: l.review_sent_at,
+  })),
+  bookings: bookings.map((b) => ({
+    id: b.id,
+    name: `${b.first_name ?? ''} ${b.last_name ?? ''}`.trim(),
+    service: b.service,
+    date: b.preferred_date,
+    status: b.status,
+  })),
+}
 
 const tiles = [
   { label: 'Open leads', value: openLeads, note: 'Not yet won or lost', accent: 'var(--grad-heat)' },
@@ -49,6 +76,27 @@ const tiles = [
       ))
     }
   </div>
+
+  <section class="admin-panel" style="margin-bottom:1.5rem">
+    <h2 class="admin-panel-title">What to do next</h2>
+    <ul class="rec-list">
+      {
+        nextActions.map((r) => (
+          <li class:list={['rec', `rec--${r.severity}`]}>
+            <div>
+              <p class="rec-title">{r.title}</p>
+              <p class="rec-detail">{r.detail}</p>
+            </div>
+            {r.href && (
+              <a href={r.href} class="btn btn--ghost btn--sm rec-cta">
+                {r.cta ?? 'Open'}
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 
   <section class="admin-panel" style="margin-bottom:1.5rem">
     <h2 class="admin-panel-title">Pipeline</h2>
@@ -164,4 +212,5 @@ const tiles = [
       </div>
     </section>
   </div>
+  <AdminAssistant snapshot={snapshot} />
 </Admin>

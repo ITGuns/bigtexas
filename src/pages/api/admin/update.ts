@@ -56,6 +56,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         await updateBooking(Number(data.get('id')), { status })
         break
       }
+      case 'lead-followup-sent': {
+        await updateLead(Number(data.get('id')), { follow_up_at: new Date().toISOString() })
+        break
+      }
+      case 'lead-review-sent': {
+        await updateLead(Number(data.get('id')), { review_sent_at: new Date().toISOString() })
+        break
+      }
       case 'booking-notes': {
         await updateBooking(Number(data.get('id')), {
           tech_notes: String(data.get('techNotes') ?? '').slice(0, 4000),
