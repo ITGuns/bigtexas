@@ -70,25 +70,27 @@ const ok = (cond, msg) => (cond ? null : fails.push(msg))
   })
   ok(decoded === 9, `video: only ${decoded}/9 posters decoded at full size`)
 
-  // ads render first on this page
+  // ads are self-hosted now, so they play a local file with no third-party request
   await page.locator('.videos--ads .video-trigger').first().click()
-  await page.waitForTimeout(600)
-  const adFrame = page.locator('.videos--ads .video-card iframe').first()
-  ok((await adFrame.count()) > 0, 'video: ad iframe not injected on click')
-  ok(
-    (await adFrame.getAttribute('src'))?.includes('player.vimeo.com/video/267257017'),
-    `video: wrong ad src ${await adFrame.getAttribute('src')}`,
-  )
-  ok(((await adFrame.getAttribute('title')) ?? '').length > 0, 'video: iframe missing title')
+  await page.waitForTimeout(1500)
+  const adVideo = page.locator('.videos--ads .video-card video').first()
+  ok((await adVideo.count()) > 0, 'video: ad did not become a local player')
+  const adInfo = await page.evaluate(() => {
+    const v = document.querySelector('.videos--ads .video-card video')
+    return { src: v?.currentSrc ?? '', muted: v?.muted, controls: v?.controls, w: v?.videoWidth ?? 0 }
+  })
+  ok(adInfo.src.includes('/video/'), `video: ad not served locally (${adInfo.src})`)
+  ok(adInfo.w > 0, 'video: local ad has no frames')
+  ok(adInfo.controls === true, 'video: local ad missing controls')
+  ok(adInfo.muted === false, 'video: local ad should carry its audio')
 
-  // the player must fill the card it replaced, not collapse to a default box
+  // it must fill the card it replaced, not collapse to a default box
   const adCardBox = await page.locator('.videos--ads .video-card').first().boundingBox()
-  const adFrameBox = await adFrame.boundingBox()
+  const adFrameBox = await adVideo.boundingBox()
   ok(
     Math.abs(adFrameBox.width - adCardBox.width) < 4,
     `video: ad player width ${Math.round(adFrameBox.width)} does not fill card ${Math.round(adCardBox.width)}`,
   )
-  ok(adFrameBox.width > 400, `video: ad player collapsed to ${Math.round(adFrameBox.width)}px`)
 
   // and the equipment overviews still work
   await page.locator('.videos--stacked .video-trigger').first().click()

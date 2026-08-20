@@ -64,33 +64,25 @@ Row level security is enabled on both tables with no policies, so anonymous and 
 
 ## Videos
 
-The nine videos embedded on the old site live on a Vimeo account owned by
-**Select on Site**, the previous web vendor, and are embed-restricted to
-`bigtexascomfort.com`. Anywhere else Vimeo renders a "privacy settings"
-notice instead of the film.
+All four commercials are self-hosted in `public/video/` and play on every
+domain with sound. The homepage and videos page make no third-party video
+request at all.
 
-The site handles all three cases:
+| Video | File | Where |
+| --- | --- | --- |
+| American Standard Air Promo | `air-promo.mp4` | videos page, and the hero as a silent loop (`hero-promo.mp4`) |
+| American Standard Raccoon Commercial | `raccoon-commercial.mp4` | videos page |
+| Be Proactive | `be-proactive.mp4` | videos page |
+| 4 Reasons to Choose Mitsubishi Electric Heat Pumps | `mitsubishi-heat-pumps.mp4` | videos page |
 
-| Situation | Behaviour |
-| --- | --- |
-| A self-hosted file is set on the video | Plays it directly with a native player. No Vimeo request at all. |
-| On bigtexascomfort.com, no local file | Embeds the Vimeo player inline, as before. |
-| Any other domain, no local file | Poster and runtime still show; pressing play opens the video on vimeo.com in a new tab. |
+The five long equipment overviews still come from Vimeo, where they are
+embed-restricted to `bigtexascomfort.com`. Off that domain their posters and
+runtimes still render and pressing play opens the film on vimeo.com.
 
-The hero behaves the same way: the American Standard promo on the licensed
-domain, the company's own sky footage everywhere else.
+### Adding or replacing a film
 
-### Serving the films yourself
-
-This is the durable fix. It removes the domain restriction and the dependency
-on the old vendor's account.
-
-1. Obtain properly licensed copies. The American Standard and Mitsubishi
-   Electric spots are dealer marketing assets available through the respective
-   dealer portals. For anything Big Texas Comfort paid Select On Site to
-   produce, request the source files.
-2. Drop the files into `public/video/`.
-3. Add a `src` to the matching entry in `src/data/videos.ts`:
+1. Put the file in `public/video/`.
+2. Set `src` on the matching entry in `src/data/videos.ts`:
 
 ```ts
 {
@@ -100,11 +92,29 @@ on the old vendor's account.
   duration: 30,
   poster: '/images/video/air-promo.jpg',
   blurb: '...',
-  src: '/video/air-promo.mp4',   // add this line
+  src: '/video/air-promo.mp4',
 }
 ```
 
-That one line switches the card to the local file everywhere, on every domain.
+Without a `src` the card falls back to Vimeo. With one it plays the local file
+everywhere.
+
+### Encoding
+
+Sources were re-encoded to 720p H.264 with faststart so playback begins before
+the file finishes downloading. Gallery copies keep AAC audio at CRF 26; the
+hero copy is silent at CRF 30, since a background loop is muted anyway.
+
+```bash
+npx ffmpeg-static -i input.mov \
+  -vf "scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720" \
+  -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p \
+  -c:a aac -b:a 128k -movflags +faststart output.mp4
+```
+
+If higher-quality masters become available from the American Standard or
+Mitsubishi dealer portals, drop them through the same command and the site
+picks them up with no code change.
 
 ## Admin panel
 
