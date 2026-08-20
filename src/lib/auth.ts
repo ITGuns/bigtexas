@@ -19,8 +19,13 @@ const COOKIE = 'btc_admin'
 const MAX_AGE = 60 * 60 * 12 // 12 hours
 
 const isProd = import.meta.env.PROD
-const envPassword = process.env.ADMIN_PASSWORD
-const envSecret = process.env.ADMIN_SECRET
+
+/** Astro serves .env via import.meta.env; Vercel and Node use process.env. */
+const readEnv = (name: string): string | undefined =>
+  (import.meta.env as Record<string, string | undefined>)[name] ?? process.env[name]
+
+const envPassword = readEnv('ADMIN_PASSWORD')
+const envSecret = readEnv('ADMIN_SECRET')
 
 const DEV_PASSWORD = 'bigtexas'
 

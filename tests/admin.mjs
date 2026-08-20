@@ -27,8 +27,14 @@ const testName = `QA${stamp}`
   await page.selectOption('[name="preferredSlot"]', { label: 'Morning (7am to 12pm)' })
   await page.fill('[name="comments"]', 'Upstairs unit blowing warm air since last night.')
 
-  await page.locator('.contact-submit').click()
-  await page.waitForTimeout(900)
+  // wait on the API rather than a fixed delay: a remote database is slower
+  // than the local file the suite used to run against
+  const [submitRes] = await Promise.all([
+    page.waitForResponse((r) => r.url().includes('/api/leads'), { timeout: 30000 }),
+    page.locator('.contact-submit').click(),
+  ])
+  ok(submitRes.status() === 201, `contact: API returned ${submitRes.status()}`)
+  await page.locator('[data-form-ready]').waitFor({ state: 'visible', timeout: 15000 })
   ok(await page.locator('[data-form-ready]').isVisible(), 'contact: success panel did not appear')
   await page.close()
 }

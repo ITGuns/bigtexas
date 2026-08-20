@@ -1,9 +1,10 @@
 /**
  * Leads and bookings store.
  *
- * Two interchangeable backends behind one async API:
- *   - Supabase (Postgres) when SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are
- *     set. This is what Vercel runs.
+ * Three interchangeable backends behind one async API, picked by environment:
+ *   - Supabase REST when SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set.
+ *   - Postgres over the wire when DATABASE_URL is set. On serverless point it
+ *     at Supabase's transaction pooler (port 6543).
  *   - Node's built-in SQLite otherwise, so `npm run dev` and the test suite
  *     work with no external service and no native build step.
  *
@@ -247,6 +248,146 @@ function supabaseStore(client: SupabaseClient): Store {
 }
 
 /* ============================================================
+   Postgres over the wire (Supabase connection pooler)
+   Used when DATABASE_URL is set. Point it at the transaction
+   pooler (port 6543) on serverless: prepared statements are
+   disabled below because that mode does not support them.
+   ============================================================ */
+
+async function pgStore(connection: string): Promise<Store> {
+  const { default: postgres } = await import('postgres')
+  const sql = postgres(connection, {
+    ssl: 'require',
+    prepare: false,
+    max: 1,
+    idle_timeout: 20,
+    connect_timeout: 15,
+  })
+
+  const one = <T>(rows: T[]): T | undefined => rows[0]
+
+  return {
+    async createLead(input) {
+      const [row] = await sql<{ id: number }[]>`
+        INSERT INTO leads ${sql({
+          first_name: input.first_name,
+          last_name: input.last_name ?? '',
+          phone: input.phone ?? '',
+          email: input.email ?? '',
+          address: input.address ?? '',
+          city: input.city ?? '',
+          service: input.service ?? '',
+          message: input.message ?? '',
+          source: input.source ?? '',
+          urgency: input.urgency ?? 'normal',
+        })}
+        RETURNING id`
+      return Number(row.id)
+    },
+
+    async listLeads(status) {
+      const rows = status
+        ? await sql<Lead[]>`SELECT * FROM leads WHERE status = ${status} ORDER BY created_at DESC`
+        : await sql<Lead[]>`SELECT * FROM leads ORDER BY created_at DESC`
+      return rows.map(normaliseLead)
+    },
+
+    async getLead(id) {
+      const row = one(await sql<Lead[]>`SELECT * FROM leads WHERE id = ${id}`)
+      return row ? normaliseLead(row) : undefined
+    },
+
+    async updateLead(id, fields) {
+      if (!Object.keys(fields).length) return
+      await sql`UPDATE leads SET ${sql(fields as Record<string, string>)}, updated_at = now() WHERE id = ${id}`
+    },
+
+    async deleteLead(id) {
+      await sql`DELETE FROM leads WHERE id = ${id}`
+    },
+
+    async leadCounts() {
+      const rows = await sql<{ status: string; n: string }[]>`
+        SELECT status, COUNT(*)::int AS n FROM leads GROUP BY status`
+      const out = zeroed(LEAD_STATUSES)
+      for (const r of rows) out[r.status] = Number(r.n)
+      return out
+    },
+
+    async countLeadsSince(iso) {
+      const [row] = await sql<{ n: string }[]>`
+        SELECT COUNT(*)::int AS n FROM leads WHERE created_at >= ${iso}`
+      return Number(row.n)
+    },
+
+    async createBooking(input) {
+      const [row] = await sql<{ id: number }[]>`
+        INSERT INTO bookings ${sql({
+          lead_id: input.lead_id ?? null,
+          service: input.service ?? '',
+          preferred_date: input.preferred_date || null,
+          preferred_slot: input.preferred_slot ?? '',
+        })}
+        RETURNING id`
+      return Number(row.id)
+    },
+
+    async listBookings(status) {
+      const rows = status
+        ? await sql<BookingRow[]>`
+            SELECT b.*, l.first_name, l.last_name, l.phone, l.city, l.address
+            FROM bookings b LEFT JOIN leads l ON l.id = b.lead_id
+            WHERE b.status = ${status}
+            ORDER BY b.preferred_date ASC NULLS LAST, b.created_at DESC`
+        : await sql<BookingRow[]>`
+            SELECT b.*, l.first_name, l.last_name, l.phone, l.city, l.address
+            FROM bookings b LEFT JOIN leads l ON l.id = b.lead_id
+            ORDER BY b.preferred_date ASC NULLS LAST, b.created_at DESC`
+      return rows.map(normaliseBooking) as BookingRow[]
+    },
+
+    async bookingsForLead(leadId) {
+      const rows = await sql<Booking[]>`
+        SELECT * FROM bookings WHERE lead_id = ${leadId} ORDER BY created_at DESC`
+      return rows.map(normaliseBooking)
+    },
+
+    async updateBooking(id, fields) {
+      if (!Object.keys(fields).length) return
+      const patch: Record<string, string | null> = { ...(fields as Record<string, string>) }
+      if ('preferred_date' in patch && !patch.preferred_date) patch.preferred_date = null
+      await sql`UPDATE bookings SET ${sql(patch)}, updated_at = now() WHERE id = ${id}`
+    },
+
+    async bookingCounts() {
+      const rows = await sql<{ status: string; n: string }[]>`
+        SELECT status, COUNT(*)::int AS n FROM bookings GROUP BY status`
+      const out = zeroed(BOOKING_STATUSES)
+      for (const r of rows) out[r.status] = Number(r.n)
+      return out
+    },
+  }
+}
+
+/** Postgres returns Date objects and nulls where the app expects strings. */
+const iso = (v: unknown): string =>
+  v instanceof Date ? v.toISOString() : typeof v === 'string' ? v : ''
+
+function normaliseLead<T extends Lead>(l: T): T {
+  return { ...l, created_at: iso(l.created_at), updated_at: iso(l.updated_at) }
+}
+
+function normaliseBooking<T extends Booking>(b: T): T {
+  return {
+    ...b,
+    created_at: iso(b.created_at),
+    updated_at: iso(b.updated_at),
+    // a DATE column comes back as a Date; the UI compares plain YYYY-MM-DD
+    preferred_date: b.preferred_date ? iso(b.preferred_date).slice(0, 10) : '',
+  }
+}
+
+/* ============================================================
    SQLite (local development and tests)
    ============================================================ */
 
@@ -422,17 +563,26 @@ async function sqliteStore(): Promise<Store> {
    Backend selection
    ============================================================ */
 
-const url = process.env.SUPABASE_URL ?? process.env.PUBLIC_SUPABASE_URL
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+/**
+ * Astro exposes .env through import.meta.env, while Vercel and plain Node
+ * provide process.env. Read both so one lookup works in every environment.
+ */
+const env = (name: string): string | undefined =>
+  (import.meta.env as Record<string, string | undefined>)[name] ?? process.env[name]
 
-export const backend: 'supabase' | 'sqlite' = url && key ? 'supabase' : 'sqlite'
+const url = env('SUPABASE_URL') ?? env('PUBLIC_SUPABASE_URL')
+const key = env('SUPABASE_SERVICE_ROLE_KEY')
+const dbUrl = env('DATABASE_URL')
+
+export const backend: 'supabase' | 'postgres' | 'sqlite' =
+  url && key ? 'supabase' : dbUrl ? 'postgres' : 'sqlite'
 
 /**
  * SQLite is fine locally but writes to an ephemeral filesystem on serverless,
  * so a lead saved there would be silently lost. Routes check this and refuse
  * to accept submissions rather than pretending to store them.
  */
-export const storageReady = backend === 'supabase' || !import.meta.env.PROD
+export const storageReady = backend !== 'sqlite' || !import.meta.env.PROD
 
 let storePromise: Promise<Store> | null = null
 function store(): Promise<Store> {
@@ -444,7 +594,9 @@ function store(): Promise<Store> {
               createClient(url!, key!, { auth: { persistSession: false, autoRefreshToken: false } }),
             ),
           )
-        : sqliteStore()
+        : backend === 'postgres'
+          ? pgStore(dbUrl!)
+          : sqliteStore()
   }
   return storePromise
 }
