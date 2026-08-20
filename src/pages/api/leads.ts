@@ -1,12 +1,23 @@
 export const prerender = false
 
 import type { APIRoute } from 'astro'
-import { createLead, createBooking } from '@/lib/db'
+import { createLead, createBooking, storageReady } from '@/lib/db'
 
 const clean = (v: FormDataEntryValue | null, max = 2000) =>
   typeof v === 'string' ? v.trim().slice(0, max) : ''
 
 export const POST: APIRoute = async ({ request }) => {
+  // Better to tell the visitor to phone than to accept a request we cannot keep.
+  if (!storageReady) {
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: 'Online requests are unavailable right now. Please call 832-888-5166.',
+      }),
+      { status: 503, headers: { 'content-type': 'application/json' } },
+    )
+  }
+
   let data: FormData
   try {
     const ct = request.headers.get('content-type') ?? ''

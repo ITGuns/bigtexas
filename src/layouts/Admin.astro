@@ -5,6 +5,7 @@ import '@fontsource-variable/jetbrains-mono'
 import '@/styles/global.css'
 import '@/styles/admin.css'
 import { usingDefaultPassword } from '@/lib/auth'
+import { storageReady } from '@/lib/db'
 
 interface Props {
   title: string
@@ -60,6 +61,15 @@ const nav = [
         </div>
       </div>
     </header>
+
+    {
+      !storageReady && (
+        <p class="admin-warn">
+          Storage is not configured. Set <code>SUPABASE_URL</code> and <code>SUPABASE_SERVICE_ROLE_KEY</code>,
+          then redeploy. Until then the website cannot accept new requests.
+        </p>
+      )
+    }
 
     {
       usingDefaultPassword && (

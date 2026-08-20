@@ -28,5 +28,8 @@
   "private": true,
   "overrides": {
     "path-to-regexp": "^6.3.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }

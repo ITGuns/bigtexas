@@ -427,6 +427,13 @@ const key = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 export const backend: 'supabase' | 'sqlite' = url && key ? 'supabase' : 'sqlite'
 
+/**
+ * SQLite is fine locally but writes to an ephemeral filesystem on serverless,
+ * so a lead saved there would be silently lost. Routes check this and refuse
+ * to accept submissions rather than pretending to store them.
+ */
+export const storageReady = backend === 'supabase' || !import.meta.env.PROD
+
 let storePromise: Promise<Store> | null = null
 function store(): Promise<Store> {
   if (!storePromise) {
