@@ -1,9 +1,12 @@
-.env
-.env.*
-!.env.example
-node_modules
-dist
-.astro
-data
-shots
-tests
+# Paths are anchored with a leading slash on purpose: a bare "data" would also
+# match src/data, which silently removed the site's content from the build.
+/.env
+/.env.*
+!/.env.example
+/node_modules
+/dist
+/.astro
+/.vercel
+/data
+/shots
+/tests
