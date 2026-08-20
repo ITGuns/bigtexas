@@ -42,6 +42,18 @@ Structured business facts live in `src/data/site.ts`. Images in `public/images/`
 
 The adapter switches itself: `@astrojs/vercel` when the `VERCEL` env var is present, `@astrojs/node` otherwise, so `npm run build && npm start` still gives you a working server anywhere else.
 
+## Live deployment
+
+The Vercel project is **guns/bigtexas**, connected to this repository so pushes to `main` deploy automatically.
+
+- Production: https://bigtexas.vercel.app
+- Dashboard: https://vercel.com/guns-0e95291c/bigtexas
+
+Set and working: `ADMIN_SECRET`, `SITE_URL`.
+Still required before the site can take requests: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`.
+
+Until those are set the marketing pages are fully live, the admin panel stays locked, and the contact form returns a 503 telling visitors to phone instead of silently dropping their request.
+
 ## Setting up Supabase
 
 1. Create a project at [supabase.com](https://supabase.com).
