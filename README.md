@@ -44,15 +44,28 @@ The adapter switches itself: `@astrojs/vercel` when the `VERCEL` env var is pres
 
 ## Live deployment
 
-The Vercel project is **guns/bigtexas**, connected to this repository so pushes to `main` deploy automatically.
-
 - Production: https://bigtexas.vercel.app
-- Dashboard: https://vercel.com/guns-0e95291c/bigtexas
+- Vercel project: **guns/bigtexas**, connected to this repo so pushes to `main` deploy automatically
+- Database: Supabase project `jwkasbdkvqthtrprixoq` (ap-northeast-2)
 
-Set and working: `ADMIN_SECRET`, `SITE_URL`.
-Still required before the site can take requests: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`.
+Environment variables set in Vercel:
 
-Until those are set the marketing pages are fully live, the admin panel stays locked, and the contact form returns a 503 telling visitors to phone instead of silently dropping their request.
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | Supabase transaction pooler, port 6543 |
+| `SUPABASE_URL` | Project URL |
+| `ADMIN_PASSWORD` | Admin panel password |
+| `ADMIN_SECRET` | Signs the admin session cookie |
+| `SITE_URL` | Canonical origin for sitemap and og: tags |
+
+Two things that are easy to get wrong here:
+
+- **`.vercelignore` patterns must be root-anchored.** A bare `data` also matches
+  `src/data`, which silently drops the site's content and fails the build on
+  the resolve of `@/data/site`.
+- **The `@` alias is declared in `astro.config.mjs`, not only `tsconfig.json`.**
+  The bundler does not pick tsconfig paths up reliably on the deployment host,
+  which produces a build that passes locally and fails on Vercel.
 
 ## Setting up Supabase
 
