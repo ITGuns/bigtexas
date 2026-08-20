@@ -1,0 +1,244 @@
+---
+import { site } from '@/data/site'
+
+interface Props {
+  /** map query: address or "City, TX" */
+  query?: string
+  zoom?: number
+  label?: string
+  sublabel?: string
+  ratio?: string
+  /** set false to show a click-to-load facade instead of the live map */
+  eager?: boolean
+}
+
+const {
+  query = `${site.address.street}, ${site.address.city}, ${site.address.state} ${site.address.zip}`,
+  zoom = 12,
+  label = 'Big Texas Comfort',
+  sublabel = site.address.full,
+  ratio = '4 / 3',
+  eager = true,
+} = Astro.props
+
+const src = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=${zoom}&output=embed`
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`
+const id = `map-${Math.random().toString(36).slice(2, 9)}`
+---
+
+<div class="gmap" style={`--ratio:${ratio}`} data-gmap={id} data-src={src} data-eager={eager ? 'true' : 'false'}>
+  {
+    eager ? (
+      <div class="gmap-frame">
+        <iframe
+          src={src}
+          title={`Google Map showing ${label}`}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        />
+      </div>
+    ) : (
+      <button type="button" class="gmap-facade" data-gmap-load aria-label={`Load interactive Google Map for ${label}`}>
+        <span class="gmap-grid" aria-hidden="true" />
+        <span class="gmap-glow" aria-hidden="true" />
+        <span class="gmap-pin" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none">
+            <path
+              d="M12 22s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"
+              fill="var(--color-heat)"
+              stroke="var(--color-bone)"
+              stroke-width="1.4"
+            />
+            <circle cx="12" cy="11" r="2.6" fill="var(--color-bone)" />
+          </svg>
+        </span>
+        <span class="gmap-card">
+          <span class="gmap-label">{label}</span>
+          <span class="gmap-sub">{sublabel}</span>
+          <span class="gmap-cta">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 1a5.5 5.5 0 0 0-5.5 5.5C2.5 10.6 8 15 8 15s5.5-4.4 5.5-8.5A5.5 5.5 0 0 0 8 1Zm0 7.6a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2Z" />
+            </svg>
+            View interactive map
+          </span>
+        </span>
+      </button>
+    )
+  }
+
+  <div class="gmap-actions">
+    <a href={directions} target="_blank" rel="noopener" class="gmap-action">Get directions</a>
+    <a href={site.address.mapsUrl} target="_blank" rel="noopener" class="gmap-action">Open in Google Maps</a>
+  </div>
+</div>
+
+<style>
+  .gmap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .gmap :global(iframe),
+  .gmap-facade {
+    width: 100%;
+    aspect-ratio: var(--ratio);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    display: block;
+    background: var(--color-night);
+  }
+  /* Google paints its own square canvas, so the rounded corners have to be
+     clipped by the wrapper rather than set on the frame alone. */
+  .gmap-frame {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    box-shadow: 0 20px 50px -34px rgba(22, 20, 26, 0.55);
+    line-height: 0;
+  }
+  .gmap-frame :global(iframe) {
+    border: 0;
+    border-radius: 0;
+  }
+
+  /* facade */
+  .gmap-facade {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    background:
+      radial-gradient(28rem 20rem at 62% 38%, rgba(43, 76, 140, 0.55), transparent 68%),
+      linear-gradient(150deg, #182238 0%, var(--color-night) 55%, #14192a 100%);
+    transition: border-color 0.3s var(--ease-swift);
+  }
+  .gmap-facade:hover {
+    border-color: var(--color-heat);
+  }
+  .gmap-grid {
+    position: absolute;
+    inset: -10%;
+    background-image:
+      linear-gradient(rgba(236, 232, 220, 0.075) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(236, 232, 220, 0.075) 1px, transparent 1px);
+    background-size: 34px 34px;
+    transform: perspective(600px) rotateX(42deg) scale(1.35);
+    transform-origin: 50% 30%;
+    mask-image: radial-gradient(70% 60% at 50% 45%, #000 35%, transparent 85%);
+    -webkit-mask-image: radial-gradient(70% 60% at 50% 45%, #000 35%, transparent 85%);
+  }
+  .gmap-glow {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: 9rem;
+    height: 9rem;
+    margin: -4.5rem 0 0 -4.5rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-heat) 45%, transparent), transparent 68%);
+  }
+  .gmap-pin {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    transform: translate(-50%, -100%);
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .gmap-pin {
+      animation: pin-bob 2.6s ease-in-out infinite;
+    }
+  }
+  @keyframes pin-bob {
+    0%,
+    100% {
+      transform: translate(-50%, -100%);
+    }
+    50% {
+      transform: translate(-50%, -118%);
+    }
+  }
+  .gmap-card {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    text-align: left;
+    padding: 0.95rem 1.1rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--color-night) 82%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-night-line);
+  }
+  .gmap-label {
+    font-family: var(--font-display);
+    font-weight: 640;
+    font-size: 1rem;
+    color: var(--color-night-ink);
+  }
+  .gmap-sub {
+    font-size: 0.82rem;
+    color: var(--color-night-ink-soft);
+    line-height: 1.45;
+  }
+  .gmap-cta {
+    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-heat-bright);
+  }
+  .gmap-facade:hover .gmap-cta {
+    color: var(--color-bone);
+  }
+
+  .gmap-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+  }
+  .gmap-action {
+    font-size: 0.85rem;
+    color: var(--color-cool);
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.35s var(--ease-out-expo);
+    padding-bottom: 2px;
+  }
+  .gmap-action:hover {
+    background-size: 100% 1px;
+  }
+  .on-night .gmap-action {
+    color: var(--color-cool-bright);
+  }
+</style>
+
+<script>
+  for (const wrap of document.querySelectorAll<HTMLElement>('[data-gmap]')) {
+    const btn = wrap.querySelector<HTMLButtonElement>('[data-gmap-load]')
+    btn?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe')
+      iframe.src = wrap.dataset.src ?? ''
+      iframe.title = 'Google Map'
+      iframe.loading = 'lazy'
+      iframe.referrerPolicy = 'no-referrer-when-downgrade'
+      iframe.setAttribute('allowfullscreen', '')
+      iframe.style.aspectRatio = getComputedStyle(wrap).getPropertyValue('--ratio')
+      btn.replaceWith(iframe)
+    })
+  }
+</script>

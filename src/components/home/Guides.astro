@@ -1,0 +1,120 @@
+---
+/** The old site's real "Quick Help" guides + DIY troubleshooting trees. */
+const guides = [
+  { name: 'Select a New System', href: '/guides/select-new-system/', q: 'What should replace it?' },
+  { name: 'Repair or Replace?', href: '/guides/repair-or-replace/', q: 'Is it worth fixing again?' },
+  { name: 'Energy Bill Concerns', href: '/guides/energy-bill-concerns/', q: 'Why is the bill climbing?' },
+  { name: 'Healthier Home', href: '/guides/healthier-home/', q: 'What’s in the air in here?' },
+  { name: 'Ready for Maintenance', href: '/guides/ready-maintenance/', q: 'When was the last tune-up?' },
+]
+---
+
+<section class="section guides" aria-labelledby="guides-title">
+  <div class="container-site">
+    <div class="guides-grid">
+      <div class="guides-intro">
+        <p class="type-label type-label--cool eyebrow" data-reveal="fade">Quick help</p>
+        <h2 class="type-h2" id="guides-title" data-reveal>Answers before appointments.</h2>
+        <p class="type-lede" data-reveal data-reveal-delay="0.1">
+          Some problems need a truck. Others need two minutes and the right checklist.
+          These guides help you tell the difference before you spend a dime.
+        </p>
+        <a href="/support/" class="btn btn--ghost guides-support-btn" data-reveal data-reveal-delay="0.16">
+          DIY troubleshooting trees <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <ul class="guides-list" data-reveal-group>
+        {
+          guides.map((g) => (
+            <li data-reveal-child>
+              <a href={g.href} class="guide-row">
+                <span class="guide-q">{g.q}</span>
+                <span class="guide-name">
+                  {g.name}
+                  <span class="btn-arrow" aria-hidden="true">→</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .guides-grid {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .guides-grid {
+      grid-template-columns: 1fr 1.3fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+  .guides-intro h2 {
+    margin-top: 1.4rem;
+  }
+  .guides-intro .type-lede {
+    margin-top: 1.5rem;
+    max-width: 30rem;
+  }
+  .guides-support-btn {
+    margin-top: 1.8rem;
+  }
+  .guides-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .guide-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 1.35rem 0.25rem;
+    border-bottom: 1px solid var(--color-line);
+    text-decoration: none;
+    color: inherit;
+    transition: padding-left 0.3s var(--ease-out-expo);
+  }
+  .guides-list li:first-child .guide-row {
+    border-top: 1px solid var(--color-line);
+  }
+  .guide-row:hover {
+    padding-left: 0.7rem;
+  }
+  .guide-q {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    font-weight: 590;
+    letter-spacing: -0.015em;
+  }
+  .guide-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-ink-faint);
+    white-space: nowrap;
+  }
+  .guide-row:hover .guide-name {
+    color: var(--color-heat);
+  }
+  .guide-row .btn-arrow {
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .guide-row:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+  @media (max-width: 40rem) {
+    .guide-row {
+      grid-template-columns: 1fr;
+    }
+    .guide-name {
+      justify-self: start;
+    }
+  }
+</style>

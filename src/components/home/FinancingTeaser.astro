@@ -1,0 +1,92 @@
+---
+import { site } from '@/data/site'
+---
+
+<section class="section financing-teaser" aria-labelledby="fin-title">
+  <div class="container-site fin-grid">
+    <div class="fin-intro">
+      <p class="type-label type-label--cool eyebrow" data-reveal="fade">Financing</p>
+      <h2 class="type-h2" id="fin-title" data-reveal>
+        A new system shouldn’t wait on a lump sum.
+      </h2>
+      <p class="type-lede" data-reveal data-reveal-delay="0.1">
+        With approved credit, you can finance new equipment through our partners and keep your
+        home equity line, credit cards and savings available for when you actually need them.
+      </p>
+      <a href="/financing/" class="btn btn--night fin-btn" data-reveal data-reveal-delay="0.16">
+        Financing options <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="fin-partners" data-reveal-group>
+      {
+        site.financing.partners.map((p) => (
+          <div class="fin-card surface card-hover" data-reveal-child>
+            <p class="fin-card-name">{p.name}</p>
+            <ul class="fin-card-points">
+              {p.points.map((pt) => (
+                <li>{pt}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .fin-grid {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .fin-grid {
+      grid-template-columns: 1.1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+  }
+  .fin-intro h2 {
+    margin-top: 1.4rem;
+    max-width: 22ch;
+  }
+  .fin-intro .type-lede {
+    margin-top: 1.5rem;
+    max-width: 32rem;
+  }
+  .fin-btn {
+    margin-top: 2rem;
+  }
+  .fin-partners {
+    display: grid;
+    gap: 1rem;
+  }
+  .fin-card {
+    padding: 1.6rem 1.75rem;
+  }
+  .fin-card-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 620;
+    letter-spacing: -0.01em;
+  }
+  .fin-card-points {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .fin-card-points li {
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+  .fin-card-points li::before {
+    content: '•';
+    color: var(--color-cool);
+    flex-shrink: 0;
+  }
+</style>

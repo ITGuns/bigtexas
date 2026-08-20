@@ -1,0 +1,124 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { glossaryTerms } from '@/data/extracted'
+
+const sorted = [...glossaryTerms].sort((a, b) => a.term.localeCompare(b.term))
+const grouped = new Map<string, typeof sorted>()
+for (const t of sorted) {
+  const letter = t.term[0].toUpperCase()
+  if (!grouped.has(letter)) grouped.set(letter, [])
+  grouped.get(letter)!.push(t)
+}
+const letters = [...grouped.keys()]
+---
+
+<Base
+  title="HVAC Glossary | Big Texas Comfort"
+  description={`Plain-English definitions for ${sorted.length} heating and air conditioning terms, from AFUE and SEER to zoning, from Big Texas Comfort in Houston, TX.`}
+>
+  <PageHero
+    eyebrow="Glossary"
+    tone="cool"
+    lede={`${sorted.length} heating and cooling terms, defined without the jargon. Useful when you're comparing quotes or reading a spec sheet.`}
+    crumbs={[{ label: 'Glossary' }]}
+  >
+    Speak HVAC in an afternoon.
+  </PageHero>
+
+  <section class="glossary">
+    <div class="container-site">
+      <nav class="glossary-nav" aria-label="Jump to letter" data-reveal="fade">
+        {letters.map((l) => <a href={`#letter-${l}`} class="glossary-letter-link">{l}</a>)}
+      </nav>
+
+      <div class="glossary-body">
+        {
+          letters.map((l) => (
+            <section class="glossary-section" id={`letter-${l}`}>
+              <h2 class="glossary-letter" aria-label={`Terms starting with ${l}`}>{l}</h2>
+              <dl class="glossary-terms">
+                {grouped.get(l)!.map((t) => (
+                  <div class="glossary-term" data-reveal>
+                    <dt>{t.term}</dt>
+                    <dd>{t.definition}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Terms defined. Questions answered by phone." />
+</Base>
+
+<style>
+  .glossary {
+    padding-bottom: var(--spacing-section);
+  }
+  .glossary-nav {
+    position: sticky;
+    top: 4.5rem;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.75rem 0;
+    background: color-mix(in srgb, var(--color-bone) 92%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .glossary-letter-link {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-xs);
+    text-decoration: none;
+    color: var(--color-ink-soft);
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .glossary-letter-link:hover {
+    background: var(--color-paper);
+    color: var(--color-heat);
+  }
+  .glossary-section {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 1.5rem;
+    padding-block: 2.5rem;
+    border-bottom: 1px solid var(--color-line-soft);
+    scroll-margin-top: 8rem;
+  }
+  .glossary-letter {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    font-weight: 650;
+    color: var(--color-heat);
+    line-height: 1;
+  }
+  .glossary-terms {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 52rem;
+  }
+  .glossary-term dt {
+    font-weight: 680;
+    font-size: 1.02rem;
+  }
+  .glossary-term dd {
+    margin-top: 0.35rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+</style>

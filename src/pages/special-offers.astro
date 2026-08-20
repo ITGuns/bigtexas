@@ -1,0 +1,215 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { site } from '@/data/site'
+---
+
+<Base
+  title="Special Offers & Promotions | Big Texas Comfort, Houston, TX"
+  description="Current promotions from Big Texas Comfort in Houston, TX: $89.50 diagnostic service calls, free estimates on new systems, seasonal American Standard rebates and special financing with approved credit."
+>
+  <PageHero
+    eyebrow="Special offers"
+    lede="Straightforward promotions, no gimmicks. Every offer below is current; call to confirm details for your home."
+    crumbs={[{ label: 'Special Offers' }]}
+  >
+    Promotions worth a phone call.
+  </PageHero>
+
+  <section class="offers">
+    <div class="container-site">
+      <div class="offers-grid" data-reveal-group>
+        <div class="offer-card surface" data-reveal-child>
+          <p class="offer-big">$89.50</p>
+          <h2 class="offer-name">Service call</h2>
+          <p class="offer-desc">The diagnostic includes the first hour of labor.</p>
+        </div>
+        <div class="offer-card surface" data-reveal-child>
+          <p class="offer-big">Free</p>
+          <h2 class="offer-name">Estimates on new systems</h2>
+          <p class="offer-desc">Second opinions are free too. Bring us the quote you already have.</p>
+        </div>
+        <div class="offer-card surface" data-reveal-child>
+          <p class="offer-big">Rebates</p>
+          <h2 class="offer-name">Seasonal American Standard rebates</h2>
+          <p class="offer-desc">Ask about current seasonal rebates from American Standard, plus CenterPoint Energy programs.</p>
+          <a href={site.pdfs.rebates} target="_blank" rel="noopener" class="link-under offer-link">CenterPoint rebate sheet (PDF)</a>
+        </div>
+        <div class="offer-card surface" data-reveal-child>
+          <p class="offer-big">0 stress</p>
+          <h2 class="offer-name">Special financing</h2>
+          <p class="offer-desc">Ready for an AC system upgrade? Looking to pay over time? Special financing is available, subject to credit approval.</p>
+          <a href="/financing/" class="link-under offer-link">Financing details</a>
+        </div>
+      </div>
+
+      <div class="offers-media" data-reveal>
+        <figure class="offers-figure">
+          <img src="/images/promo-rebates.jpg" alt="Big Texas Comfort fall rebates promotion from American Standard" width="1200" height="675" loading="lazy" />
+        </figure>
+        <figure class="offers-figure">
+          <img src="/images/promo-awards.jpg" alt="American Standard award-winning excellence poster" width="1016" height="1089" loading="lazy" />
+        </figure>
+      </div>
+
+      <div class="offers-special" data-reveal>
+        <div class="offers-r22 surface">
+          <div>
+            <p class="type-label type-label--heat">{site.offers.r22.headline}</p>
+            <p class="offers-r22-detail">{site.offers.r22.detail}</p>
+            <p class="offers-r22-note">Limited supply, available to EPA card holders. HVAC contractors welcome.</p>
+          </div>
+          <img src="/images/promo-r22.jpg" alt="R22 refrigerant availability notice" width="800" height="630" loading="lazy" class="offers-r22-img" />
+        </div>
+
+        <div class="offers-extra">
+          <div class="offers-extra-item">
+            <h2 class="type-h3">Military &amp; first responders</h2>
+            <p>{site.offers.military}</p>
+          </div>
+          <hr class="rule" />
+          <div class="offers-extra-item">
+            <h2 class="type-h3">Refer a friend, get dinner on us</h2>
+            <p>{site.offers.referral}</p>
+            <a href="/refer-a-friend/" class="link-under">How the referral program works</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Ask what applies to your system." note={`Offers confirmed by phone at ${site.phoneDisplay}. Financing with approved credit.`} />
+</Base>
+
+<style>
+  .offers {
+    padding-bottom: var(--spacing-section);
+  }
+  .offers-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 48rem) {
+    .offers-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .offers-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .offer-card {
+    padding: 1.75rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .offer-big {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: 640;
+    letter-spacing: -0.03em;
+    color: var(--color-heat);
+    line-height: 1;
+  }
+  .offer-name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 620;
+    letter-spacing: -0.01em;
+  }
+  .offer-desc {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+    flex: 1;
+  }
+  .offer-link {
+    font-size: 0.88rem;
+    color: var(--color-cool);
+    align-self: flex-start;
+  }
+
+  .offers-media {
+    margin-top: 2.5rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 48rem) {
+    .offers-media {
+      grid-template-columns: 1.6fr 1fr;
+    }
+  }
+  .offers-figure {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-paper);
+  }
+  .offers-figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .offers-special {
+    margin-top: 2.5rem;
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (min-width: 64rem) {
+    .offers-special {
+      grid-template-columns: 1.4fr 1fr;
+      gap: 4rem;
+    }
+  }
+  .offers-r22 {
+    padding: 1.75rem;
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  @media (min-width: 48rem) {
+    .offers-r22 {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+  .offers-r22-detail {
+    margin-top: 0.8rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .offers-r22-note {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    color: var(--color-ink-soft);
+  }
+  .offers-r22-img {
+    border-radius: var(--radius-sm);
+    width: 100%;
+    height: auto;
+  }
+  .offers-extra {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+  .offers-extra-item p {
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+  .offers-extra-item a {
+    display: inline-block;
+    margin-top: 0.7rem;
+    font-size: 0.9rem;
+    color: var(--color-cool);
+  }
+</style>

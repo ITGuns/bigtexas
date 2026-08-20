@@ -1,0 +1,248 @@
+---
+import { site } from '@/data/site'
+
+interface Step {
+  step: string
+  detail?: string
+  action?: string
+}
+interface Props {
+  id: string
+  title: string
+  steps: Step[]
+}
+const { id, title, steps } = Astro.props
+---
+
+<div class="tree surface" data-tree={id}>
+  <!-- interactive stepper (JS) -->
+  <div class="tree-stepper" data-tree-stepper hidden>
+    <div class="tree-progress" aria-hidden="true">
+      {steps.map(() => <span class="tree-progress-seg" data-progress-seg />)}
+    </div>
+
+    <div class="tree-screen" data-tree-screen aria-live="polite">
+      <!-- filled by script -->
+    </div>
+
+    <div class="tree-controls">
+      <button type="button" class="btn btn--ghost btn--sm" data-tree-back hidden>Back</button>
+      <div class="tree-controls-main">
+        <button type="button" class="btn btn--night btn--sm" data-tree-fixed hidden>That fixed it</button>
+        <button type="button" class="btn btn--primary btn--sm" data-tree-next>Start checking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- static fallback: full checklist, always rendered for no-JS and print -->
+  <ol class="tree-static" data-tree-static>
+    {
+      steps.map((s) => (
+        <li class="tree-static-step">
+          <p class="tree-static-name">{s.step}</p>
+          {s.detail && <p class="tree-static-detail">{s.detail}</p>}
+          {s.action && <p class="tree-static-action">{s.action}</p>}
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<script define:vars={{ id, title, steps, phone: site.phone, phoneHref: site.phoneHref }}>
+  const root = document.querySelector(`[data-tree="${id}"]`)
+  if (root) {
+    const stepper = root.querySelector('[data-tree-stepper]')
+    const staticList = root.querySelector('[data-tree-static]')
+    const screen = root.querySelector('[data-tree-screen]')
+    const segs = [...root.querySelectorAll('[data-progress-seg]')]
+    const backBtn = root.querySelector('[data-tree-back]')
+    const nextBtn = root.querySelector('[data-tree-next]')
+    const fixedBtn = root.querySelector('[data-tree-fixed]')
+
+    stepper.hidden = false
+    staticList.hidden = true
+
+    let i = -1 // -1 = intro
+
+    function esc(s) {
+      const d = document.createElement('div')
+      d.textContent = s ?? ''
+      return d.innerHTML
+    }
+
+    function render() {
+      segs.forEach((seg, k) => seg.classList.toggle('is-done', k <= i))
+      backBtn.hidden = i < 0
+      if (i === -1) {
+        screen.innerHTML = `
+          <p class="tree-kicker">${esc(title)}</p>
+          <p class="tree-lead">Work through the same checks our techs start with. Takes a few minutes, fixes the easy stuff for free.</p>`
+        nextBtn.textContent = 'Start checking'
+        nextBtn.hidden = false
+        fixedBtn.hidden = true
+        return
+      }
+      if (i >= steps.length) {
+        screen.innerHTML = `
+          <p class="tree-kicker">Checklist complete</p>
+          <p class="tree-lead">Still not working? At this point it needs trained eyes and gauges. That part is on us.</p>
+          <a href="${phoneHref}" class="btn btn--primary tree-call">Call ${esc(phone)}</a>`
+        nextBtn.hidden = true
+        fixedBtn.hidden = true
+        return
+      }
+      const s = steps[i]
+      const last = i === steps.length - 1
+      screen.innerHTML = `
+        <p class="tree-kicker">Step ${i + 1} of ${steps.length}</p>
+        <h3 class="tree-step-name">${esc(s.step)}</h3>
+        ${s.detail ? `<p class="tree-step-detail">${esc(s.detail)}</p>` : ''}
+        ${s.action ? `<p class="tree-step-action">${esc(s.action)}</p>` : ''}`
+      nextBtn.textContent = last ? 'Done, still broken' : 'Still not working'
+      nextBtn.hidden = false
+      fixedBtn.hidden = false
+    }
+
+    nextBtn.addEventListener('click', () => {
+      i++
+      render()
+    })
+    backBtn.addEventListener('click', () => {
+      i = Math.max(-1, i - 1)
+      render()
+    })
+    fixedBtn.addEventListener('click', () => {
+      screen.innerHTML = `
+        <p class="tree-kicker">Fixed</p>
+        <p class="tree-lead">Good news travels fast. If it acts up again, the checklist will be here, and so will we.</p>`
+      nextBtn.hidden = true
+      fixedBtn.hidden = true
+      backBtn.hidden = false
+      segs.forEach((seg) => seg.classList.add('is-done'))
+    })
+
+    render()
+  }
+</script>
+
+<style>
+  .tree {
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  }
+  .tree-progress {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1.75rem;
+  }
+  .tree-progress-seg {
+    height: 3px;
+    flex: 1;
+    border-radius: 2px;
+    background: var(--color-line);
+    transition: background-color 0.3s;
+  }
+  .tree-progress-seg.is-done {
+    background: var(--color-heat);
+  }
+  .tree-screen {
+    min-height: 9.5rem;
+  }
+  .tree :global(.tree-kicker) {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-heat);
+  }
+  .tree :global(.tree-lead) {
+    margin-top: 0.9rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+    max-width: 44ch;
+  }
+  .tree :global(.tree-step-name) {
+    margin-top: 0.8rem;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 630;
+    letter-spacing: -0.015em;
+  }
+  .tree :global(.tree-step-detail) {
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+    max-width: 52ch;
+  }
+  .tree :global(.tree-step-action) {
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-weight: 600;
+    padding: 0.8rem 1rem;
+    background: var(--color-bone);
+    border-left: 3px solid var(--color-cool);
+    border-radius: var(--radius-sm);
+    max-width: 52ch;
+  }
+  .tree :global(.tree-call) {
+    margin-top: 1.2rem;
+  }
+  .tree-controls {
+    margin-top: 1.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  .tree-controls-main {
+    display: flex;
+    gap: 0.7rem;
+    margin-left: auto;
+  }
+
+  .tree-static {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    counter-reset: step;
+  }
+  .tree-static-step {
+    padding-left: 2.4rem;
+    position: relative;
+    counter-increment: step;
+  }
+  .tree-static-step::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--color-bone);
+    border: 1px solid var(--color-line);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+  .tree-static-name {
+    font-weight: 650;
+  }
+  .tree-static-detail {
+    margin-top: 0.35rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+  .tree-static-action {
+    margin-top: 0.35rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+</style>

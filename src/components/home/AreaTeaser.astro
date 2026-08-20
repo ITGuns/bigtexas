@@ -1,0 +1,97 @@
+---
+import { cities } from '@/data/cities'
+import GoogleMap from '@/components/GoogleMap.astro'
+const primary = cities.filter((c) => c.tier === 'primary')
+const extended = cities.filter((c) => c.tier === 'extended')
+---
+
+<section class="section area" aria-labelledby="area-title">
+  <div class="container-site area-grid">
+    <div class="area-intro">
+      <p class="type-label type-label--heat eyebrow" data-reveal="fade">Service area</p>
+      <h2 class="type-h2" id="area-title" data-reveal>
+        Houston to the bay,<br />and every suburb between.
+      </h2>
+      <p class="type-lede" data-reveal data-reveal-delay="0.1">
+        Our shop sits on Bay Area Blvd in Clear Lake, in the middle of the area we serve.
+        That keeps drive times short across the Houston metro and the bay communities.
+      </p>
+      <div class="area-lists" data-reveal data-reveal-delay="0.16">
+        <div>
+          <p class="type-label">Primary</p>
+          <ul>
+            {primary.map((c) => (
+              <li>
+                <a class="link-under" href={c.id === 'houston' ? '/service-area/' : `/service-area/${c.id}/`}>
+                  {c.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p class="type-label">Also serving</p>
+          <ul>
+            {extended.map((c) => (
+              <li><a class="link-under" href={`/service-area/${c.id}/`}>{c.name}</a></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <a href="/service-area/" class="btn btn--night area-btn" data-reveal data-reveal-delay="0.2">
+        Full service area <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="area-map-wrap">
+      <GoogleMap query="Clear Lake City, Houston, TX" zoom={10} label="Serving Houston and the bay area" sublabel="Dispatching from 2437 Bay Area Blvd, Clear Lake" ratio="1 / 1" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .area-grid {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .area-grid {
+      grid-template-columns: 1fr 1.1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+  }
+  .area-intro h2 {
+    margin-top: 1.4rem;
+  }
+  .area-intro .type-lede {
+    margin-top: 1.5rem;
+    max-width: 30rem;
+  }
+  .area-lists {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 26rem;
+  }
+  .area-lists ul {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .area-lists a {
+    color: var(--color-ink-soft);
+    font-size: 0.95rem;
+  }
+  .area-btn {
+    margin-top: 2.2rem;
+  }
+
+  .area-map-wrap {
+    max-width: 34rem;
+    justify-self: center;
+    width: 100%;
+  }
+</style>

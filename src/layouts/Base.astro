@@ -1,0 +1,110 @@
+---
+import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/instrument-sans'
+import '@fontsource-variable/jetbrains-mono'
+import '@/styles/global.css'
+import Nav from '@/components/Nav.astro'
+import Footer from '@/components/Footer.astro'
+import { site } from '@/data/site'
+
+interface Props {
+  title: string
+  description: string
+  navTheme?: 'night' | 'paper'
+  /** Extra JSON-LD blocks to append (already-stringified objects) */
+  schema?: Record<string, unknown>[]
+  ogType?: string
+}
+
+const { title, description, navTheme = 'paper', schema = [], ogType = 'website' } = Astro.props
+const canonical = new URL(Astro.url.pathname, Astro.site).href
+
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'HVACBusiness',
+  name: site.name,
+  url: site.url,
+  telephone: site.phone,
+  description: site.description,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    addressLocality: site.address.city,
+    addressRegion: site.address.state,
+    postalCode: site.address.zip,
+    addressCountry: 'US',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: site.address.geo.lat,
+    longitude: site.address.geo.lng,
+  },
+  openingHours: site.hours.schema,
+  priceRange: '$$',
+  sameAs: site.social.map((s) => s.url),
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#101419" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.shortName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/images/og.png', Astro.site).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>
+      document.documentElement.classList.add('js')
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div id="scroll-progress" aria-hidden="true"></div>
+
+    <Nav theme={navTheme} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      import '@/scripts/motion.ts'
+    </script>
+
+    <style>
+      .skip-link {
+        position: fixed;
+        top: -100%;
+        left: 1rem;
+        z-index: 200;
+        background: var(--color-ink);
+        color: var(--color-bone);
+        padding: 0.7rem 1.2rem;
+        border-radius: var(--radius-xs);
+        text-decoration: none;
+        font-weight: 600;
+        transition: top 0.2s;
+      }
+      .skip-link:focus {
+        top: 1rem;
+      }
+    </style>
+  </body>
+</html>

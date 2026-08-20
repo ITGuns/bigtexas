@@ -1,0 +1,391 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import GoogleMap from '@/components/GoogleMap.astro'
+import { site } from '@/data/site'
+import { services } from '@/data/services'
+
+const serviceOptions = services.map((s) => s.name)
+const today = new Date().toISOString().slice(0, 10)
+---
+
+<Base
+  title="Contact Us | Big Texas Comfort, Houston, TX"
+  description="Request HVAC service from Big Texas Comfort in Houston, TX. Call 832-888-5166, Mon-Sat 7 AM to 9 PM, with 24/7 emergency service. 2437 Bay Area Blvd Ste 38, Houston, TX 77058."
+>
+  <PageHero
+    eyebrow="Contact"
+    lede="Fastest path is the phone: a real person, straight answers. Prefer writing it down? The form works too."
+    crumbs={[{ label: 'Contact' }]}
+  >
+    Our experienced team can help.
+  </PageHero>
+
+  <section class="contact">
+    <div class="container-site contact-grid">
+      <div class="contact-info">
+        <div class="contact-phone-card surface">
+          <p class="type-label type-label--heat">Call or text-friendly line</p>
+          <a href={site.phoneHref} class="contact-phone">{site.phoneDisplay}</a>
+          <p class="contact-hours">
+            {site.hours.regular}<br />
+            {site.hours.emergency}
+          </p>
+        </div>
+
+        <address class="contact-address">
+          <p class="type-label">Headquarters</p>
+          <p class="contact-addr-line">
+            {site.shortName}<br />
+            {site.address.street}<br />
+            {site.address.city}, {site.address.state} {site.address.zip}<br />
+            Fax: 832-632-1310
+          </p>
+          <a href={site.address.mapsUrl} target="_blank" rel="noopener" class="link-under">Open in Google Maps</a>
+        </address>
+
+        {
+          site.branches.map((b) => (
+            <address class="contact-address">
+              <p class="type-label">Branch</p>
+              <p class="contact-addr-line">
+                {b.name}
+                <br />
+                {b.street}
+                <br />
+                {b.city}, {b.state} {b.zip}
+              </p>
+              <a href={b.phoneHref} class="link-under">{b.phone}</a>
+            </address>
+          ))
+        }
+
+        <GoogleMap ratio="4 / 3" label={site.shortName} sublabel={site.address.full} />
+
+        <p class="contact-license">
+          {site.licenseLabel} · Bonded &amp; Insured · Free estimates and second opinions
+        </p>
+      </div>
+
+      <form class="contact-form surface" data-contact-form method="POST" action="/api/leads/">
+        <p class="type-label">Request service</p>
+        <h2 class="contact-form-title">Tell us what's going on.</h2>
+
+        <input type="hidden" name="source" value="contact page" />
+        <div class="hp-field" aria-hidden="true">
+          <label for="company">Company (leave blank)</label>
+          <input id="company" type="text" name="company" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">First name</span>
+            <input type="text" name="firstName" autocomplete="given-name" required />
+          </label>
+          <label class="field">
+            <span class="field-label">Last name</span>
+            <input type="text" name="lastName" autocomplete="family-name" required />
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">Phone</span>
+            <input type="tel" name="phone" autocomplete="tel" required />
+          </label>
+          <label class="field">
+            <span class="field-label">Email</span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">Address</span>
+            <input type="text" name="address" autocomplete="street-address" />
+          </label>
+          <label class="field">
+            <span class="field-label">City</span>
+            <input type="text" name="city" autocomplete="address-level2" />
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">Service needed</span>
+            <select name="service">
+              <option value="">Not sure yet</option>
+              {serviceOptions.map((s) => <option value={s}>{s}</option>)}
+            </select>
+          </label>
+          <label class="field">
+            <span class="field-label">Preferred date (optional)</span>
+            <input type="date" name="preferredDate" min={today} />
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">Arrival window</span>
+            <select name="preferredSlot">
+              <option value="Any time">Any time</option>
+              <option value="Morning (7am to 12pm)">Morning (7am to 12pm)</option>
+              <option value="Afternoon (12pm to 5pm)">Afternoon (12pm to 5pm)</option>
+              <option value="Evening (5pm to 9pm)">Evening (5pm to 9pm)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field-label">How urgent?</span>
+            <select name="urgency">
+              <option value="normal">Normal</option>
+              <option value="soon">Soon, within a few days</option>
+              <option value="emergency">Emergency, no cooling or heat</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field">
+          <span class="field-label">What's going on with your system?</span>
+          <textarea name="comments" rows="5" required></textarea>
+        </label>
+
+        <button type="submit" class="btn btn--primary btn--lg contact-submit">
+          Send request <span class="btn-arrow" aria-hidden="true">→</span>
+        </button>
+        <p class="contact-form-note" data-form-error hidden></p>
+        <p class="contact-form-note">
+          Emergencies always move fastest by phone:
+          <a href={site.phoneHref} class="link-under">{site.phone}</a>.
+        </p>
+
+        <div class="contact-ready" data-form-ready hidden>
+          <p class="type-label type-label--heat">Request received</p>
+          <p class="contact-ready-msg">
+            Thanks. Your request is in our system and a coordinator will reach out. If this is an
+            emergency, call <a href={site.phoneHref} class="link-under">{site.phone}</a> and we will
+            answer around the clock.
+          </p>
+          <div class="contact-ready-actions">
+            <a href={site.phoneHref} class="btn btn--primary">Call {site.phone}</a>
+            <a href="/" class="btn btn--ghost">Back to home</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact {
+    padding-bottom: var(--spacing-section);
+  }
+  .contact-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .contact-grid {
+      grid-template-columns: 24rem 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .contact-phone-card {
+    padding: 1.75rem 1.9rem;
+  }
+  .contact-phone {
+    display: block;
+    margin-top: 0.8rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3vw, 2.4rem);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .contact-phone:hover {
+    color: var(--color-heat);
+  }
+  .contact-hours {
+    margin-top: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.8;
+    color: var(--color-ink-faint);
+  }
+  .contact-address {
+    font-style: normal;
+  }
+  .contact-addr-line {
+    margin-top: 0.7rem;
+    line-height: 1.65;
+    margin-bottom: 0.5rem;
+  }
+  .contact-address a {
+    font-size: 0.9rem;
+    color: var(--color-cool);
+  }
+  .contact-license {
+    font-size: 0.82rem;
+    color: var(--color-ink-faint);
+    line-height: 1.6;
+  }
+
+  .contact-form {
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+  }
+  .contact-form-title {
+    margin-top: 0.6rem;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 630;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.75rem;
+  }
+  .field-row {
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .field-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 1.1rem;
+  }
+  .field-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+  .field input,
+  .field textarea {
+    font: inherit;
+    font-size: 0.98rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-bone);
+    color: var(--color-ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:hover,
+  .field textarea:hover {
+    border-color: var(--color-ink-faint);
+  }
+  .field input:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--color-heat);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-heat) 18%, transparent);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 7rem;
+  }
+  .contact-submit {
+    margin-top: 0.5rem;
+  }
+  .contact-form-note {
+    margin-top: 1.1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--color-ink-faint);
+  }
+  /* honeypot: off-screen for humans, irresistible to bots */
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .field select {
+    font: inherit;
+    font-size: 0.98rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-bone);
+    color: var(--color-ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field select:hover {
+    border-color: var(--color-ink-faint);
+  }
+  .field select:focus-visible {
+    outline: none;
+    border-color: var(--color-heat);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-heat) 18%, transparent);
+  }
+  .contact-ready {
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--color-line);
+    padding-top: 1.5rem;
+  }
+  .contact-ready-msg {
+    margin-top: 0.9rem;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+    max-width: 46ch;
+  }
+  .contact-ready-actions {
+    margin-top: 1.1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]')
+  const ready = form?.querySelector<HTMLElement>('[data-form-ready]')
+  const errorEl = form?.querySelector<HTMLElement>('[data-form-error]')
+  const submitBtn = form?.querySelector<HTMLButtonElement>('.contact-submit')
+  const fields = form?.querySelector<HTMLElement>('.contact-form-fields')
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    if (!form.reportValidity()) return
+
+    const original = submitBtn?.innerHTML ?? ''
+    if (submitBtn) {
+      submitBtn.disabled = true
+      submitBtn.textContent = 'Sending…'
+    }
+    if (errorEl) errorEl.hidden = true
+
+    try {
+      const res = await fetch('/api/leads/', { method: 'POST', body: new FormData(form) })
+      const json = await res.json().catch(() => ({ ok: false }))
+      if (!res.ok || !json.ok) throw new Error(json.error || 'Something went wrong.')
+
+      form.querySelectorAll('.field-row, .field, .contact-submit').forEach((el) => {
+        ;(el as HTMLElement).hidden = true
+      })
+      if (ready) {
+        ready.hidden = false
+        ready.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent =
+          (err as Error).message + ' You can always reach us directly at 832-888-5166.'
+        errorEl.hidden = false
+        errorEl.style.color = 'var(--color-danger)'
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.innerHTML = original
+      }
+    }
+  })
+</script>

@@ -1,0 +1,561 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   BIG TEXAS COMFORT DESIGN TOKENS
+   Art direction: "Texas premium workshop"
+   Palette drawn from the company logo: Texas-flag red and
+   flag navy over warm bone paper and navy-cast night. Red = heat,
+   blue = cool: the two temperatures of the trade. Editorial
+   grotesk display, equipment-plate mono labels, hairline rules.
+   Gradients stay inside the two brand temperatures: no third hue.
+   ============================================================ */
+
+@theme {
+  /* -- palette: light (paper) -- */
+  --color-bone: #f2eee4;
+  --color-paper: #faf8f1;
+  --color-ink: #16141a;
+  --color-ink-soft: #524e56;
+  --color-ink-faint: #85808a;
+  --color-line: #dcd5c8;
+  --color-line-soft: #e8e2d5;
+
+  /* -- palette: dark (night, navy-cast from the flag blue) -- */
+  --color-night: #101421;
+  --color-night-soft: #161c2e;
+  --color-night-line: #2a3349;
+  --color-night-ink: #ece8dc;
+  --color-night-ink-soft: #a3a3b0;
+
+  /* -- temperature accents (logo colors) -- */
+  --color-heat: #bf1f2e;
+  --color-heat-deep: #991823;
+  --color-heat-bright: #ef4453;
+  --color-cool: #2b4c8c;
+  --color-cool-deep: #223c70;
+  --color-cool-bright: #7fa7e8;
+
+  /* -- functional -- */
+  --color-success: #3d7a50;
+  --color-warn: #b07f14;
+  --color-danger: #a63c2a;
+
+  /* -- type -- */
+  --font-display: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
+  --font-sans: 'Instrument Sans Variable', 'Helvetica Neue', Arial, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'SFMono-Regular', Menlo, monospace;
+
+  --text-display: clamp(2.75rem, 1.2rem + 6.5vw, 6.75rem);
+  --text-h1: clamp(2.4rem, 1.4rem + 4vw, 4.75rem);
+  --text-h2: clamp(1.9rem, 1.2rem + 2.6vw, 3.4rem);
+  --text-h3: clamp(1.35rem, 1.05rem + 1.2vw, 2rem);
+  --text-lede: clamp(1.075rem, 1rem + 0.45vw, 1.35rem);
+
+  /* -- rhythm -- */
+  --spacing-section: clamp(5rem, 3rem + 8vw, 10.5rem);
+  --spacing-gutter: clamp(1.25rem, 0.75rem + 2.5vw, 3.5rem);
+
+  /* -- corners: nothing on this site is a hard rectangle -- */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* -- motion -- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-swift: cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* ============================================================
+   GRADIENTS
+   Every gradient runs between the two brand temperatures or
+   stays inside one family. No third hue, no rainbow drift.
+   ============================================================ */
+
+:root {
+  /* the signature: heat resolving into cool */
+  --grad-temperature: linear-gradient(100deg, var(--color-heat) 0%, #7a3462 48%, var(--color-cool) 100%);
+  --grad-heat: linear-gradient(120deg, var(--color-heat-bright) 0%, var(--color-heat-deep) 100%);
+  --grad-cool: linear-gradient(120deg, var(--color-cool-bright) 0%, var(--color-cool-deep) 100%);
+
+  /* dark panel grounds: navy depth rather than flat black */
+  --grad-night: radial-gradient(60rem 40rem at 78% -10%, rgba(43, 76, 140, 0.34), transparent 62%),
+    radial-gradient(48rem 34rem at 8% 108%, rgba(191, 31, 46, 0.2), transparent 62%),
+    linear-gradient(168deg, #141b2e 0%, var(--color-night) 46%, #0d1120 100%);
+  --grad-night-soft: radial-gradient(46rem 30rem at 88% 8%, rgba(43, 76, 140, 0.26), transparent 64%),
+    linear-gradient(160deg, #161d31 0%, var(--color-night) 62%);
+
+  /* paper grounds: warm, barely-there lift */
+  --grad-paper: linear-gradient(178deg, var(--color-paper) 0%, var(--color-bone) 100%);
+  --grad-surface: linear-gradient(160deg, #fffdf8 0%, var(--color-paper) 100%);
+
+  /* hairline dividers that fade at the ends */
+  --grad-rule: linear-gradient(90deg, transparent, var(--color-line) 12%, var(--color-line) 88%, transparent);
+  --grad-rule-night: linear-gradient(90deg, transparent, var(--color-night-line) 12%, var(--color-night-line) 88%, transparent);
+}
+
+/* Gradient text, used sparingly on a single emphasized word */
+.grad-text {
+  background: var(--grad-temperature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Dark sections get real depth instead of flat fill */
+.on-night {
+  background: var(--grad-night);
+}
+.on-night--soft {
+  background: var(--grad-night-soft);
+}
+
+/* Fading hairline */
+.rule-fade {
+  border: 0;
+  height: 1px;
+  background: var(--grad-rule);
+}
+.on-night .rule-fade {
+  background: var(--grad-rule-night);
+}
+
+/* Top edge highlight on dark panels: light catching an edge */
+.edge-lit {
+  position: relative;
+}
+.edge-lit::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-heat) 55%, transparent) 30%,
+    color-mix(in srgb, var(--color-cool-bright) 55%, transparent) 70%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--grad-paper);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-heat);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-heat);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.on-night :focus-visible {
+  outline-color: var(--color-cool-bright);
+}
+
+/* ============================================================
+   TYPE SYSTEM
+   ============================================================ */
+
+.type-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 640;
+  line-height: 0.98;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+}
+
+.type-h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 620;
+  line-height: 1.02;
+  letter-spacing: -0.024em;
+  text-wrap: balance;
+}
+
+.type-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.type-h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 590;
+  line-height: 1.15;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.type-lede {
+  font-size: var(--text-lede);
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+  text-wrap: pretty;
+}
+
+.on-night .type-lede {
+  color: var(--color-night-ink-soft);
+}
+
+/* Equipment-plate label: the site's signature small type */
+.type-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.on-night .type-label {
+  color: var(--color-night-ink-soft);
+}
+
+.type-label--heat {
+  color: var(--color-heat);
+}
+
+.type-label--cool {
+  color: var(--color-cool);
+}
+
+.on-night .type-label--cool {
+  color: var(--color-cool-bright);
+}
+
+/* Eyebrow: the label carries itself, no leading rule */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ============================================================
+   LAYOUT PRIMITIVES
+   ============================================================ */
+
+.container-site {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+.section {
+  padding-block: var(--spacing-section);
+}
+
+.on-night {
+  background: var(--color-night);
+  color: var(--color-night-ink);
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.on-night .rule {
+  border-color: var(--color-night-line);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.25s var(--ease-swift),
+    color 0.25s var(--ease-swift),
+    border-color 0.25s var(--ease-swift),
+    transform 0.35s var(--ease-out-expo),
+    box-shadow 0.35s var(--ease-out-expo);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn .btn-arrow {
+  transition: transform 0.35s var(--ease-out-expo);
+}
+
+.btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.btn--primary {
+  background: var(--grad-heat);
+  background-size: 140% 100%;
+  background-position: 0% 50%;
+  color: #fff8f2;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset;
+  transition:
+    background-position 0.5s var(--ease-out-expo),
+    transform 0.35s var(--ease-out-expo),
+    box-shadow 0.35s var(--ease-out-expo);
+}
+
+.btn--primary:hover {
+  background-position: 100% 50%;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 12px 32px -12px color-mix(in srgb, var(--color-heat) 65%, transparent);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+}
+
+.btn--ghost:hover {
+  border-color: var(--color-ink);
+  background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+}
+
+.on-night .btn--ghost {
+  color: var(--color-night-ink);
+  border-color: var(--color-night-line);
+}
+
+.on-night .btn--ghost:hover {
+  border-color: var(--color-night-ink);
+  background: color-mix(in srgb, var(--color-night-ink) 7%, transparent);
+}
+
+.btn--night {
+  background: var(--color-ink);
+  color: var(--color-bone);
+}
+
+.btn--night:hover {
+  background: #000;
+}
+
+.btn--lg {
+  padding: 1.15rem 2.2rem;
+  font-size: 1.02rem;
+}
+
+.btn--sm {
+  padding: 0.6rem 1.15rem;
+  font-size: 0.85rem;
+}
+
+/* ============================================================
+   CARD / SURFACE
+   ============================================================ */
+
+.surface {
+  background: var(--grad-surface);
+  border: 1px solid var(--color-line-soft);
+  border-radius: var(--radius-md);
+}
+
+.on-night .surface {
+  background: linear-gradient(160deg, #1a2138 0%, var(--color-night-soft) 100%);
+  border-color: var(--color-night-line);
+}
+
+.card-hover {
+  transition:
+    transform 0.45s var(--ease-out-expo),
+    border-color 0.3s var(--ease-swift),
+    box-shadow 0.45s var(--ease-out-expo);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-ink-faint);
+  box-shadow: 0 18px 40px -24px rgba(25, 21, 16, 0.35);
+}
+
+.on-night .card-hover:hover {
+  border-color: var(--color-night-ink-soft);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================
+   MOTION SYSTEM
+   [data-reveal] elements animate in via GSAP (src/scripts/motion.ts).
+   Initial hidden state applies ONLY when JS is running (html.js)
+   and motion is allowed. No-JS and reduced-motion users see
+   everything immediately.
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  html.js [data-reveal='fade'] {
+    transform: none;
+  }
+
+  html.js [data-reveal='left'] {
+    transform: translateX(-32px);
+  }
+
+  html.js [data-reveal='right'] {
+    transform: translateX(32px);
+  }
+
+  html.js [data-reveal='scale'] {
+    transform: scale(0.94);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Marquee (trust band) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Underline link */
+.link-under {
+  position: relative;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s var(--ease-out-expo);
+  padding-bottom: 2px;
+}
+
+.link-under:hover {
+  background-size: 100% 1px;
+}
+
+/* Scroll progress hairline */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: var(--color-heat);
+  z-index: 90;
+  pointer-events: none;
+}
+
+/* ============================================================
+   CALLOUT
+   Accent bar on the leading edge, rounded on all four corners.
+   ============================================================ */
+
+.callout {
+  position: relative;
+  padding: 1.1rem 1.4rem 1.1rem 1.6rem;
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+  border: 1px solid var(--color-line-soft);
+  overflow: hidden;
+}
+
+.callout::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background: var(--callout-accent, var(--grad-heat));
+}
+
+.on-night .callout {
+  background: var(--color-night-soft);
+  border-color: var(--color-night-line);
+}
+
+.callout--cool {
+  --callout-accent: var(--grad-cool);
+}
+
+.callout--warn {
+  --callout-accent: linear-gradient(120deg, #d9a63a, var(--color-warn));
+}

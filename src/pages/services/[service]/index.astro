@@ -1,0 +1,301 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { services, serviceCategories } from '@/data/services'
+import { serviceContent, combosForService, ductlessSystemsExtra } from '@/data/extracted'
+import { getCity } from '@/data/cities'
+import { site } from '@/data/site'
+import { getServiceImage } from '@/data/productImages'
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { service: s.id }, props: { svc: s } }))
+}
+
+const { svc } = Astro.props
+const content = serviceContent(svc.id)
+const category = serviceCategories.find((c) => c.id === svc.category)
+const cityCombos = combosForService(svc.id)
+const related = services.filter((s) => s.category === svc.category && s.id !== svc.id).slice(0, 4)
+
+const title = content?.title ?? `${svc.name} in Houston, TX | Big Texas Comfort`
+const description =
+  content?.metaDescription ??
+  `${svc.name} in Houston, TX and the bay area by Big Texas Comfort. Licensed, factory-trained technicians. Call ${site.phone}.`
+
+const paragraphs = content?.uniqueCopy ?? []
+const shot = getServiceImage(svc.id)
+const features = content?.features ?? []
+const isDuctless = svc.id === 'ductless-mini-split-installation'
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: svc.name,
+  provider: { '@type': 'HVACBusiness', name: site.name, telephone: site.phone },
+  areaServed: 'Houston, TX and surrounding bay-area communities',
+}
+---
+
+<Base title={title} description={description} schema={[serviceSchema]}>
+  <PageHero
+    eyebrow={category?.name ?? 'Service'}
+    lede={svc.short}
+    crumbs={[{ label: 'Services', href: '/services/' }, { label: svc.name }]}
+  >
+    {content?.h1 ?? `${svc.name} in Houston, TX`}
+  </PageHero>
+
+  <section class="svc-body">
+    <div class="container-site svc-layout">
+      <article class="svc-article">
+        {svc.emergency && (
+          <p class="svc-emergency" data-reveal>
+            <strong>24/7 emergency line:</strong> emergency service runs around the clock, seven
+            days a week. Call <a href={site.phoneHref} class="link-under">{site.phone}</a>.
+          </p>
+        )}
+
+        {paragraphs.map((p) => <p class="svc-para" data-reveal>{p}</p>)}
+
+        {
+          features.length > 0 && (
+            <div class="svc-features" data-reveal>
+              <h2 class="type-h3">What's included</h2>
+              <ul class="svc-feature-list">
+                {features.map((f) => (
+                  <li>
+                    <span class="svc-tick" aria-hidden="true">★</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          isDuctless && ductlessSystemsExtra && (
+            <aside class="svc-aside surface" data-reveal>
+              <p class="type-label type-label--cool">Ductless Pro program</p>
+              {ductlessSystemsExtra.uniqueCopy.slice(0, 2).map((p) => (
+                <p class="svc-aside-para">{p}</p>
+              ))}
+            </aside>
+          )
+        }
+      </article>
+
+      <aside class="svc-rail">
+        {
+          shot && (
+            <figure class:list={['svc-shot', { 'svc-shot--plate': shot.plate }]} data-reveal="scale">
+              <img src={shot.src} alt={shot.alt} width="400" height="300" loading="lazy" decoding="async" />
+            </figure>
+          )
+        }
+        <div class="svc-rail-card surface">
+          <p class="type-label">Talk to a specialist</p>
+          <a href={site.phoneHref} class="svc-rail-phone">{site.phoneDisplay}</a>
+          <p class="svc-rail-hours">{site.hours.regular}<br />{site.hours.emergency}</p>
+          <a href="/contact/" class="btn btn--primary svc-rail-btn">Request service</a>
+          <p class="svc-rail-offer">{site.offers.diagnostic}. Free estimates &amp; second opinions.</p>
+        </div>
+
+        {
+          cityCombos.length > 0 && (
+            <nav class="svc-rail-cities" aria-label={`${svc.name} by city`}>
+              <p class="type-label">{svc.name} near you</p>
+              <ul>
+                {cityCombos.map((c) => {
+                  const city = getCity(c.cityId)
+                  return (
+                    <li>
+                      <a href={`/services/${svc.id}/${c.cityId}/`} class="link-under">
+                        {city?.name ?? c.cityId}
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </nav>
+          )
+        }
+
+        {
+          related.length > 0 && (
+            <nav class="svc-rail-related" aria-label="Related services">
+              <p class="type-label">Related</p>
+              <ul>
+                {related.map((r) => (
+                  <li>
+                    <a href={`/services/${r.id}/`} class="link-under">{r.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand title={`Need ${svc.name.toLowerCase()}? Start here.`} />
+</Base>
+
+<style>
+  .svc-body {
+    padding-bottom: var(--spacing-section);
+  }
+  .svc-layout {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .svc-layout {
+      grid-template-columns: 1fr 20rem;
+      gap: 5rem;
+    }
+  }
+  .svc-article {
+    max-width: 46rem;
+  }
+  .svc-emergency {
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--color-heat);
+    background: var(--color-paper);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+  .svc-para {
+    margin-bottom: 1.4rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+    font-size: 1.02rem;
+  }
+  .svc-para:first-of-type {
+    color: var(--color-ink);
+    font-size: 1.12rem;
+  }
+  .svc-features {
+    margin-top: 3rem;
+  }
+  .svc-feature-list {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 0.7rem;
+  }
+  @media (min-width: 40rem) {
+    .svc-feature-list {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem 2rem;
+    }
+  }
+  .svc-feature-list li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: baseline;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .svc-tick {
+    color: var(--color-heat);
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+  .svc-aside {
+    margin-top: 3rem;
+    padding: 1.6rem 1.75rem;
+  }
+  .svc-aside-para {
+    margin-top: 0.9rem;
+    font-size: 0.93rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+
+  .svc-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-self: start;
+    position: sticky;
+    top: 6rem;
+  }
+  .svc-shot {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    background: var(--color-night);
+  }
+  .svc-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+  .svc-shot:hover img {
+    transform: scale(1.05);
+  }
+  .svc-shot--plate {
+    background: linear-gradient(158deg, #ffffff 0%, #f2efe7 100%);
+    padding: 1.25rem;
+  }
+  .svc-shot--plate img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .svc-rail-card {
+    padding: 1.6rem 1.75rem;
+  }
+  .svc-rail-phone {
+    display: block;
+    margin-top: 0.8rem;
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 640;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .svc-rail-phone:hover {
+    color: var(--color-heat);
+  }
+  .svc-rail-hours {
+    margin-top: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    line-height: 1.7;
+    color: var(--color-ink-faint);
+  }
+  .svc-rail-btn {
+    margin-top: 1.2rem;
+    width: 100%;
+  }
+  .svc-rail-offer {
+    margin-top: 1rem;
+    font-size: 0.83rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  .svc-rail-cities ul,
+  .svc-rail-related ul {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .svc-rail-cities a,
+  .svc-rail-related a {
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+  }
+</style>

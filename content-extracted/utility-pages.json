@@ -1,0 +1,243 @@
+{
+  "pages": [
+    {
+      "slug": "customer-survey",
+      "oldUrl": "/customer-survey/",
+      "title": "Big Texas Comfort, Customer Survey - Houston, TX  77058",
+      "metaDescription": "Give us your feedback on the quality of our work and team near Houston, TX",
+      "h1": "",
+      "summary": "Customer satisfaction survey form where past customers rate service quality, technician courtesy, and value, and give permission to reuse comments in advertising. No H1; main heading is an H2 'Customer Satisfaction Survey'.",
+      "uniqueCopy": [
+        "Please take the time to fill out our survey below. We want to know how you felt about your service with Big Texas Comfort. All comments are greatly appreciated and respected.",
+        "If you have any questions, please call us at (832) 888-5166.",
+        "How did we do?"
+      ],
+      "facts": [
+        "Phone for survey questions: (832) 888-5166",
+        "Survey asks whether the customer was offered an Annual Maintenance Agreement",
+        "Survey asks permission to reuse customer comments in future advertising",
+        "Survey collects referrals (name and telephone number)"
+      ],
+      "features": [
+        "Rating question (Excellent | Good | Fair | Poor): Timely manner of service",
+        "Rating question (Excellent | Good | Fair | Poor): Overall quality of work",
+        "Rating question (Excellent | Good | Fair | Poor): Value of work done",
+        "Rating question (Excellent | Good | Fair | Poor): Technician's Neatness / Cleanliness",
+        "Rating question (Excellent | Good | Fair | Poor): Courtesy of Technician",
+        "Rating question (Excellent | Good | Fair | Poor): Courtesy of Office Personnel",
+        "Open question: Name of technician?",
+        "Open question: How did you hear about us?",
+        "Question: Were you offered an Annual Maintenance Agreement? (Yes | No | Already have one)",
+        "Question: Would you call our company again? (Yes | No)",
+        "Contact information fields: Name, Address, City/State, Email address",
+        "Comments/Misc. fields: Service or Product Purchased, Star Rating, Comments (problems/praises), Referrals (Name and Telephone number)",
+        "Question: Can we reuse your comments in future advertising? (Yes | No)"
+      ],
+      "images": [
+        "Customer Satisfaction Survey"
+      ],
+      "ctas": []
+    },
+    {
+      "slug": "refer-friend",
+      "oldUrl": "/refer-friend/",
+      "title": "Big Texas Comfort, Refer A Friend - Houston, TX 77058",
+      "metaDescription": "Refer a friend to us and receive a benefit for yourself! - Houston, TX",
+      "h1": "Refer a Friend",
+      "summary": "Referral program page: customers submit a friend's contact details, and if the referral results in a complete system installation, the referrer receives a $50 dinner gift certificate.",
+      "uniqueCopy": [
+        "Tell your family, friends, and neighbors about your experience with Big Texas Comfort, and we will reward you.",
+        "At Big Texas Comfort we strive to have satisfied customers. We know how important a company recommendation is. Our customers' confidence is what makes our company grow, and a referral is the highest honor we could receive. To show our appreciation, we are introducing our Refer A Friend Program.",
+        "When your referral results in the installation of a complete system, we will reward you with a $50 dinner gift certificate as our thank you to you."
+      ],
+      "facts": [
+        "Reward: $50 dinner gift certificate",
+        "Reward condition: the referral must result in the installation of a complete system",
+        "Program name: Refer A Friend Program"
+      ],
+      "features": [
+        "Form section 'Your Friend's Contact Information': First Name, Last Name, Email, Phone, Address, City, State, Zip Code, Product or Service Desired",
+        "Form section 'Your Contact Information': First Name, Last Name, Email, Phone"
+      ],
+      "images": [
+        "Refer a Friend"
+      ],
+      "ctas": []
+    },
+    {
+      "slug": "privacy-policy",
+      "oldUrl": "/privacy-policy/",
+      "title": "Privacy Policy",
+      "metaDescription": "States the privacy policies of our company.",
+      "h1": "Privacy Policy",
+      "summary": "Standard privacy policy covering information collected via website forms/email, how it is used, analytics cookies (Google Analytics), educational-tool cookies/sessions, data security measures, and how policy changes are announced.",
+      "uniqueCopy": [
+        "The Information We Collect: This notice applies to all information collected or submitted on our website via email or any forms you voluntarily fill out. Personal information collected: Name; Address; Email address; Phone number(s); Questions to assess your service needs; Comments and/or Opinions about Big Texas Comfort.",
+        "The Way We Use Information (verbatim key clause): \"We use the information you provide about yourself to respond to your email contact or on-line form submittal. We do not share the information with any outside parties.\" If you express interest in services you are added to the mailing list automatically; registered users may receive announcements about products, services, special offers, and newsletters; you can unsubscribe at any time and will not be re-subscribed after removal. \"we never use or share the personally identifiable information provided to us online in ways unrelated to the ones described above.\"",
+        "Website Analytics: The site uses analytics tools such as Google Analytics (Google, Inc.), which use cookies to compile anonymous statistical reports on website activity; the information generated (including IP address) is transmitted to and stored by the analytics provider's servers. Neither Big Texas Comfort nor the Web Analytics Vendors will link, or seek to link, an IP address with the identity of a computer user. Users may refuse cookies via browser settings, though full site functionality may be affected; by using the website, users consent to this data processing.",
+        "Use of Cookies and Sessions: Cookies and server sessions are used when entering the site's educational tools, only to personalize the experience (tracking answers to provide a customized result). The cookie can be deleted by the user at any time; the session file is stored on the server and no information is retrieved or stored from it.",
+        "Our Commitment To Data Security (verbatim): \"To prevent unauthorized access, maintain data accuracy, and ensure the correct use of information, we have put in place appropriate physical, electronic, and managerial procedures to safeguard and secure the information we collect online.\"",
+        "Notification of Changes: Policy changes will be posted on this page along with the policy effectiveness date; any decision to use personally identifiable information in a manner different from that stated at collection time will be posted on this page."
+      ],
+      "facts": [
+        "Data collected: Name, Address, Email address, Phone number(s), service-need questions, comments/opinions",
+        "\"We do not share the information with any outside parties.\"",
+        "Users who express interest in services are added to the mailing list automatically; unsubscribe available at any time",
+        "Analytics: Google Analytics and similar tools with cookies; IP addresses are not linked to user identity"
+      ],
+      "features": [],
+      "images": [],
+      "ctas": []
+    },
+    {
+      "slug": "site-map",
+      "oldUrl": "/site-map/",
+      "title": "Big Texas Comfort, Sitemap - Houston, TX",
+      "metaDescription": "Navigational page listing all pages of website with links to each page.",
+      "h1": "Site Map",
+      "summary": "Navigational sitemap listing every page of the site: core sections, service-by-city programmatic pages, product pages, support/troubleshooting guides, educational topics, blog posts, and local landmark pages.",
+      "uniqueCopy": [],
+      "facts": [],
+      "features": [
+        "Home",
+        "About Us (6 sub-pages): Contact Us, History, Photo Gallery, Qualifications, Reviews, Service Area (13 sub-pages incl. Bacliff TX, Hitchcock TX, La Marque TX, Texas City TX contractor pages; Friendswood, League City, Seabrook, Clear Lake City, Webster HVAC pages; Furnace Installation Houston; Seasonal AC Maintenance Houston; 2 blog-style pages)",
+        "Service-by-city pages: AC Repair (Clear Lake City, Friendswood, League City, Pasadena, Seabrook, Webster); AC Replacement & Installation (Clear Lake City, Friendswood, League City, Seabrook, Webster); Air Duct Cleaning (Clear Lake City, Friendswood, League City, Seabrook, Webster); Air Duct Sealing (Clear Lake City, League City, Seabrook, Webster); Air Quality Testing (Clear Lake City, League City, Seabrook, Webster); Commercial HVAC (Clear Lake City, League City, Seabrook, Webster); Ductless Mini Split Installation (Clear Lake City, Friendswood, Houston, League City, Seabrook, Webster); Furnace Installation (Clear Lake City, League City, Seabrook, Webster); Furnace Repair (Clear Lake City, Friendswood, Houston, League City, Pasadena, Seabrook, Webster); Furnace Maintenance (Clear Lake City, League City, Seabrook, Webster); Seasonal AC Maintenance (Clear Lake City, Friendswood, League City, Seabrook, Webster)",
+        "Comprehensive HVAC Services in Houston, TX (12 sub-pages): Air Duct Cleaning, Air Duct Sealing, Air Quality Testing, Emergency AC Repair, Extended Warranties, Energy Audits, Attic Insulation, New HVAC Installation, Preventive HVAC Maintenance, Service Agreements - \"The Smart Choice\", Sheet Metal Fabrication, Upgrade & Replacement",
+        "Products (23 sub-pages): Air Cleaners, Air Conditioners (incl. AC Replacement & Installation Houston), Air Handlers, American Standard Home App, Carbon Monoxide Detectors, Cooling Products, Dehumidifiers, Duct Free Systems, Ductless Mini Split Systems, Evaporator Coils, Gas Furnaces, Heat Pumps, Heating Products, Thermostats and HVAC Zone Control Products, Humidifiers, Hybrid Heat, Indoor Air Quality Products, MicroPure with Duo Field Control, Packaged Units, Residential Zoning Products, Thermostats, UV Lights, Ventilators",
+        "Support (3 sub-pages): Air Conditioning & Heating Troubleshooting (4 guides: Air Conditioner - No Cooling; Gas Furnace - No Heating; Heat Pump - No Cooling; Heat Pump - No Heating), Ask the Expert, Product Knowledge",
+        "Educational topics: Select a New System, Repair or Replace, Energy Bill Concerns, Healthier Home, Ready for Maintenance, Request Service",
+        "Blog/article pages: Duct Cleaning: The Real Deal; How Houston's Humidity Impacts Your AC and What You Can Do About It; Mold in the Cold? How to Get Rid of Mold in Your AC; Musty AC? Here's How to Banish Those Odors; Pro Tips for Keeping Your Air Conditioner Ice-Free and Efficient; Finding the Best HVAC Professionals; The Importance of Seasonal HVAC Maintenance",
+        "Local landmark pages under /league-city-tx/ and /webster-tx/: Absolute Volleyball Academy of Texas, Academy Sports + Outdoors, Bay Colony Pool, Brittany Lakes Park and Pool, Edgewater Park, Florence Campbell Elementary School, Marbella Pool, Marquis at Clear Lake, South Shore Harbour Resort and Conference Center, Texas Avenue Park; plus city hub pages League City TX and Webster TX",
+        "Other pages: Special Offers, Financing, Radiant Floor Heating Houston TX, Commercial HVAC Repair Houston TX, Fast and Reliable AC Repair in Houston TX, Need R22?, Customer Satisfaction Survey, Refer a Friend, Glossary, Privacy Policy, Site Map, Thank You"
+      ],
+      "images": [],
+      "ctas": []
+    },
+    {
+      "slug": "glossary",
+      "oldUrl": "/glossary/",
+      "title": "HVACGlossary - Big Texas Comfort, Houston, TX",
+      "metaDescription": "This glossary gives information on all the terms of the Air Conditioning, Heating, Indoor Air Quality & refrigeration trades.",
+      "h1": "Glossary",
+      "summary": "Alphabetical glossary of 62 HVAC industry terms with definitions, from AFUE to Zoning, including efficiency ratings, equipment components, and refrigerant terminology.",
+      "uniqueCopy": [],
+      "facts": [
+        "Glossary contains 62 defined HVAC terms with an a-z jump navigation"
+      ],
+      "features": [],
+      "images": [],
+      "ctas": [],
+      "terms": [
+        {"term": "AFUE", "definition": "Annual Fuel Utilization Efficiency. Indicated as a percentage, your furnace's AFUE tells you how much energy is being converted to heat. For example, an AFUE of 90 means that 90% of the fuel is being used to warm your home, while the other 10% escapes as exhaust with the combustion gases."},
+        {"term": "Advanced Reciprocating Compressor", "definition": "Type of compressor that uses a more efficient process for compressing refrigerant for better cooling efficiency"},
+        {"term": "Air Handler", "definition": "The portion of your air conditioner or heating system that forces air through your home's ductwork."},
+        {"term": "BTU", "definition": "British Thermal Unit. Used for both heating and cooling, BTU is a measure of the heat given off when fuel is combusted. Or for cooling, it's a measure of heat extracted from your home. (One BTU is approximately equal to the heat given off by a wooden kitchen match.)"},
+        {"term": "BTUH", "definition": "A British Thermal Unit (BTU) is the unit of heat required to raise 1 pound of water by 1 degree Fahrenheit. BTUH is British Thermal Units per Hour."},
+        {"term": "Beckett Burner", "definition": "A burner assembly within your oil furnace. This burner provides good combustion of heating oil."},
+        {"term": "CFM", "definition": "Stands for Cubic Feet per Minute. A measurement of airflow that indicates how many cubic feet of air pass by a stationary point in one minute. The higher the number, the more air is being forced through the system."},
+        {"term": "Capacity", "definition": "The ability of a heating or cooling system to heat or cool a given amount of space. For heating, this is usually expressed in BTUs. For cooling, it is usually given in tons."},
+        {"term": "Carbon Monoxide", "definition": "A colorless, odorless, highly poisonous gas produced when carbon-based fuels, such as natural gas, burns without sufficient air nearby."},
+        {"term": "Compressor", "definition": "Part of a split-system heat pump or air conditioner's outdoor unit that controls the pressure applied to the refrigerant, necessary for taking in heat to warm your home with a heat pump or getting rid of heat to keep your home cool."},
+        {"term": "Condenser Coil", "definition": "Part of the outdoor portion of a split-system air conditioner or heat pump. By converting refrigerant that is in a gas form back to a liquid, the coil sends heat carried by the refrigerant to the outside."},
+        {"term": "DB", "definition": "Decibels (dB) are a unit measuring the intensity of noise."},
+        {"term": "Damper", "definition": "A type of \"valve\" used in duct work that opens or closes to control airflow. Used in zoning to control the amount of warm or cool air entering certain areas of your home."},
+        {"term": "Downflow", "definition": "A type of furnace that takes cool air from the top and blows warm air to the bottom-commonly used where furnaces must be located in a second-floor closet or utility area."},
+        {"term": "Ductwork", "definition": "Hollow pipes used to transfer air from the Air Handler to the air vents throughout your home. Ductwork is one of the most important components of a home heating and cooling system."},
+        {"term": "EER", "definition": "Energy Efficiency Ratings (EER) measure the efficiency with which a product uses energy to function. It is calcuated by dividing a product's BTU output by its wattage."},
+        {"term": "Electronic Air Cleaner (EAC)", "definition": "An electronic device that filters out large particles and contaminants in indoor air. It then electronically pulls out tiny particles that have been magnetized, such as viruses and bacteria, drawing them to a collector plate."},
+        {"term": "Energy Saver Switch", "definition": "An energy-saver switch causes the air conditioner's fan and compressor to cycle on and off together, reducing energy use."},
+        {"term": "Energy Star", "definition": "Energy Star is a government-backed program helping businesses and individuals protect the environment through superior energy efficiency. Products with the Energy Star rating will be efficient and save cost on energy bills."},
+        {"term": "Evaporator Coil", "definition": "Part of a split-system air conditioner or heat pump located indoors. The evaporator coil cools and dehumidifies the air by converting liquid refrigerant into a gas (or vice-versa). A blower moter, typically in a furnace, then moves air over the coil to either heat or cool your home."},
+        {"term": "Fan Coil", "definition": "An indoor component of an air conditioner or heat pump system, used in place of a furnace and evaporator coil, to provide change the refrigerant from a gas to a liquid (or vice-versa) and blow air over the coil to cool or heat your home."},
+        {"term": "HSPF", "definition": "The Heating Seasonal Performance Factor is a measure of the heating efficiency of a heat pump. The higher the HSPF number, the more efficiently the heat pump heats your home."},
+        {"term": "HVAC", "definition": "Term used for Heating, Ventilation, and Air Conditioning"},
+        {"term": "Heat Exchanger", "definition": "The part of a furnace that transfers heat to nearby air."},
+        {"term": "Heat Pump", "definition": "A product that works just like an air conditioner in cooling mode; however, in heating mode, the refrigerant flow is reversed and heat is extrated from the outside air too heat your home."},
+        {"term": "Horizontal Flow", "definition": "A type of furnace, installed on its \"side\", that draws in air from one side, heats it and sends the warm air out the other side. Most often used for installations in attics or crawl spaces"},
+        {"term": "Humidifier", "definition": "A piece of equipment that adds water vapor to heated air as it moves out of the furnace. This adds necessary moisture to protect your furnishings and reduce static electricity."},
+        {"term": "Hybrid Heat", "definition": "Hybrid Heat systems deliver exceptional performance by using a heating source that provides the most energy-efficient comfort during moderate heating conditions."},
+        {"term": "Indoor Coil", "definition": "see Evaporator Coil"},
+        {"term": "Load Estimate", "definition": "A series of studies performed to determine the heating or cooling requirements of your home. An energy load analysis uses information such as the square footage of your home, window or door areas, insulation quality and local climate to determine the heating and cooling capacity needed by your furnace, heat pump or air conditioner. When referring to heating, this is often known as a Heat Loss Analysis, since a home's heating requirements are determined by the amount of heat lost through the roof, entry ways and walls."},
+        {"term": "Low Boy", "definition": "Low Boy is a type of furnace configuration in which the furnace is lower in height and occupies more floor space."},
+        {"term": "MERV", "definition": "The Minimum Efficiency Reporting Value is the standard comparison of the efficiency of an air filter. The MERV scale ranges from 1 (least efficient) to 16 (most efficient), and measures a filter's ability remove particles from 3 to 10 microns in size."},
+        {"term": "Matched System", "definition": "A heating and cooling system comprised of products that have been certified to perform at promised comfort and efficiency levels when used together, and used according to design and engineering specifications."},
+        {"term": "Non-Thermal plasma (cold plasma)", "definition": "Plasma in its simplest form is oppositely charged hydrogen and oxygen ions, also called bi-polar ionization. These naturally occurring ions are artificially produced when a sufficiently high voltage is applied to a sharp point. The plasma, when produced and injected into a moving air stream, breaks down gases to harmless compounds prevalent in the atmosphere such as oxygen, nitrogen, water vapor and carbon dioxide."},
+        {"term": "Operating Cost", "definition": "The day-to-day cost of running your home comfort equipment, based on energy use."},
+        {"term": "Outdoor Coil", "definition": "see Condenser Coil"},
+        {"term": "Payback Analysis", "definition": "Overall measure of the efficiency and value of your home comfort system. By combining your purchase price and ongoing operating costs, a payback analysis determines the number of years required before monthly energy savings offset the purchase price."},
+        {"term": "Puron Refrigerant", "definition": "Puron® Refrigerant is an environmentally sound refrigerant designed not to harm the earth's ozone layer. Federal law requires that all manufacturers phase out ozone depleting refrigerants in the next few years. Puron Refrigerant is approved by the US Environmental Protection Agency as a replacement from Freon 22*."},
+        {"term": "QuieTech", "definition": "QuieTech™ is a noise reduction system that provides comfortable heat while generating very little noise in the process."},
+        {"term": "R-22 refrigerant", "definition": "R-22 is a single component HCFC refrigerant with low ozone depletion potential. It has long been used in a variety of air-conditioning and refrigeration applications in a variety of markets. Production of R-22 will cease in 2015 per the Montreal Protocol."},
+        {"term": "Reciprocating Compressor", "definition": "A type of compressor used in air conditioners that compresses refrigerant by using a type of \"piston\" action."},
+        {"term": "Reclaiming", "definition": "Returning used refrigerant to the manufacturer for disposal or reuse."},
+        {"term": "Recycling", "definition": "Removing, cleaning and reusing refrigerant."},
+        {"term": "Refrigerant Lines", "definition": "Two copper lines that connect the Condenser (Outdoor) Coil to the Evaporator (Indoor) Coil."},
+        {"term": "Riello Burner", "definition": "A burner assembly within your oil furnace. This burner provides a cleaner, higher quality combustion of heating oil to increase energy efficiency."},
+        {"term": "SEER", "definition": "The Seasonal Energy Efficiency Ratio is a measure of the cooling efficiency of your air conditioner or heat pump. The higher the SEER number, the more efficient the system is at converting electricity into cooling power."},
+        {"term": "Scroll Compressor", "definition": "A specially designed compressor that works in a circular motion vs. an up and down piston action."},
+        {"term": "Setback Thermostat", "definition": "A state-of-the-art electronic thermostat with a built-in memory that can be programmed for different temperature settings at different times of the day."},
+        {"term": "Single Package Product", "definition": "One outdoor unit that contains both a heating and a cooling system."},
+        {"term": "SmartRecovery", "definition": "Smart Recovery starts the system in advance to be sure that each zone reaches your selected temperature setting at the scheduled time."},
+        {"term": "Split System", "definition": "Refers to an air conditioner or heat pump that has components in two locations. Usually, one part of the system is located inside (evaporator coil) and the other is located outside your home (condenser coil)."},
+        {"term": "Thermidistat", "definition": "The Thermidistat™ Control monitors temperatures both inside and outside, as well as indoor humidity and adjusts system operation to maintain the temperature and humidity levels set by the homeowner."},
+        {"term": "Thermostat", "definition": "Unit that monitors and controls your HVAC system products."},
+        {"term": "Thermostatic Expansion Valve", "definition": "A thermostatic expansion valve (TXV) is precision device used to meter the flow of liquid refrigerant entering the evaporator at a rate that matches the amount of refrigerant being boiled off in the evaporator."},
+        {"term": "Ton", "definition": "A unit of measure for cooling capacity. One ton = 12,000 BTUs per hour."},
+        {"term": "Total Home Comfort System", "definition": "The ultimate solution to providing you with consistent, customized home comfort, despite the ever-changing weather."},
+        {"term": "TrueSense Dirty Filter Detection", "definition": "TrueSense™ dirty filter detection reminds you when it's time to change your media filter."},
+        {"term": "Two Stage Compressor", "definition": "Two Stage Compressors are capable of two levels of operation, a low stage and a high stage. Properly sized equipment will operate 80% of the time in low stage, enhancing efficiency and comfort with lower humidity levels and quieter operation. It's like getting two air conditioners or heat pumps in one system."},
+        {"term": "UL", "definition": "UL is an objective, non-profit organization that tests and rates electrical products for public safety."},
+        {"term": "Upflow", "definition": "A type of furnace that draws cool air from the bottom and blows the warmed air out the top into the duct work. This type of furnace is usually installed in a basement or an out-of-the-way closet."},
+        {"term": "Ventilator", "definition": "A ventilator captures heating or cooling energy from stale indoor air and transfers it to fresh incoming air."},
+        {"term": "Zoning", "definition": "A way to increase your home comfort and energy efficiency by controlling when and where heating and cooling occurs in a home. Programmable thermostats are used to control operating times of the equipment. Dampers are used to direct air flow to certain parts or \"zones\" of the home."}
+      ]
+    },
+    {
+      "slug": "thank-you",
+      "oldUrl": "/thank-you/",
+      "title": "Thank You",
+      "metaDescription": "",
+      "h1": "Thank You",
+      "summary": "Form-submission confirmation page shown after a visitor submits a contact/request form.",
+      "uniqueCopy": [
+        "Thank you for your submission. Someone from our team will be in touch soon."
+      ],
+      "facts": [],
+      "features": [],
+      "images": [
+        "Thanks (contact-us.jpg)"
+      ],
+      "ctas": []
+    },
+    {
+      "slug": "r22",
+      "oldUrl": "/r22/",
+      "title": "Big Texas Comfort, Refrigerant 22, R22 - Houston, TX",
+      "metaDescription": "",
+      "h1": "Need R22?",
+      "summary": "Landing page offering hard-to-find R22 refrigerant (limited supply, 30 pound jugs, refrigerant certification required) for older AC systems, plus free estimates on replacement systems and financing. No dollar price is stated on the page.",
+      "uniqueCopy": [
+        "If you have an older HVAC system that uses Refrigerant (R22) and need some to extend it's life a bit, you may have trouble finding anyone that still carries it. That is because in 2010 it was replaced with R 410A. Since then R22 has slowly been phased out and it is getting harder to find. Big Texas Comfort has some available, but supply is limited. 30 pound jugs available to those with refrigerant certification and for install in residential and commercial AC systems. Please contact us for more information.",
+        "We also provide free estimates on new replacement systems. We work hard to provide our customers with the best solutions for their heating and cooling needs. Ask about our financing options, convenient monthly payments available.",
+        "Big Texas Comfort is also a CenterPoint Energy Conservation Partner. Ask about our seasonal rates."
+      ],
+      "facts": [
+        "R22 was replaced with R 410A in 2010 and has been phased out since",
+        "Big Texas Comfort has R22 available, but supply is limited",
+        "R22 sold in 30 pound jugs, available to those with refrigerant certification, for install in residential and commercial AC systems",
+        "No price is listed on the page; visitors are told to contact for more information",
+        "Free estimates on new replacement systems",
+        "Financing options with convenient monthly payments available",
+        "Big Texas Comfort is a CenterPoint Energy Conservation Partner",
+        "Seasonal rates available (ask)"
+      ],
+      "features": [],
+      "images": [
+        "Need R22?"
+      ],
+      "ctas": [
+        "Please contact us for more information -> 832-888-5166 (tel:8328885166)"
+      ]
+    }
+  ]
+}

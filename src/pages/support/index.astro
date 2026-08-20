@@ -1,0 +1,208 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { get } from '@/data/extracted'
+import { site } from '@/data/site'
+
+const treeCards = [
+  { slug: 'ac-not-cooling', title: 'Air conditioner not cooling', symptom: 'Blowing warm, weak, or nothing at all' },
+  { slug: 'furnace-not-heating', title: 'Gas furnace not heating', symptom: 'Cold air, short cycling, or no start' },
+  { slug: 'heat-pump-not-cooling', title: 'Heat pump not cooling', symptom: 'Summer mode struggling to keep up' },
+  { slug: 'heat-pump-not-heating', title: 'Heat pump not heating', symptom: 'Winter mode blowing cool air' },
+]
+
+const faqPage = get('support', 'ask-expert')
+/** Entries arrive as "Q: <question> <separator> A: <answer>". The separator
+ *  varies, so split on the answer marker rather than matching punctuation. */
+const faqs = (faqPage?.uniqueCopy ?? [])
+  .map((entry) => {
+    if (!entry.startsWith('Q:')) return null
+    const split = entry.search(/\bA:\s/)
+    if (split === -1) return null
+    const q = entry.slice(2, split).replace(/[\s,.;:]+$/, '').trim()
+    const a = entry.slice(split + 2).trim()
+    return q && a ? { q, a } : null
+  })
+  .filter((f): f is { q: string; a: string } => !!f)
+---
+
+<Base
+  title="DIY Troubleshooting & Support | Big Texas Comfort"
+  description="Free DIY troubleshooting checklists for air conditioners, gas furnaces and heat pumps, plus answers from our experts. When the checklist runs out, call 832-888-5166."
+>
+  <PageHero
+    eyebrow="Support"
+    lede="The same first checks our technicians run, free to work through yourself. If the checklist runs out, the truck rolls."
+    crumbs={[{ label: 'Support' }]}
+  >
+    Fix the easy stuff first.
+  </PageHero>
+
+  <section class="sup">
+    <div class="container-site">
+      <h2 class="type-h3" data-reveal>Guided troubleshooting</h2>
+      <ul class="sup-grid" data-reveal-group>
+        {
+          treeCards.map((t) => (
+            <li data-reveal-child>
+              <a href={`/support/${t.slug}/`} class="sup-card surface card-hover">
+                <span class="sup-card-name">{t.title}</span>
+                <span class="sup-card-symptom">{t.symptom}</span>
+                <span class="sup-card-cta">Start the checklist <span class="btn-arrow" aria-hidden="true">→</span></span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="sup-warn" data-reveal>
+        Safety first: if you ever suspect a gas leak or see sparking, skip the checklist,
+        leave the area and call your utility, then call us at {site.phoneDisplay}.
+      </div>
+
+      {
+        faqs.length > 0 && (
+          <div class="sup-faq">
+            <h2 class="type-h3" data-reveal>Ask the expert</h2>
+            <p class="sup-faq-lede" data-reveal>
+              Real questions our customers have asked, answered by the Big Texas Comfort team.
+            </p>
+            <div class="sup-faq-list" data-reveal>
+              {faqs.map((f) => (
+                <details class="sup-faq-item">
+                  <summary>
+                    <span>{f.q}</span>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </summary>
+                  <p class="sup-faq-answer">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBand title="Checklist ran out? That's our cue." />
+</Base>
+
+<style>
+  .sup {
+    padding-bottom: var(--spacing-section);
+  }
+  .sup-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .sup-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .sup-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .sup-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+    padding: 1.5rem 1.6rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .sup-card-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 630;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .sup-card-symptom {
+    font-size: 0.87rem;
+    color: var(--color-ink-soft);
+    flex: 1;
+  }
+  .sup-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-heat);
+  }
+  .sup-card .btn-arrow {
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .sup-card:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+  .sup-warn {
+    margin-top: 2rem;
+    max-width: 56rem;
+    padding: 1.1rem 1.4rem;
+    border-left: 3px solid var(--color-warn);
+    background: var(--color-paper);
+    border-radius: var(--radius-md);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+  .sup-faq {
+    margin-top: 5rem;
+  }
+  .sup-faq-lede {
+    margin-top: 0.8rem;
+    color: var(--color-ink-soft);
+  }
+  .sup-faq-list {
+    margin-top: 1.75rem;
+    max-width: 56rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .sup-faq-item {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .sup-faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.15rem 0.25rem;
+    cursor: pointer;
+    font-weight: 620;
+    font-size: 1rem;
+    list-style: none;
+    transition: color 0.2s;
+  }
+  .sup-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .sup-faq-item summary:hover {
+    color: var(--color-heat);
+  }
+  .sup-faq-item summary svg {
+    flex-shrink: 0;
+    color: var(--color-ink-faint);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .sup-faq-item[open] summary svg {
+    transform: rotate(45deg);
+    color: var(--color-heat);
+  }
+  .sup-faq-answer {
+    padding: 0 0.25rem 1.4rem;
+    max-width: 62ch;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+  }
+</style>

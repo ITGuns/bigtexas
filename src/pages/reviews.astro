@@ -1,0 +1,153 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { site } from '@/data/site'
+
+const platforms = [
+  { name: 'Google', url: site.reviewLinks.google, note: 'Read and leave Google reviews' },
+  { name: 'Yelp', url: site.reviewLinks.yelp, note: 'Our Yelp business page' },
+  { name: 'Facebook', url: site.reviewLinks.facebook, note: 'Reviews and job photos' },
+  { name: 'Angi', url: site.reviewLinks.angi, note: '2017 Super Service Award winner' },
+]
+---
+
+<Base
+  title="Reviews | Big Texas Comfort, Houston, TX"
+  description="Read what customers say about Big Texas Comfort on Google, Yelp, Facebook and Angi, and share your own experience. We strive for 100% satisfaction in everything we do."
+>
+  <PageHero
+    eyebrow="Reviews"
+    lede="We strive for 100% satisfaction in everything we do. We value your opinion and invite you to tell us, and others, about your experience with us."
+    crumbs={[{ label: 'Reviews' }]}
+  >
+    Read us in our customers’ words.
+  </PageHero>
+
+  <section class="rev">
+    <div class="container-site">
+      <figure class="rev-featured on-night" data-reveal>
+        <blockquote>
+          <p class="rev-quote">“{site.testimonial.quote}”</p>
+        </blockquote>
+        <figcaption class="rev-caption">
+          <span class="rev-stars" aria-label="5 out of 5 stars">★★★★★</span>
+          <span class="rev-author">{site.testimonial.author}</span>
+          <span class="rev-meta">{site.testimonial.product} · {site.testimonial.date}</span>
+        </figcaption>
+      </figure>
+
+      <div class="rev-platforms">
+        <h2 class="type-h3" data-reveal>Read more, or write your own</h2>
+        <p class="rev-platforms-lede" data-reveal>
+          Reviews live where you wrote them. Pick your platform:
+        </p>
+        <ul class="rev-grid" data-reveal-group>
+          {
+            platforms.map((p) => (
+              <li data-reveal-child>
+                <a href={p.url} target="_blank" rel="noopener" class="rev-card surface card-hover">
+                  <span class="rev-card-name">{p.name}</span>
+                  <span class="rev-card-note">{p.note}</span>
+                  <span class="btn-arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Earn your review the old-fashioned way? That's the plan." note="Tell us how we did after your next visit. Every review gets read." />
+</Base>
+
+<style>
+  .rev {
+    padding-bottom: var(--spacing-section);
+  }
+  .rev-featured {
+    border-radius: var(--radius-lg);
+    padding: clamp(2rem, 5vw, 3.5rem);
+  }
+  .rev-quote {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 1rem + 1.8vw, 2.3rem);
+    font-weight: 560;
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+    max-width: 30ch;
+    text-wrap: pretty;
+  }
+  .rev-caption {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem 1.4rem;
+  }
+  .rev-stars {
+    color: var(--color-heat-bright);
+    letter-spacing: 0.2em;
+  }
+  .rev-author {
+    font-weight: 640;
+  }
+  .rev-meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-night-ink-soft);
+  }
+  .rev-platforms {
+    margin-top: 4rem;
+  }
+  .rev-platforms-lede {
+    margin-top: 0.8rem;
+    color: var(--color-ink-soft);
+  }
+  .rev-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .rev-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .rev-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .rev-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.4rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+  .rev-card-name {
+    font-family: var(--font-display);
+    font-weight: 630;
+    font-size: 1.15rem;
+  }
+  .rev-card-note {
+    font-size: 0.86rem;
+    color: var(--color-ink-soft);
+    flex: 1;
+  }
+  .rev-card .btn-arrow {
+    color: var(--color-ink-faint);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .rev-card:hover .btn-arrow {
+    transform: translateX(4px);
+    color: var(--color-heat);
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import { site } from '@/data/site'
+---
+
+<section class="section on-night final" aria-labelledby="final-title">
+  <div class="container-site final-inner">
+    <p class="type-label type-label--heat eyebrow" data-reveal="fade">{site.tagline}</p>
+    <h2 class="type-h1 final-title" id="final-title" data-reveal>
+      Customer for life<br />starts with one call<em>.</em>
+    </h2>
+    <p class="type-lede final-lede" data-reveal data-reveal-delay="0.1">
+      Free estimates. Free second opinions. Military and first responders, ask about our discounts.
+    </p>
+    <div class="final-ctas" data-reveal data-reveal-delay="0.18">
+      <a href={site.phoneHref} class="btn btn--primary btn--lg" data-magnetic="0.22">
+        Call {site.phone}
+      </a>
+      <a href="/contact/" class="btn btn--ghost btn--lg" data-magnetic="0.15">
+        Request service online <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <p class="final-meta" data-reveal="fade" data-reveal-delay="0.25">
+      {site.hours.regular} · {site.hours.emergency} · {site.address.full}
+    </p>
+  </div>
+</section>
+
+<style>
+  .final {
+    background:
+      radial-gradient(50rem 30rem at 50% 110%, rgba(193, 74, 18, 0.18), transparent 65%),
+      var(--color-night);
+    border-top: 1px solid var(--color-night-line);
+  }
+  .final-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .final-title {
+    margin-top: 1.6rem;
+  }
+  .final-title em {
+    font-style: normal;
+    color: var(--color-heat-bright);
+  }
+  .final-lede {
+    margin-top: 1.5rem;
+    max-width: 38rem;
+  }
+  .final-ctas {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .final-meta {
+    margin-top: 3rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--color-night-ink-soft);
+  }
+</style>

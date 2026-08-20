@@ -1,0 +1,154 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { getService } from '@/data/services'
+import { combos, combosForCity } from '@/data/extracted'
+import { getCity } from '@/data/cities'
+import { site } from '@/data/site'
+
+export function getStaticPaths() {
+  return combos.map((c) => ({
+    params: { service: c.serviceId, city: c.cityId },
+    props: { combo: c },
+  }))
+}
+
+const { combo } = Astro.props
+const svc = getService(combo.serviceId)!
+const city = getCity(combo.cityId)!
+const page = combo.page
+
+const otherServicesHere = combosForCity(combo.cityId)
+  .filter((c) => c.serviceId !== combo.serviceId)
+  .map((c) => getService(c.serviceId))
+  .filter((s): s is NonNullable<typeof s> => !!s)
+  .slice(0, 6)
+
+const title = page.title || `${svc.name} in ${city.name}, TX | Big Texas Comfort`
+const description =
+  page.metaDescription ||
+  `${svc.name} in ${city.name}, TX by Big Texas Comfort. Licensed, factory-trained HVAC technicians. Call ${site.phone}.`
+---
+
+<Base title={title} description={description}>
+  <PageHero
+    eyebrow={`${city.name}, TX`}
+    lede={svc.short}
+    crumbs={[
+      { label: 'Services', href: '/services/' },
+      { label: svc.name, href: `/services/${svc.id}/` },
+      { label: city.name },
+    ]}
+  >
+    {page.h1 ?? `${svc.name} in ${city.name}, TX`}
+  </PageHero>
+
+  <section class="combo-body">
+    <div class="container-site combo-layout">
+      <article class="combo-article">
+        {page.uniqueCopy.map((p) => <p class="combo-para" data-reveal>{p}</p>)}
+
+        <div class="combo-cta surface" data-reveal>
+          <p class="combo-cta-line">
+            Serving {city.name} and the surrounding bay area. {site.hours.regular},
+            with 24/7 emergency service.
+          </p>
+          <div class="combo-cta-row">
+            <a href={site.phoneHref} class="btn btn--primary">Call {site.phone}</a>
+            <a href="/contact/" class="btn btn--ghost">Request service</a>
+          </div>
+        </div>
+      </article>
+
+      <aside class="combo-rail">
+        {
+          otherServicesHere.length > 0 && (
+            <nav aria-label={`Other services in ${city.name}`}>
+              <p class="type-label">Also in {city.name}</p>
+              <ul class="combo-rail-list">
+                {otherServicesHere.map((s) => (
+                  <li>
+                    <a href={`/services/${s.id}/${combo.cityId}/`} class="link-under">{s.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+        <nav aria-label="Area">
+          <p class="type-label">Area</p>
+          <ul class="combo-rail-list">
+            <li><a href={`/service-area/${combo.cityId}/`} class="link-under">HVAC in {city.name}</a></li>
+            <li><a href="/service-area/" class="link-under">Full service area</a></li>
+          </ul>
+        </nav>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand title={`${svc.name} in ${city.name} starts with a call.`} />
+</Base>
+
+<style>
+  .combo-body {
+    padding-bottom: var(--spacing-section);
+  }
+  .combo-layout {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .combo-layout {
+      grid-template-columns: 1fr 18rem;
+      gap: 5rem;
+    }
+  }
+  .combo-article {
+    max-width: 46rem;
+  }
+  .combo-para {
+    margin-bottom: 1.4rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+    font-size: 1.02rem;
+  }
+  .combo-para:first-of-type {
+    color: var(--color-ink);
+    font-size: 1.12rem;
+  }
+  .combo-cta {
+    margin-top: 2.5rem;
+    padding: 1.6rem 1.75rem;
+  }
+  .combo-cta-line {
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+  }
+  .combo-cta-row {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+  .combo-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-self: start;
+    position: sticky;
+    top: 6rem;
+  }
+  .combo-rail-list {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .combo-rail-list a {
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+  }
+</style>

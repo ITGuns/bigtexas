@@ -1,0 +1,102 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { blogPosts } from '@/data/extracted'
+---
+
+<Base
+  title="Blog | HVAC Advice for Houston Homes | Big Texas Comfort"
+  description="Practical HVAC advice for Houston homes: humidity, duct cleaning, mold, musty smells and ice buildup, written by the Big Texas Comfort team."
+>
+  <PageHero
+    eyebrow="Blog"
+    lede="Longer reads on the problems Houston throws at HVAC systems, written by people who fix them daily."
+    crumbs={[{ label: 'Blog' }]}
+  >
+    Notes from the field.
+  </PageHero>
+
+  <section class="blog">
+    <div class="container-site">
+      <ul class="blog-list" data-reveal-group>
+        {
+          blogPosts.map((p) => (
+            <li data-reveal-child>
+              <a href={`/blog/${p.slug}/`} class="blog-row">
+                <span class="blog-row-title">{p.h1 ?? p.title}</span>
+                <span class="blog-row-sum">{p.summary}</span>
+                <span class="blog-row-cta">Read <span class="btn-arrow" aria-hidden="true">→</span></span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Reading done. Problem still there?" />
+</Base>
+
+<style>
+  .blog {
+    padding-bottom: var(--spacing-section);
+  }
+  .blog-list {
+    max-width: 56rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .blog-row {
+    display: grid;
+    gap: 0.5rem 2rem;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'title cta'
+      'sum cta';
+    align-items: center;
+    padding: 1.75rem 0.25rem;
+    border-bottom: 1px solid var(--color-line);
+    text-decoration: none;
+    color: inherit;
+    transition: padding-left 0.3s var(--ease-out-expo);
+  }
+  .blog-row:hover {
+    padding-left: 0.7rem;
+  }
+  .blog-row-title {
+    grid-area: title;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2vw, 1.7rem);
+    font-weight: 620;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+  .blog-row-sum {
+    grid-area: sum;
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+    max-width: 60ch;
+  }
+  .blog-row-cta {
+    grid-area: cta;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-heat);
+    white-space: nowrap;
+  }
+  .blog-row .btn-arrow {
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .blog-row:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+  @media (max-width: 40rem) {
+    .blog-row {
+      grid-template-columns: 1fr;
+      grid-template-areas: 'title' 'sum' 'cta';
+    }
+  }
+</style>

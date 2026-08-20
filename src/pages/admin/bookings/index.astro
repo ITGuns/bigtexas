@@ -1,0 +1,119 @@
+---
+export const prerender = false
+
+import Admin from '@/layouts/Admin.astro'
+import { isAuthed, LOGIN_PATH } from '@/lib/auth'
+import { listBookings, bookingCounts, BOOKING_STATUSES, type BookingStatus } from '@/lib/db'
+import { fmtDate, fmtWhen, statusLabel } from '@/lib/format'
+
+if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
+
+const filter = Astro.url.searchParams.get('status') as BookingStatus | null
+const valid = filter && BOOKING_STATUSES.includes(filter) ? filter : undefined
+const bookings = await listBookings(valid)
+const counts = await bookingCounts()
+
+const today = new Date().toISOString().slice(0, 10)
+const upcoming = bookings.filter((b) => b.preferred_date >= today && b.status !== 'cancelled')
+const past = bookings.filter((b) => b.preferred_date < today || b.status === 'cancelled')
+---
+
+<Admin title="Bookings" active="bookings">
+  <div class="admin-head">
+    <div>
+      <h1 class="admin-title">Bookings</h1>
+      <p class="admin-sub">{upcoming.length} upcoming, {past.length} past or cancelled.</p>
+    </div>
+    <form class="inline-form" method="GET">
+      <select class="admin-select" name="status" onchange="this.form.submit()">
+        <option value="">All statuses</option>
+        {BOOKING_STATUSES.map((s) => <option value={s} selected={valid === s}>{statusLabel(s)} ({counts[s]})</option>)}
+      </select>
+      <noscript><button type="submit" class="btn btn--ghost btn--sm">Filter</button></noscript>
+    </form>
+  </div>
+
+  <div class="admin-stats" style="grid-template-columns:repeat(4,1fr)">
+    {
+      BOOKING_STATUSES.map((s) => (
+        <a
+          class="stat"
+          href={`/admin/bookings/?status=${s}`}
+          style={`--accent:${
+            s === 'requested'
+              ? 'linear-gradient(120deg,#8f7dee,#6d5bd0)'
+              : s === 'confirmed'
+                ? 'var(--grad-cool)'
+                : s === 'completed'
+                  ? 'linear-gradient(120deg,#4e9c68,#2f6b45)'
+                  : 'linear-gradient(120deg,#8a8a96,#5f5f6b)'
+          }`}
+        >
+          <p class="stat-label">{statusLabel(s)}</p>
+          <p class="stat-value">{counts[s]}</p>
+        </a>
+      ))
+    }
+  </div>
+
+  {
+    bookings.length === 0 ? (
+      <div class="admin-panel">
+        <div class="admin-empty">
+          <strong>No bookings yet</strong>
+          A booking is created when a customer picks a date on the website, or when you book a lead
+          from its detail page.
+        </div>
+      </div>
+    ) : (
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Service</th>
+              <th>Requested date</th>
+              <th>Window</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Move to</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bookings.map((b) => (
+              <tr>
+                <td>
+                  {b.lead_id ? (
+                    <a href={`/admin/leads/${b.lead_id}/`}>
+                      {b.first_name} {b.last_name}
+                    </a>
+                  ) : (
+                    <span class="cell-muted">Unlinked</span>
+                  )}
+                  <div class="cell-muted">{b.city || b.address}</div>
+                </td>
+                <td class="cell-muted">{b.service || 'Service visit'}</td>
+                <td>{b.preferred_date ? fmtDate(b.preferred_date) : <span class="cell-muted">Not set</span>}</td>
+                <td class="cell-muted">{b.preferred_slot || 'Any'}</td>
+                <td><span class:list={['pill', `pill--${b.status}`]}>{statusLabel(b.status)}</span></td>
+                <td class="cell-mono">{fmtWhen(b.created_at)}</td>
+                <td>
+                  <form class="inline-form" method="POST" action="/api/admin/update/">
+                    <input type="hidden" name="action" value="booking-status" />
+                    <input type="hidden" name="id" value={b.id} />
+                    <select class="admin-select" name="status" onchange="this.form.submit()">
+                      {BOOKING_STATUSES.map((s) => (
+                        <option value={s} selected={b.status === s}>{statusLabel(s)}</option>
+                      ))}
+                    </select>
+                    <noscript><button type="submit" class="btn btn--ghost btn--sm">Set</button></noscript>
+                  </form>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+</Admin>

@@ -1,0 +1,105 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import TroubleshootTree from '@/components/interactive/TroubleshootTree.astro'
+import { get } from '@/data/extracted'
+
+const treeMap = [
+  { slug: 'ac-not-cooling', source: 'troubleshooting-ac-no-cooling', name: 'Air Conditioner: No Cooling' },
+  { slug: 'furnace-not-heating', source: 'troubleshooting-gas-furnace-no-heating', name: 'Gas Furnace: No Heating' },
+  { slug: 'heat-pump-not-cooling', source: 'troubleshooting-heat-pump-no-cooling', name: 'Heat Pump: No Cooling' },
+  { slug: 'heat-pump-not-heating', source: 'troubleshooting-heat-pump-no-heating', name: 'Heat Pump: No Heating' },
+]
+
+export function getStaticPaths() {
+  const map = [
+    { slug: 'ac-not-cooling', source: 'troubleshooting-ac-no-cooling', name: 'Air Conditioner: No Cooling' },
+    { slug: 'furnace-not-heating', source: 'troubleshooting-gas-furnace-no-heating', name: 'Gas Furnace: No Heating' },
+    { slug: 'heat-pump-not-cooling', source: 'troubleshooting-heat-pump-no-cooling', name: 'Heat Pump: No Cooling' },
+    { slug: 'heat-pump-not-heating', source: 'troubleshooting-heat-pump-no-heating', name: 'Heat Pump: No Heating' },
+  ]
+  return map.map((t) => ({ params: { tree: t.slug }, props: { meta: t } }))
+}
+
+const { meta } = Astro.props
+const page = get('support', meta.source)
+const steps = page?.decisionTree ?? []
+const others = treeMap.filter((t) => t.slug !== meta.slug)
+---
+
+<Base
+  title={`${meta.name} | DIY Troubleshooting | Big Texas Comfort`}
+  description={page?.metaDescription || `Step-by-step DIY troubleshooting for "${meta.name}" from Big Texas Comfort. Work the same checks our technicians start with, then call 832-888-5166 if it persists.`}
+>
+  <PageHero
+    eyebrow="DIY troubleshooting"
+    lede="Follow the steps in order. Each one rules out a common cause, and most take under a minute."
+    crumbs={[{ label: 'Support', href: '/support/' }, { label: meta.name }]}
+  >
+    {page?.h1 ?? meta.name}
+  </PageHero>
+
+  <section class="treepage">
+    <div class="container-site treepage-grid">
+      <div data-reveal>
+        <TroubleshootTree id={meta.slug} title={meta.name} steps={steps} />
+      </div>
+      <aside class="treepage-rail">
+        <p class="type-label">Other checklists</p>
+        <ul class="treepage-list">
+          {
+            others.map((t) => (
+              <li>
+                <a href={`/support/${t.slug}/`} class="link-under">{t.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="type-label treepage-more">More help</p>
+        <ul class="treepage-list">
+          <li><a href="/guides/repair-or-replace/" class="link-under">Repair or replace?</a></li>
+          <li><a href="/videos/" class="link-under">How the equipment works</a></li>
+          <li><a href="/support/" class="link-under">Ask the expert</a></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand title="Steps done and still broken? Our turn." />
+</Base>
+
+<style>
+  .treepage {
+    padding-bottom: var(--spacing-section);
+  }
+  .treepage-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .treepage-grid {
+      grid-template-columns: 1fr 16rem;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+  .treepage-rail {
+    position: sticky;
+    top: 6rem;
+  }
+  .treepage-list {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .treepage-list a {
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+  }
+  .treepage-more {
+    margin-top: 2rem;
+  }
+</style>

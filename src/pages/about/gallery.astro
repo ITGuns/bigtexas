@@ -1,0 +1,86 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { site } from '@/data/site'
+
+const photos = [
+  { src: '/images/work-install-1.jpg', alt: 'Rooftop HVAC unit being positioned during installation' },
+  { src: '/images/work-install-2.jpg', alt: 'Technician servicing an American Standard condenser at a Houston home' },
+  { src: '/images/work-install-3.jpg', alt: 'Completed outdoor condenser installation' },
+]
+---
+
+<Base
+  title="Photo Gallery | Big Texas Comfort, Houston, TX"
+  description="Photos from real Big Texas Comfort jobs around Houston and the bay area. Installations, service calls, and the crews behind them."
+>
+  <PageHero
+    eyebrow="Photo gallery"
+    lede="A few frames from our own jobs. Every photo here is our crew, our work."
+    crumbs={[{ label: 'About', href: '/about/' }, { label: 'Gallery' }]}
+  >
+    Real jobs, photographed on site.
+  </PageHero>
+
+  <section class="gal">
+    <div class="container-site">
+      <div class="gal-grid" data-reveal-group>
+        {
+          photos.map((p) => (
+            <figure class="gal-item" data-reveal-child>
+              <img src={p.src} alt={p.alt} width="200" height="200" loading="lazy" />
+            </figure>
+          ))
+        }
+      </div>
+      <p class="gal-more" data-reveal>
+        We post new job photos on
+        <a href={site.social[0].url} target="_blank" rel="noopener" class="link-under">Facebook</a>
+        and
+        <a href={site.social[1].url} target="_blank" rel="noopener" class="link-under">Instagram</a>.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="Your system could be the next photo." />
+</Base>
+
+<style>
+  .gal {
+    padding-bottom: var(--spacing-section);
+  }
+  .gal-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 52rem;
+  }
+  @media (min-width: 48rem) {
+    .gal-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .gal-item {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: var(--color-paper);
+  }
+  .gal-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .gal-item:hover img {
+    transform: scale(1.04);
+  }
+  .gal-more {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+  }
+</style>

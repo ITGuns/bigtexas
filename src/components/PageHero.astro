@@ -1,0 +1,82 @@
+---
+interface Props {
+  eyebrow: string
+  tone?: 'heat' | 'cool'
+  lede?: string
+  /** breadcrumb trail, last item is the current page */
+  crumbs?: { label: string; href?: string }[]
+}
+const { eyebrow, tone = 'heat', lede, crumbs = [] } = Astro.props
+---
+
+<header class="page-hero">
+  <div class="container-site">
+    {
+      crumbs.length > 0 && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            {crumbs.map((c) => (
+              <li>{c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    <p class:list={['type-label', 'eyebrow', tone === 'heat' ? 'type-label--heat' : 'type-label--cool']} data-reveal="fade">
+      {eyebrow}
+    </p>
+    <h1 class="type-h1 page-hero-title" data-reveal>
+      <slot />
+    </h1>
+    {lede && <p class="type-lede page-hero-lede" data-reveal data-reveal-delay="0.1">{lede}</p>}
+    <slot name="extra" />
+  </div>
+</header>
+
+<style>
+  .page-hero {
+    padding-top: 8.5rem;
+    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .crumbs {
+    margin-bottom: 2rem;
+  }
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .crumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-ink-faint);
+  }
+  .crumbs li + li::before {
+    content: '/';
+    opacity: 0.5;
+  }
+  .crumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--color-ink);
+  }
+  .crumbs span {
+    color: var(--color-ink-soft);
+  }
+  .page-hero-title {
+    margin-top: 1.4rem;
+    max-width: 24ch;
+  }
+  .page-hero-lede {
+    margin-top: 1.5rem;
+    max-width: 46rem;
+  }
+</style>

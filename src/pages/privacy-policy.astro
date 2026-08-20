@@ -1,0 +1,39 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import { get } from '@/data/extracted'
+
+const page = get('utility', 'privacy-policy')
+---
+
+<Base
+  title="Privacy Policy | Big Texas Comfort"
+  description="How Big Texas Comfort collects, uses and protects your information."
+>
+  <PageHero eyebrow="Legal" crumbs={[{ label: 'Privacy Policy' }]}>
+    Privacy policy
+  </PageHero>
+
+  <section class="legal">
+    <div class="container-site">
+      <article class="legal-article">
+        {(page?.uniqueCopy ?? []).map((p) => <p class="legal-para">{p}</p>)}
+      </article>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .legal {
+    padding-bottom: var(--spacing-section);
+  }
+  .legal-article {
+    max-width: 44rem;
+  }
+  .legal-para {
+    margin-bottom: 1.3rem;
+    font-size: 0.98rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+</style>

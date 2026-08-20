@@ -1,0 +1,108 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { site } from '@/data/site'
+---
+
+<Base
+  title="Refer a Friend | Big Texas Comfort"
+  description="Refer a friend to Big Texas Comfort. When your referral results in installation of a complete system, we thank you with a $50 dinner gift certificate."
+>
+  <PageHero
+    eyebrow="Refer a friend"
+    lede="The best compliment we can get is your recommendation. We like to say thank you properly."
+    crumbs={[{ label: 'Refer a Friend' }]}
+  >
+    Good referrals earn good dinners.
+  </PageHero>
+
+  <section class="refer">
+    <div class="container-site">
+      <div class="refer-card surface" data-reveal>
+        <p class="refer-big">$50</p>
+        <div>
+          <h2 class="refer-name">Dinner gift certificate</h2>
+          <p class="refer-desc">
+            When someone you refer has a complete system installed by Big Texas Comfort,
+            we send you a $50 dinner gift certificate as a thank-you.
+          </p>
+        </div>
+      </div>
+
+      <ol class="refer-steps" data-reveal-group>
+        <li data-reveal-child>
+          <h3>Tell a friend</h3>
+          <p>Pass along our number: {site.phoneDisplay}. That part you already know how to do.</p>
+        </li>
+        <li data-reveal-child>
+          <h3>They mention you</h3>
+          <p>Have them give your name when they call or book, so the referral is on record.</p>
+        </li>
+        <li data-reveal-child>
+          <h3>Dinner's on us</h3>
+          <p>Once their complete system is installed, your gift certificate goes out.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <CtaBand title="Know someone melting in Houston heat?" />
+</Base>
+
+<style>
+  .refer {
+    padding-bottom: var(--spacing-section);
+  }
+  .refer-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 2.5rem;
+    padding: 2rem 2.25rem;
+    max-width: 46rem;
+  }
+  .refer-big {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    font-weight: 650;
+    letter-spacing: -0.04em;
+    color: var(--color-heat);
+    line-height: 1;
+  }
+  .refer-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 630;
+    letter-spacing: -0.01em;
+  }
+  .refer-desc {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+    max-width: 44ch;
+  }
+  .refer-steps {
+    margin-top: 3rem;
+    display: grid;
+    gap: 2rem;
+    max-width: 60rem;
+  }
+  @media (min-width: 48rem) {
+    .refer-steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .refer-steps h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 630;
+  }
+  .refer-steps p {
+    margin-top: 0.5rem;
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+</style>

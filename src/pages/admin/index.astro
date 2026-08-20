@@ -1,0 +1,167 @@
+---
+export const prerender = false
+
+import Admin from '@/layouts/Admin.astro'
+import { isAuthed, LOGIN_PATH } from '@/lib/auth'
+import { listLeads, leadCounts, bookingCounts, listBookings, countLeadsSince, LEAD_STATUSES } from '@/lib/db'
+import { fmtDate, fmtWhen, statusLabel } from '@/lib/format'
+
+if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
+
+const counts = await leadCounts()
+const bCounts = await bookingCounts()
+const leads = await listLeads()
+const bookings = await listBookings()
+
+const weekAgo = new Date(Date.now() - 7 * 864e5).toISOString()
+const newThisWeek = await countLeadsSince(weekAgo)
+const openLeads = counts.new + counts.contacted + counts.qualified + counts.booked
+const upcoming = bookings
+  .filter((b) => b.status === 'requested' || b.status === 'confirmed')
+  .slice(0, 6)
+const recent = leads.slice(0, 8)
+
+const tiles = [
+  { label: 'Open leads', value: openLeads, note: 'Not yet won or lost', accent: 'var(--grad-heat)' },
+  { label: 'New this week', value: newThisWeek, note: 'Last 7 days', accent: 'var(--grad-cool)' },
+  { label: 'Bookings pending', value: bCounts.requested + bCounts.confirmed, note: 'Requested or confirmed', accent: 'var(--grad-temperature)' },
+  { label: 'Jobs won', value: counts.won, note: 'All time', accent: 'linear-gradient(120deg,#4e9c68,#2f6b45)' },
+]
+---
+
+<Admin title="Dashboard" active="dashboard">
+  <div class="admin-head">
+    <div>
+      <h1 class="admin-title">Dashboard</h1>
+      <p class="admin-sub">Where every lead stands right now.</p>
+    </div>
+    <a href="/admin/leads/?export=csv" class="btn btn--ghost btn--sm">Export leads CSV</a>
+  </div>
+
+  <div class="admin-stats">
+    {
+      tiles.map((t) => (
+        <div class="stat" style={`--accent:${t.accent}`}>
+          <p class="stat-label">{t.label}</p>
+          <p class="stat-value">{t.value}</p>
+          <p class="stat-note">{t.note}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <section class="admin-panel" style="margin-bottom:1.5rem">
+    <h2 class="admin-panel-title">Pipeline</h2>
+    <div class="pipeline">
+      {
+        LEAD_STATUSES.map((s) => {
+          const inStage = leads.filter((l) => l.status === s).slice(0, 4)
+          return (
+            <div class="pipe-col">
+              <div class="pipe-head">
+                <span class="pipe-name">{statusLabel(s)}</span>
+                <span class="pipe-count">{counts[s]}</span>
+              </div>
+              {inStage.length === 0 && <p class="pipe-empty">Empty</p>}
+              {inStage.map((l) => (
+                <a class="pipe-card" href={`/admin/leads/${l.id}/`}>
+                  <span class="pipe-card-name">{l.first_name} {l.last_name}</span>
+                  <span class="pipe-card-meta">
+                    {l.city || 'No city'}
+                    <br />
+                    {fmtWhen(l.created_at)}
+                  </span>
+                </a>
+              ))}
+              {counts[s] > 4 && (
+                <a class="pipe-empty" href={`/admin/leads/?status=${s}`} style="display:block">
+                  View all {counts[s]}
+                </a>
+              )}
+            </div>
+          )
+        })
+      }
+    </div>
+  </section>
+
+  <div class="detail-grid">
+    <section class="admin-panel">
+      <h2 class="admin-panel-title">Recent leads</h2>
+      {
+        recent.length === 0 ? (
+          <div class="admin-empty">
+            <strong>No leads yet</strong>
+            Requests from the website land here the moment they are submitted.
+          </div>
+        ) : (
+          <div class="admin-table-wrap" style="border:0;background:none">
+            <table class="admin-table" style="min-width:0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                  <th>When</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recent.map((l) => (
+                  <tr>
+                    <td>
+                      <a href={`/admin/leads/${l.id}/`}>
+                        {l.first_name} {l.last_name}
+                      </a>
+                      {l.urgency === 'emergency' && <span class="pill pill--urgent" style="margin-left:.4rem">Emergency</span>}
+                      <div class="cell-muted">{l.city}</div>
+                    </td>
+                    <td class="cell-muted">
+                      {l.phone && <a href={`tel:${l.phone.replace(/\D/g, '')}`}>{l.phone}</a>}
+                      {l.email && <div>{l.email}</div>}
+                    </td>
+                    <td>
+                      <span class:list={['pill', `pill--${l.status}`]}>{statusLabel(l.status)}</span>
+                    </td>
+                    <td class="cell-mono">{fmtWhen(l.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      }
+    </section>
+
+    <section class="admin-panel">
+      <h2 class="admin-panel-title">Upcoming bookings</h2>
+      {
+        upcoming.length === 0 ? (
+          <div class="admin-empty">
+            <strong>Nothing scheduled</strong>
+            Bookings appear when a customer requests a date, or when you book a lead.
+          </div>
+        ) : (
+          <div class="detail-list">
+            {upcoming.map((b) => (
+              <div class="pipe-card" style="margin:0">
+                <span class="pipe-card-name">
+                  {b.first_name ? `${b.first_name} ${b.last_name ?? ''}`.trim() : 'Booking'}
+                  <span class:list={['pill', `pill--${b.status}`]}>{statusLabel(b.status)}</span>
+                </span>
+                <span class="pipe-card-meta">
+                  {b.service || 'Service visit'}
+                  <br />
+                  {b.preferred_date ? fmtDate(b.preferred_date) : 'No date set'}
+                  {b.preferred_slot && ` · ${b.preferred_slot}`}
+                </span>
+              </div>
+            ))}
+          </div>
+        )
+      }
+      <div class="admin-actions">
+        <a href="/admin/bookings/" class="btn btn--ghost btn--sm">All bookings</a>
+      </div>
+    </section>
+  </div>
+</Admin>

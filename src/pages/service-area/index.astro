@@ -1,0 +1,188 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import GoogleMap from '@/components/GoogleMap.astro'
+import { cities } from '@/data/cities'
+import { site } from '@/data/site'
+
+/** community list from the old service-area page (spelling corrected: Kemah) */
+const communities = [
+  'Alvin', 'Clear Lake City', 'Dickinson', 'Friendswood', 'Houston', 'Kemah',
+  'League City', 'Pasadena', 'Seabrook', 'Texas City', 'Webster',
+]
+const withPages = cities.filter((c) => c.id !== 'houston')
+---
+
+<Base
+  title="Service Area | HVAC in Houston & the Bay Area | Big Texas Comfort"
+  description="Big Texas Comfort serves residential and commercial customers throughout Houston, TX and the bay area: Clear Lake City, Friendswood, League City, Seabrook, Webster, Pasadena, Bacliff, Hitchcock, La Marque and Texas City."
+>
+  <PageHero
+    eyebrow="Service area"
+    lede="Big Texas Comfort is based in Houston and serves residential and commercial customers throughout the area, dispatching from Bay Area Blvd in the middle of the communities we cover."
+    crumbs={[{ label: 'Service Area' }]}
+  >
+    Houston to the bay,<br />and every suburb between.
+  </PageHero>
+
+  <section class="sa">
+    <div class="container-site sa-grid">
+      <div class="sa-map-col">
+        <GoogleMap query="Clear Lake City, Houston, TX" zoom={10} label="Our coverage area" sublabel="Houston metro and the bay-area communities" ratio="1 / 1" />
+        <p class="sa-zips" data-reveal="fade">
+          Covering Houston ZIP codes <strong>77001 to 77083</strong> and the surrounding
+          bay-area communities. Not sure if we reach you? Call {site.phoneDisplay}.
+        </p>
+      </div>
+
+      <div class="sa-lists">
+        <h2 class="type-h3" data-reveal>City pages</h2>
+        <ul class="sa-city-grid" data-reveal-group>
+          {
+            withPages.map((c) => (
+              <li data-reveal-child>
+                <a href={`/service-area/${c.id}/`} class="sa-city surface card-hover">
+                  <span class="sa-city-name">{c.name}</span>
+                  <span class="sa-city-tier type-label">
+                    {c.tier === 'primary' ? 'Primary area' : 'Also serving'}
+                  </span>
+                  <span class="btn-arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h2 class="type-h3 sa-communities-head" data-reveal>All communities</h2>
+        <p class="sa-communities" data-reveal>
+          {communities.join(' · ')}
+        </p>
+
+        <div class="sa-branches" data-reveal>
+          <h2 class="type-h3">Local offices</h2>
+          <div class="sa-branch-grid">
+            <div class="surface sa-branch">
+              <p class="type-label">Headquarters</p>
+              <p class="sa-branch-name">{site.shortName}</p>
+              <p class="sa-branch-addr">{site.address.full}<br /><a href={site.phoneHref} class="link-under">{site.phoneDisplay}</a></p>
+            </div>
+            {
+              site.branches.map((b) => (
+                <div class="surface sa-branch">
+                  <p class="type-label">Branch</p>
+                  <p class="sa-branch-name">{b.name}</p>
+                  <p class="sa-branch-addr">
+                    {b.street}, {b.city}, {b.state} {b.zip}
+                    <br />
+                    <a href={b.phoneHref} class="link-under">{b.phone}</a>
+                  </p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="In the area? Then so are we." />
+</Base>
+
+<style>
+  .sa {
+    padding-bottom: var(--spacing-section);
+  }
+  .sa-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .sa-grid {
+      grid-template-columns: 26rem 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+  .sa-map-col {
+    position: sticky;
+    top: 6rem;
+  }
+  .sa-zips {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+  .sa-city-grid {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 0.8rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .sa-city-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .sa-city {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.05rem 1.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .sa-city-name {
+    font-family: var(--font-display);
+    font-weight: 620;
+    font-size: 1.05rem;
+    flex: 1;
+  }
+  .sa-city .btn-arrow {
+    color: var(--color-ink-faint);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .sa-city:hover .btn-arrow {
+    transform: translateX(4px);
+    color: var(--color-heat);
+  }
+  .sa-communities-head {
+    margin-top: 3rem;
+  }
+  .sa-communities {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--color-ink-soft);
+    max-width: 52ch;
+  }
+  .sa-branches {
+    margin-top: 3rem;
+  }
+  .sa-branch-grid {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .sa-branch-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .sa-branch {
+    padding: 1.3rem 1.4rem;
+  }
+  .sa-branch-name {
+    margin-top: 0.6rem;
+    font-weight: 640;
+    font-size: 0.98rem;
+  }
+  .sa-branch-addr {
+    margin-top: 0.5rem;
+    font-size: 0.87rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+</style>

@@ -1,0 +1,124 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { blogPosts } from '@/data/extracted'
+
+export function getStaticPaths() {
+  return blogPosts.map((p) => ({ params: { slug: p.slug }, props: { post: p } }))
+}
+
+const { post } = Astro.props
+const others = blogPosts.filter((p) => p.slug !== post.slug)
+
+/** paragraphs prefixed with "## " in extraction are section headings */
+const blocks = post.uniqueCopy.map((p) => {
+  const m = p.match(/^#{2,4}\s*(.+)$/)
+  return m ? { type: 'h2' as const, text: m[1] } : { type: 'p' as const, text: p }
+})
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.h1 ?? post.title,
+  description: post.metaDescription,
+  author: { '@type': 'Organization', name: 'Big Texas Comfort, Inc.' },
+  publisher: { '@type': 'Organization', name: 'Big Texas Comfort, Inc.' },
+}
+---
+
+<Base
+  title={post.title || `${post.h1} | Big Texas Comfort`}
+  description={post.metaDescription || post.summary || ''}
+  schema={[articleSchema]}
+  ogType="article"
+>
+  <PageHero eyebrow="Blog" crumbs={[{ label: 'Blog', href: '/blog/' }, { label: post.h1 ?? post.title }]}>
+    {post.h1 ?? post.title}
+  </PageHero>
+
+  <section class="post">
+    <div class="container-site post-grid">
+      <article class="post-article">
+        {
+          blocks.map((b) =>
+            b.type === 'h2' ? (
+              <h2 class="post-h2">{b.text}</h2>
+            ) : (
+              <p class="post-para">{b.text}</p>
+            ),
+          )
+        }
+      </article>
+
+      <aside class="post-rail">
+        <p class="type-label">More from the blog</p>
+        <ul class="post-rail-list">
+          {
+            others.map((p) => (
+              <li>
+                <a href={`/blog/${p.slug}/`} class="link-under">{p.h1 ?? p.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand title="Symptoms sound familiar? Let us take a look." />
+</Base>
+
+<style>
+  .post {
+    padding-bottom: var(--spacing-section);
+  }
+  .post-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .post-grid {
+      grid-template-columns: 1fr 17rem;
+      gap: 5rem;
+    }
+  }
+  .post-article {
+    max-width: 44rem;
+  }
+  .post-h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 630;
+    letter-spacing: -0.015em;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  .post-para {
+    margin-bottom: 1.35rem;
+    font-size: 1.02rem;
+    line-height: 1.8;
+    color: var(--color-ink-soft);
+  }
+  .post-para:first-child {
+    font-size: 1.14rem;
+    color: var(--color-ink);
+  }
+  .post-rail {
+    align-self: start;
+    position: sticky;
+    top: 6rem;
+  }
+  .post-rail-list {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .post-rail-list a {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+</style>

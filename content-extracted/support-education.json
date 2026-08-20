@@ -1,0 +1,730 @@
+{
+  "pages": [
+    {
+      "slug": "support",
+      "oldUrl": "/support/",
+      "title": "Big Texas Comfort, HVAC Support - Houston, TX 77058",
+      "metaDescription": "This page is a starting point for homeowners to find information related to heating and air conditioning systems near Houston, TX",
+      "h1": "Support",
+      "summary": "Hub page for the Support section, pointing homeowners to the free self-help resources: Ask the Expert (FAQs), Product Knowledge (videos), and Troubleshooting.",
+      "uniqueCopy": [
+        "Big Texas Comfort wants to help resolve any issue you currently have with your heating or cooling system and keep your costs down while doing so. Our Frequently Asked Questions and Troubleshooting pages offer free expert information. You may find the answer to your question without the cost of a service call."
+      ],
+      "facts": [
+        "Support resources are positioned as free expert information that may save the cost of a service call"
+      ],
+      "features": [
+        "Ask the Expert",
+        "Product Knowledge",
+        "Troubleshooting"
+      ],
+      "images": [
+        "Ask the Expert",
+        "Product Knowledge",
+        "Troubleshooting"
+      ],
+      "ctas": [
+        "Ask the Expert -> /support/ask-expert/",
+        "Product Knowledge -> /support/product-knowledge/",
+        "Troubleshooting -> /support/furnace-heat-pump-air-conditioning-troubleshooting/"
+      ]
+    },
+    {
+      "slug": "ask-expert",
+      "oldUrl": "/support/ask-expert/",
+      "title": "Big Texas Comfort, Frequently Asked Questions - Houston, TX 77058",
+      "metaDescription": "Providing answers to homeowner's most frequently asked questions (FAQs) about their heating and air conditioning systems near Houston, TX",
+      "h1": "",
+      "summary": "Ask the Expert / FAQ page: an archive of 24 previously asked homeowner questions with expert answers, plus an on-page 'Ask Your Question' submission form (Name, Email, City/State, Question) whose answers are posted back to the page.",
+      "askQuestionMechanics": {
+        "intro": "You've got questions and the experts at Big Texas Comfort have the answers. Below you'll find a collection of previous questions and the expert answers. If you'd like an answer to your question, just click the link below, enter your question and the experts will get you an answer.",
+        "formLabel": "Ask Your Question",
+        "formFields": ["Name", "Email (won't be used on site)", "City, State", "Question"]
+      },
+      "uniqueCopy": [
+        "You've got questions and the experts at Big Texas Comfort have the answers. Below you'll find a collection of previous questions and the expert answers. If you'd like an answer to your question, just click the link below, enter your question and the experts will get you an answer.",
+        "Q: What is the average life expectancy of equipment? — A: Most systems have a lifetime of 10 to 20 years. As your equipment gets older, it's efficiency can decrease dramatically. You may notice that it gets noisier and needs repairs more often. When a unit begins to show it's age, you have two choices. You can overhaul the system or replace it. Because heating and cooling technologies improve over time, a new system designed with newer, more energy-efficient equipment makes sense, especially if your system is 10 or more years old. We can estimate the cost of a new system as well as a payback schedule that will show you how newer technology will pay you back in lower energy usage.",
+        "Q: Can I just replace the outdoor unit on an older system to save money? — A: No. Replacing only the outdoor unit will lower the efficiency of the unit. In fact, you can lose up to 15% of the unit's efficiency! Even worse, your system may fail sooner than normal and most manufacturers' warranties will be voided. You should always replace the indoor cooling coil with the outdoor unit.",
+        "Q: Will a bigger sized system perform better? — A: No, you don't want your air conditioner to be too big. Air conditioners control the comfort level in your home by cooling the air and by removing humidity. An oversized air conditioner will cool your home faster, but it will use more energy and will not remove humidity adequately. A unit that is too big for your home will have short run cycles. It may take only a short time to cool the air, but the unit shuts off before enough air blows across the indoor coil where moisture condenses into water and drains from your system. Too much moisture left in the air can lead to mold and mildew problems. These short run cycles also mean your system starts and stops more often which uses more energy and causes a lot of wear and tear. An air conditioner operates more efficiently during long run cycles. The same holds true with heating systems. An oversized furnace will warm the house quicker, but it uses more fuel and causes greater temperature swings in the home.",
+        "Q: Why is a system with matched components so important? — A: A matched system is important for a variety of reasons. One is comfort. When all your components are properly sized to your home, you can control exactly how much heating or cooling you need so you can relax. Also, a properly sized matched system enables every component to perform as designed, meaning proper cycle times are maintained, humidity is controlled, and system sound is minimized. Another reason matched systems are important is efficiency. Most systems people buy are too large for their homes, which uses more energy than needed for your home. A matched system outlined by a dealer who has completed a load calculation for your home provides just the right amount of heating and cooling you need so you get the most value for your utility dollar.",
+        "Q: How often should I change my air filter? — A: At the risk of telling you something you're tired of hearing, replace the air filter in your furnace on a regular basis. Dirty air filters reduce the amount of air flowing through a system and make the furnace work harder to maintain the temperature. How often you change the filter depends on the type of filter you use, if you have pets, and the size of your equipment. Please give us a call and we can give you proper guidance.",
+        "Q: Why should I switch to a high efficiency air filter? — A: Proper air filtration is just as important to the health of your heating and cooling system as it is to the health of your family. Without proper filtration, dust and dirt can build up on your system which impacts operation and efficiency. A high-efficiency filter will remove more dust, dirt, pollen, mold, and other particles from the air. If you suffer from allergies or other respiratory problems, you should strongly consider a high-efficiency filter. No matter what type of filter you have, make sure you change it regularly.",
+        "Q: Should I have my furnace and air conditioner serviced every year? — A: Yes. Keeping your system properly maintained will lower energy and repair costs, prevent breakdowns, and prolong the life of your equipment. Neglecting necessary maintenance ensures a steady decline in air conditioning performance while energy use steadily increases.",
+        "Q: Why should I purchase a service agreement? — A: Without warranty coverage, a breakdown can mean significant expense in parts, labor, or both. However, with one of our service agreements, you avoid that unexpected significant expense. While no warranty can guard against every possible problem, we can explain the broad range of protection our service agreements afford.",
+        "Q: How can I reduce allergens and improve the air quality in my home? — A: With a high efficiency air cleaner, you can remove up to 99% of the pollen and spores that find their way into the home. There is also a great reduction in household dust, dirt, smoke, and other air pollutants. Your indoor air will become cleaner and fresher while reducing the allergens and dust that circulate throughout the house. With a whole house humidifier, you can relieve the irritating discomfort of dry indoor air. The humidifier reduces itchy skin, scratchy throats, static electricity, and damage to your furnishings and woodwork. Since humid air feels warmer than dry air, you do not have to set the thermostat as high to feel the comfort you want. A lower thermostat setting will reduce the costs of your energy bill.",
+        "Q: I am concerned about mold growth, what should I do? — A: Molds are part of the natural environment. Outdoors, molds play a part in nature by breaking down dead organic matter such as fallen leaves and dead trees, but indoors, mold growth should be avoided. Molds reproduce by means of tiny spores; the spores are invisible to the naked eye and float through outdoor and indoor air. Mold may begin growing indoors when mold spores land on surfaces that are wet. There are many types of mold, and none of them will grow without water or moisture. Click here to learn more about mold prevention in your home from the EPA. When humid air passes over chilled cooling coils, water condenses and drips through the coils into a collection pan, from which it continuously drains. Problems with these systems may occur when this water collects and becomes stagnant when it becomes blocked, either on the coils or in the drip pan. The pan will grow mold that can infect your home with dangerous mold spores very quickly. Problems also exist when the HVAC ducting contains microscopic mold spores that stay continually present and blow contaminants around the home or office often caused by mold in other parts of your home. You can do 3 things to prevent mold growth in your system: 1. Preventative maintenance will ensure that the collection pan under the indoor coil stays clean and clog free. 2. Install ultra violet lights next to the cooling coils to kill any mold or bacteria growing on the coils or collection pan. 3. Keep your ductwork clean and use a high-efficiency filtration system to keep your entire HVAC system clean.",
+        "Q: What is duct cleaning? — A: Duct cleaning refers to the cleaning of the various heating and cooling system components of forced air systems, including the supply and return air ducts and registers, grilles and diffusers, heat exchangers heating and cooling coils, fan motor and fan housing, and the air handling unit housing.",
+        "Q: What does SEER, AFUE, and HSPF ratings mean to me? — A: SEER, AFUE and HSPF are all measures of energy efficiency. Air conditioners may look similar, but their Seasonal Energy Efficiency Rating (SEER) can vary widely. Higher SEER numbers save more money spent on electricity. A 13 SEER air conditioner, the EPA \"current minimum standard\", uses 23% less energy than a 10 SEER unit (EPA standard up until Jan. 2006). Even though 13 SEER is the minimum efficiency available, we currently offer a line of air conditioners that start at 13 SEER and go all the way up to a 21 SEER. Depending on your average usage, higher SEER air conditioners can significantly reduce your electric bill. Heat pumps have SEER ratings like air conditioners and Heating Seasonal Performance Factor (HSPF) ratings for measuring heating efficiency. Higher HSPF ratings mean greater energy savings. The HSPF scale range is 7.5 to 13.0. Today's new high-efficiency furnaces can save up to 50% in operating costs over a ten-year-old furnace. Many 1990 and earlier model furnaces have Annual Fuel Utilization Efficiency (AFUE) ratings of 65% or less. The minimum AFUE rated furnace that can be sold in the United States as of May 1, 2013 is 80% in southern states and 90% in northern states. Our current product offering starts at this minimum AFUE rating and goes all the way to a very efficient 98.3% AFUE rating. Depending on your average usage, higher AFUE rated furnaces can significantly reduce your gas bill.",
+        "Q: How can I reduce my energy costs? — A (Cooling): Upgrade to a high-efficiency air conditioner - Swapping your old, inefficient air conditioning system for a high-efficient one can cut electricity bills by one-third. Consult one of our professional technicians to ensure your system is the right size for your home, and you aren't over- or under-cooling for your space needs. Turn up the temperature — To save electricity during the summer, set the temperature above 75° as every degree below this will add an extra three to five percent to your energy bill. Install ceiling fans — Change the direction of airflow on your ceiling fans. In the summer, the blades should operate in a counter-clockwise direction as a way of creating a nice, gentle wind. Have an annual maintenance performed — Having an annual maintenance performed on your air conditioner by a licensed technician will help ensure it operates at its peak efficiency and catches any potential breakdowns before they occur. Don't block vents in well-used rooms — Keep your supply and return air vents free of objects like blinds, carpets or furniture so your air conditioner can operate efficiently and there is even cool air distribution. (Heating): Upgrade to a high-efficiency furnace — New high-efficiency furnaces use up to 50% less fuel than an older system. It can save you up to 25 percent of your home-heating costs in one year, and within a few years, you'll have recovered the initial cost of replacing/upgrading your furnace. Choosing a model with an energy efficient motor can save 20 to 50 percent of the energy needed to continuously operate a fan motor. Let us show you the advantages of replacing your old furnace today. Have an annual maintenance performed — Having an annual maintenance performed on your furnace by a licensed technician will help ensure it operates at its peak efficiency and catches any potential breakdowns before they occur. Install a programmable thermostat — A programmable thermostat enables you to control your home's temperature when you're away or asleep. For every 1° you lower your thermostat for seven hours per day, you save one percent on your heating bill. Don't block vents in well-used rooms — Keep your supply and return air vents free of objects like blinds, carpets or furniture so your furnace can operate efficiently and there is even heat distribution. Install ceiling fans — Change the direction of airflow on your ceiling fans. In the winter, the blades should operate in a clockwise direction helping to push the warm air from the ceiling down into the room.",
+        "Q: Why should I buy Energy Star labeled equipment? — A: The average home spends about $1,900 annually on energy bills. Heating and cooling accounts for as much as half of a home's energy use. The EPA provides important recommendations for energy-efficient equipment, including proper sizing, quality installation and maintenance, and other home improvement considerations to help you get the most out of the heating and cooling products you purchase, save energy, and save as much as 20% annually on your total energy costs. ENERGY STAR qualified products prevent greenhouse gas emissions by meeting strict energy efficiency guidelines set by the U.S. Environmental Protection Agency (EPA) and the U.S. Department of Energy (DOE).",
+        "Q: What is a Heat Pump? — A: Heat pumps are a great solution for your home comfort system because they work to provide both heating and cooling. Heat pumps have SEER ratings like air conditioners and Heating Seasonal Performance Factor (HSPF) ratings for measuring heating efficiency. Higher SEER and HSPF ratings mean greater energy savings. Heat pumps are a very efficient alternative to electric heat. A heat pump works the same as an air conditioner in the summer, but it runs in reverse in the winter to heat your home. The system will be matched with a backup heating source, most often electric heat for those extremely cold days of winter.",
+        "Q: What is a Hybrid Heat Dual Fuel system? — A: With a traditional heating and cooling system, if you wanted to save more, you had to use less. But a Hybrid Heat system combines the benefits of intelligent control for both gas and electric heating to create an intuitive system that can actually react to changing conditions. No matter what the temperature is outside, a Hybrid Heat system will automatically select the fuel source most efficient for your home, which means you'll stay warm in the winter, cool in the summer and save money all year long. To design a Hybrid Heat system for your home, we professionally match one of our heat pump units with a natural gas furnace. Contact us to see how much energy you can save over your existing system.",
+        "Q: What are the advantages of equipment with variable speed fans? — A: Variable speed fans operate on a simple principle: they are able to spin at different speeds depending on the heating and cooling needs of your home. Usually, they operate at lower speeds, delivering a steady, reliable stream of warm or cool air to your home. This helps control humidity levels, utility costs and system noise. When conditions become more extreme, the fan speed increases so that the system can meet increased demand, guaranteeing that on even the hottest days or coldest nights, you're comfort needs will be met.",
+        "Q: How does 2-Stage heating or cooling work? — A: 2-stage cooling is a method of cooling that can better manage the cooling of your home while outdoor temperatures are changing. It can also better maximize indoor comfort and energy efficiency. 2-stage cooling systems are typically the most energy efficient systems out there. 2-stage cooling can be done by having one unit with two compressors, one small and one large. The small one is typically capable of putting out about 50% the capacity of the larger one. The second way to have 2-stage cooling is to have a single scroll unloading compressor. This compressor can unload its capacity down to about 66% of maximum capacity. Both these methods of getting 2-stage cooling allow the unit to run at a lower stage when the high stage is not needed. By doing this, energy is saved. 2-stage heating has the same principle as 2-stage cooling. It allows the unit to adjust itself based on the amount of heating that is necessary. 2-stage heating is a good way to save on heating costs. A heat pump system would have two different sized compressors, a small and a large one. The compressor that is used at a given time would depend upon the need. If only a small amount of heating is necessary, the smaller compressor would be used to save energy. The large compressor would only be used when a large amount of heating was needed. A gas furnace that is 2-stage has a modulating gas valve that regulates gas flow depending upon the need.",
+        "Q: At what temperature should I set my thermostat? — A: Normal cooling settings are 75 degrees - 80 degrees. Normal heating settings are 68 degrees - 72 degrees. You should always set your thermostat to the highest possible setting that is comfortable for you in the summer, and the lowest comfortable setting in the winter. Setting your thermostat in this way will maximize your energy savings. On average, every 1 degree of temperature change is equal to about 1% energy savings. For example, changing your thermostat setting from 75 degrees to 76 degrees in the summer could result in savings on your cooling costs.",
+        "Q: My system doesn't work well in a couple of rooms, what should I do? — A: This can occur for many reasons; uneven solar heat load through windows, an undersized system, improperly balanced or clogged system or a single system serving a two-story home with no zoning control. Each situation is different, usually requiring an onsite analysis with problem specific recommendations. Please call to arrange for us to see your home.",
+        "Q: Is Freon as a refrigerant being discontinued? — A: Yes. As of January 2010 the refrigerant R-22 (what consumers call Freon®) is no longer allowed to be used in the manufacturing of new equipment. R-22 has been used as the \"standard\" refrigerant for many years but has been found to be harmful to our planet by our government. All new air conditioners and heat pumps use R-410A, the more \"environmentally sound\" refrigerant. R-22 is still the most commonly used refrigerant in existing air conditioning equipment in residential homes today. However, per the Montreal Protocol, caps have been established to eliminate the production of R-22. In 2004, there was a 35% reduction; in 2010 there was a 65% reduction; in 2015 a 90% reduction; and finally in 2020 a 99.5% reduction in the production of R-22. This means that during the time of these reductions with high demand, the price of each pound of R-22 refrigerant could potentially skyrocket. If you are considering replacing your existing air conditioning equipment, most higher efficiency products have already made the switch to R-410A, the more \"environmentally sound\" refrigerant.",
+        "Q: My air conditioner is very loud when I entertain outside, what can I do? — A: A difference of 6 decibels (such as between 72 dB and 78 dB) is technically a four-fold increase in compressor sound when rating air conditioners or heat pump units. However, it takes a difference of 10 decibels to double the loudness. It is also noted that it takes approximately 3 decibels for the average human ear to discern any difference in loudness at all. Great strides have been made in reducing the operating sound level of equipment. We will be happy to show you the difference in sound ratings with our product line.",
+        "Q: Can carbon monoxide build up in my home? — A: Yes. Each year, carbon monoxide kills more than 200 Americans and sends nearly 5,000 more to emergency rooms for treatment, reports the U.S. Consumer Product Safety Commission (CPSC). Where does it come from? When carbon-based fuels such as gas, oil, kerosene or wood burn, they produce gases. When fuel combustion or burning isn't complete, carbon monoxide enters the air. The CPSC advises that carbon monoxide detectors are the only way to alert yourself to the presence of toxic gas in your home. If you wake in the night with a headache -- and especially if another member of the family complains of a headache or is difficult to arouse -- get out of the house fast and seek medical help. We recommend carbon monoxide detectors be installed in your home!",
+        "Q: What if I smell gas? — A: Propane (LP) gas: You have this type if your gas comes from a tank located outside close to your house. Propane is stored as a liquid under pressure in tanks and cylinders. In most residential applications, propane is used as a vapor. When liquid propane changes into a gas vapor, it expands in volume. This means that even a small leak of liquid propane can result in a much larger quantity of propane vapor, which can be especially dangerous in a confined space. A chemical odorant has been added to propane to give it a distinct smell. Learn to identify this odor. Propane gas is heavier than air, so it will sink to the floor and spread. To check for the presence of propane, carefully smell all over a room, especially in low spots. If you smell propane (LP) gas: Exit your home immediately. Propane gas can ignite easily. Do not light a match, start an engine, use a cell phone, or do anything that may create a spark. From a safe area, contact your propane supplier and call 911. If you are able, shut the propane gas supply off at the tank. Stay away from your home until you've been told that it is safe to return. Natural gas: You have this type if you have a gas meter and pay a natural gas supplier or utility. A chemical odorant has been added to natural gas to give it a distinct smell. Learn to identify this odor. If you smell natural gas: Exit your home immediately. Do not light a match, start an engine, use a cell phone, or do anything that may create a spark. From a safe area, contact your gas company or call 911. If you are able, turn the gas off at the meter. Stay away from your home until you've been told that it is safe to return."
+      ],
+      "facts": [
+        "Most systems have a lifetime of 10 to 20 years",
+        "Replacing only the outdoor unit can lose up to 15% of the unit's efficiency and most manufacturers' warranties will be voided",
+        "A 13 SEER air conditioner uses 23% less energy than a 10 SEER unit; their AC line runs from 13 SEER up to 21 SEER",
+        "HSPF scale range is 7.5 to 13.0",
+        "Minimum AFUE sold in the US as of May 1, 2013: 80% in southern states, 90% in northern states; their furnace offering goes up to 98.3% AFUE",
+        "New high-efficiency furnaces can save up to 50% in operating costs over a ten-year-old furnace",
+        "High efficiency air cleaner can remove up to 99% of pollen and spores",
+        "The average home spends about $1,900 annually on energy bills; heating and cooling is as much as half of a home's energy use",
+        "ENERGY STAR equipment can save as much as 20% annually on total energy costs",
+        "Summer: set temperature above 75°; every degree below adds an extra three to five percent to the energy bill",
+        "Programmable thermostat: every 1° lowered for seven hours per day saves one percent on the heating bill",
+        "Normal cooling settings 75-80 degrees; normal heating settings 68-72 degrees; every 1 degree of change equals about 1% energy savings",
+        "R-22 (Freon) production reductions: 35% in 2004, 65% in 2010, 90% in 2015, 99.5% in 2020; new equipment uses R-410A",
+        "Carbon monoxide kills more than 200 Americans each year and sends nearly 5,000 to emergency rooms (U.S. Consumer Product Safety Commission)",
+        "A 6 decibel difference is a four-fold increase in compressor sound; 10 decibels doubles loudness; about 3 decibels is the minimum a human ear can discern",
+        "Repair cost guidance and mold prevention link out to EPA (epa.gov/mold)"
+      ],
+      "features": [
+        "24 answered FAQ entries covering equipment life, sizing, matched systems, filters, maintenance, service agreements, air quality, mold, duct cleaning, SEER/AFUE/HSPF, energy costs, Energy Star, heat pumps, Hybrid Heat, variable speed fans, 2-stage systems, thermostat settings, uneven rooms, R-22 phase-out, sound levels, carbon monoxide, and gas leak safety",
+        "Ask Your Question form fields: Name, Email (won't be used on site), City, State, Question"
+      ],
+      "images": [
+        "Ask the Expert"
+      ],
+      "ctas": [
+        "Ask Your Question -> on-page question submission form",
+        "Click here (mold prevention from the EPA) -> https://www.epa.gov/mold"
+      ]
+    },
+    {
+      "slug": "product-knowledge",
+      "oldUrl": "/support/product-knowledge/",
+      "title": "Big Texas Comfort, Furnace, Air Conditioning Videos - Houston, TX",
+      "metaDescription": "Animations of the best HVAC systems including gas furnaces, air conditioners (AC), heat pumps, ductless mini-splits, geothermal, air filtration near Houston, TX",
+      "h1": "Product Knowledge",
+      "summary": "The Videos page (linked as 'Videos' in the main nav): a gallery of animated 'How does it work?' equipment videos hosted on Vimeo, one per equipment type.",
+      "uniqueCopy": [
+        "Today's heating and cooling equipment offers advanced technology and systems to dramatically improve energy efficiency and the comfort level of your home. Please click on the equipment's image below to view how we can use these latest systems to meet your comfort and energy efficiency needs."
+      ],
+      "facts": [
+        "Five equipment animation videos are offered, each hosted on Vimeo",
+        "Video topics: Air Conditioner, Heat Pump, Air Handler, Gas Furnace, Hybrid Heat"
+      ],
+      "features": [
+        "Air Conditioner: How does it work?",
+        "Heat Pump: How does it work?",
+        "Air Handler: How does it work?",
+        "Gas Furnace: How does it work?",
+        "Hybrid Heat: How does it work?"
+      ],
+      "images": [
+        "Air Conditioner",
+        "Heat Pump",
+        "Air Handler",
+        "Gas Furnace",
+        "Hybrid Heat"
+      ],
+      "ctas": [
+        "Air Conditioner: How does it work? -> https://player.vimeo.com/video/121265019?byline=0&portrait=0&autoplay=1",
+        "Heat Pump: How does it work? -> https://player.vimeo.com/video/121265029?byline=0&portrait=0&autoplay=1",
+        "Air Handler: How does it work? -> https://player.vimeo.com/video/121265023?byline=0&portrait=0&autoplay=1",
+        "Gas Furnace: How does it work? -> https://player.vimeo.com/video/121265026?byline=0&portrait=0&autoplay=1",
+        "Hybrid Heat: How does it work? -> https://player.vimeo.com/video/121265030?byline=0&portrait=0&autoplay=1"
+      ]
+    },
+    {
+      "slug": "troubleshooting",
+      "oldUrl": "/support/furnace-heat-pump-air-conditioning-troubleshooting/",
+      "title": "Big Texas Comfort, HVAC Troubleshooting - Houston, TX 77058",
+      "metaDescription": "Information to trouble shoot your system before calling us near Houston, TX",
+      "h1": "Air Conditioning & Heating Troubleshooting",
+      "summary": "DIY Troubleshooting hub linking to four symptom-specific checklists (AC no cooling, heat pump no heating/no cooling, gas furnace no heating) to try before calling for emergency service.",
+      "uniqueCopy": [
+        "Before calling for HVAC emergency service, please read the tips below. It may prevent a service call or help us diagnose your problem quicker. Eager to contact us regarding furnace repair in Friendswood? Call us and we will help you as soon as possible."
+      ],
+      "facts": [
+        "Positioned as pre-service-call tips that may prevent a service call or speed diagnosis",
+        "Cross-links to furnace repair in Friendswood service page"
+      ],
+      "features": [
+        "Air Conditioner - No Cooling",
+        "Heat Pump - No Heating",
+        "Heat Pump - No Cooling",
+        "Gas Furnace - No Heating"
+      ],
+      "images": [
+        "Air Conditioner - No Cooling (product image)",
+        "Heat Pump - No Heating (product image)",
+        "Heat Pump - No Cooling (product image)",
+        "Gas Furnace - No Heating (product image)"
+      ],
+      "ctas": [
+        "Air Conditioner - No Cooling -> /support/troubleshooting-air-conditioner-no-cooling/",
+        "Heat Pump - No Heating -> /support/troubleshooting-heat-pump-no-heating/",
+        "Heat Pump - No Cooling -> /support/troubleshooting-heat-pump-no-cooling/",
+        "Gas Furnace - No Heating -> /support/troubleshooting-gas-furnace-no-heating/",
+        "furnace repair in Friendswood -> /furnace-repair-friendswood-tx/"
+      ]
+    },
+    {
+      "slug": "troubleshooting-ac-no-cooling",
+      "oldUrl": "/support/troubleshooting-air-conditioner-no-cooling/",
+      "title": "Air Conditioner - No Cooling",
+      "metaDescription": "Information to trouble shoot your Air Conditioner before calling us near Houston, TX",
+      "h1": "Air Conditioner - No Cooling",
+      "summary": "Step-by-step DIY checklist for a central air conditioner that is not cooling, to run through before calling for service.",
+      "uniqueCopy": [],
+      "decisionTree": [
+        {
+          "step": "Check thermostat settings",
+          "detail": "Make sure the temperature control selector is set below the current room temperature, and the system switch is on the COOL or AUTO position.",
+          "action": "The fan switch should be set to ON for continuous airflow or AUTO if you want the blower to operate only while the air conditioner is operating."
+        },
+        {
+          "step": "Force the unit to start",
+          "detail": "Try to get the air conditioner to turn on.",
+          "action": "Lower the thermostat to its lowest temperature setting."
+        },
+        {
+          "step": "Check the air filter",
+          "detail": "If the air flow out of your registers seems low, an extremely dirty air filter can block air flow.",
+          "action": "Check the air filter."
+        },
+        {
+          "step": "Check registers",
+          "detail": "",
+          "action": "Make sure all registers are open and not obstructed."
+        },
+        {
+          "step": "Check power disconnect switches",
+          "detail": "",
+          "action": "Check the power disconnect switch by each unit (outdoor and indoor)."
+        },
+        {
+          "step": "Check fuses/breakers",
+          "detail": "",
+          "action": "Check the fuse/breaker at the electrical panel for both the outdoor and indoor unit."
+        },
+        {
+          "step": "Problem persists",
+          "detail": "",
+          "action": "If the problem persists, please call us."
+        }
+      ],
+      "facts": [
+        "Thermostat must be set below current room temperature with system switch on COOL or AUTO",
+        "Both outdoor and indoor units have their own power disconnect switch and fuse/breaker"
+      ],
+      "features": [],
+      "images": [
+        "Air Conditioner - No Cooling"
+      ],
+      "ctas": [
+        "If the problem persists, please call us -> tel:8328885166"
+      ]
+    },
+    {
+      "slug": "troubleshooting-gas-furnace-no-heating",
+      "oldUrl": "/support/troubleshooting-gas-furnace-no-heating/",
+      "title": "Gas Furnace - No Heating",
+      "metaDescription": "Information to trouble shoot your Gas Furnace before calling us near Houston, TX",
+      "h1": "Gas Furnace - No Heating",
+      "summary": "Step-by-step DIY checklist for a gas furnace that is not heating, including gas valve and pilot light checks, to run through before calling for service.",
+      "uniqueCopy": [],
+      "decisionTree": [
+        {
+          "step": "Check thermostat settings",
+          "detail": "Make sure the temperature control selector is set above the current room temperature, and the system switch is on the HEAT or AUTO position.",
+          "action": "The fan switch should be set to ON for continuous airflow or AUTO if you want the blower to operate only while the furnace is operating."
+        },
+        {
+          "step": "Force the furnace to start",
+          "detail": "Try to get the furnace to turn on.",
+          "action": "Raise the thermostat to its highest temperature setting."
+        },
+        {
+          "step": "Check the air filter",
+          "detail": "If the air flow out of your registers seems low, an extremely dirty air filter can block air flow.",
+          "action": "Check the air filter."
+        },
+        {
+          "step": "Check registers",
+          "detail": "",
+          "action": "Make sure all registers are open and not obstructed."
+        },
+        {
+          "step": "Check power disconnect switch",
+          "detail": "",
+          "action": "Check the power disconnect switch by the furnace."
+        },
+        {
+          "step": "Check fuse/breaker",
+          "detail": "",
+          "action": "Check the fuse/breaker at the electrical panel for the furnace."
+        },
+        {
+          "step": "Check the gas control valve",
+          "detail": "",
+          "action": "Check to make sure the gas control valve to the furnace is open."
+        },
+        {
+          "step": "Check the pilot light",
+          "detail": "Electronic ignitions will not have a pilot light.",
+          "action": "Check the pilot light."
+        },
+        {
+          "step": "Problem persists",
+          "detail": "",
+          "action": "If the problem persists, please call us."
+        }
+      ],
+      "facts": [
+        "Gas-specific checks: gas control valve must be open; pilot light check applies only to non-electronic-ignition furnaces",
+        "Thermostat must be set above current room temperature with system switch on HEAT or AUTO"
+      ],
+      "features": [],
+      "images": [
+        "Gas Furnace - No Heating"
+      ],
+      "ctas": [
+        "If the problem persists, please call us -> tel:8328885166"
+      ]
+    },
+    {
+      "slug": "troubleshooting-heat-pump-no-cooling",
+      "oldUrl": "/support/troubleshooting-heat-pump-no-cooling/",
+      "title": "Heat Pump - No Cooling",
+      "metaDescription": "Information to trouble shoot your Heat Pump not providing air conditioning before calling us near Houston, TX",
+      "h1": "Heat Pump - No Cooling",
+      "summary": "Step-by-step DIY checklist for a heat pump that is not providing cooling, to run through before calling for service.",
+      "uniqueCopy": [],
+      "decisionTree": [
+        {
+          "step": "Check thermostat settings",
+          "detail": "Make sure the temperature control selector is set below the current room temperature, and the system switch is on the COOL or AUTO position.",
+          "action": "The fan switch should be set to ON for continuous airflow or AUTO if you want the blower to operate only while the heat pump is operating."
+        },
+        {
+          "step": "Force the heat pump to start",
+          "detail": "Try to get the heat pump to turn on.",
+          "action": "Lower the thermostat to its lowest temperature setting."
+        },
+        {
+          "step": "Check the air filter",
+          "detail": "If the air flow out of your registers seems low, an extremely dirty air filter can block air flow.",
+          "action": "Check the air filter."
+        },
+        {
+          "step": "Check registers",
+          "detail": "",
+          "action": "Make sure all registers are open and not obstructed."
+        },
+        {
+          "step": "Check power disconnect switches",
+          "detail": "",
+          "action": "Check the power disconnect switch by each unit (outdoor and indoor)."
+        },
+        {
+          "step": "Check fuses/breakers",
+          "detail": "",
+          "action": "Check the fuse/breaker at the electrical panel for both the outdoor and indoor unit."
+        },
+        {
+          "step": "Problem persists",
+          "detail": "",
+          "action": "If the problem persists, please call us."
+        }
+      ],
+      "facts": [
+        "Thermostat must be set below current room temperature with system switch on COOL or AUTO",
+        "Both outdoor and indoor units have their own power disconnect switch and fuse/breaker"
+      ],
+      "features": [],
+      "images": [
+        "Heat Pump - No Cooling (product image)"
+      ],
+      "ctas": [
+        "If the problem persists, please call us -> tel:8328885166"
+      ]
+    },
+    {
+      "slug": "troubleshooting-heat-pump-no-heating",
+      "oldUrl": "/support/troubleshooting-heat-pump-no-heating/",
+      "title": "Heat Pump - No Heating",
+      "metaDescription": "Information to trouble shoot your Heat Pump not producing heat before calling us near Houston, TX",
+      "h1": "Heat Pump - No Heating",
+      "summary": "Step-by-step DIY checklist for a heat pump that is not producing heat, to run through before calling for service.",
+      "uniqueCopy": [],
+      "decisionTree": [
+        {
+          "step": "Check thermostat settings",
+          "detail": "Make sure the temperature control selector is set above the current room temperature, and the system switch is on the HEAT or AUTO position.",
+          "action": "The fan switch should be set to ON for continuous airflow or AUTO if you want the blower to operate only while the heat pump is operating."
+        },
+        {
+          "step": "Force the heat pump to start",
+          "detail": "Try to get the heat pump to turn on.",
+          "action": "Raise the thermostat to its highest temperature setting."
+        },
+        {
+          "step": "Check the air filter",
+          "detail": "If the air flow out of your registers seems low, an extremely dirty air filter can block air flow.",
+          "action": "Check the air filter."
+        },
+        {
+          "step": "Check registers",
+          "detail": "",
+          "action": "Make sure all registers are open and not obstructed."
+        },
+        {
+          "step": "Check power disconnect switches",
+          "detail": "",
+          "action": "Check the power disconnect switch by each unit (outdoor and indoor)."
+        },
+        {
+          "step": "Check fuses/breakers",
+          "detail": "",
+          "action": "Check the fuse/breaker at the electrical panel for both the outdoor and indoor unit."
+        },
+        {
+          "step": "Problem persists",
+          "detail": "",
+          "action": "If the problem persists, please call us."
+        }
+      ],
+      "facts": [
+        "Thermostat must be set above current room temperature with system switch on HEAT or AUTO",
+        "Both outdoor and indoor units have their own power disconnect switch and fuse/breaker"
+      ],
+      "features": [],
+      "images": [
+        "american-standard-heat-pump.png"
+      ],
+      "ctas": [
+        "If the problem persists, please call us -> tel:8328885166"
+      ]
+    },
+    {
+      "slug": "energy-bill-concerns",
+      "oldUrl": "/educational-topics/energy-bill-concerns/",
+      "title": "Big Texas Comfort, Energy Bill Concerns - Houston, TX 77058",
+      "metaDescription": "We explain the issues and provide options to quell your energy bill concerns. Houston, TX",
+      "h1": "Energy Bill Concerns",
+      "summary": "Interactive guided questionnaire that walks homeowners through energy-saving options (programmable controls, zoning, variable speed, high-efficiency equipment), asks about their space, energy source, system type, Hybrid Heat and variable speed interest, efficiency level, and thermostat tier, then collects contact info for a tailored evaluation.",
+      "uniqueCopy": [
+        "We offer a number of ways to reduce your energy bill. Some can be done for a small investment, others a larger investment, all with a corresponding return on investment.",
+        "Heating and Cooling Systems: To help us with your evaluation, we need to know what type of system you have in your home. Review the system types below, and chose the one that best represents the system you have in your home. Click on any image for more details about that system type.",
+        "Maximum Comfort & Efficiency for Maximum Savings — Save throughout the year with a Hybrid Heat® Dual Fuel system. With a traditional heating and cooling system, if you wanted to save more, you had to use less. But a Hybrid Heat® Dual Fuel system combines the benefits of intelligent control for both gas and electric heating to create an intuitive system that can actually react to changing conditions. No matter what the temperature is outside, a Hybrid Heat® Dual Fuel system will automatically select the fuel source most efficient for your home, which means you'll stay warm in the winter and cool in the summer.",
+        "Hybrid Heat Systems: Split Systems are the most typical type of heating and cooling system. The Hybrid Heat system differs from a traditional split system by replacing the air conditioner with a heat pump. Heat pumps cool your home on hot days and provide efficient heating in moderate temperatures",
+        "Advantages: Systems with variable speed blower motors have significant advantages over single speed systems.",
+        "System Efficiency and Savings: The average homeowner spends about $1,900 annually on energy bills. Heating and cooling accounts for as much as half of a home's energy use.",
+        "Ductless Mini-Split Systems: This is a system that doesn't require ductwork in your home. You still have product that resides inside and outside your home: Heat Pump or Air Conditioner - Cools and/or heats refrigerant; A Compact Fan Coil - Converts refrigerant and circulates air; Refrigerant Tubing and Wires - Connects outdoor unit to fan coil; Control or Thermostat - Your interface for controlling your system; Optional Air Quality Accessories such as Air Cleaners or Ventilators - Clean your air before it circulates throughout your home"
+      ],
+      "facts": [
+        "Four ways offered to reduce energy bills: Programmable Controls, Zoning, Variable Speed Equipment, High Efficiency Equipment",
+        "The average homeowner spends about $1,900 annually on energy bills; heating and cooling accounts for as much as half of a home's energy use",
+        "Mitsubishi Electric FX Deluxe Wall-mounted Indoor Unit: cooling efficiency up to 33.1 SEER",
+        "Mitsubishi Electric M-Series outdoor model Deluxe Wall-mounted Single-zone Heat Pump: cooling efficiency up to 33.1 SEER",
+        "Variable speed blowers: air cleaners only filter the air when the blower is on - variable speed can run continuously for just pennies a day",
+        "Product tiers presented as Premium, Best, Better, Good with Mitsubishi Electric and American Standard equipment"
+      ],
+      "features": [
+        "Questionnaire: What type of space do you need to heat and / or cool? (Whole House / Specific Room(s))",
+        "Questionnaire: Which energy source do you want to use to heat your home? (Electric Only / Electricity and Natural Gas / Propane)",
+        "Questionnaire: What type of system would you like in your home? (Heat Pump Split System, Air Conditioner Only, Packaged System Electric or Cooling Only, Furnace / Air Conditioner Split System, Furnace / Heat Pump Split System, Furnace Only, Packaged System Gas/Electric, Packaged System Hybrid)",
+        "System type explainers: Heat Pump Split System, Air Conditioner Split System, Packaged System, Furnace / Air Conditioner Split System, Furnace / Heat Pump (Hybrid Heat) Split System, Gas Furnace Only, Ductless Mini-Split Systems",
+        "Questionnaire: Are you interested in the advantages of a Hybrid Heat® Dual Fuel system? (Yes/No)",
+        "Questionnaire: Are you interested in a variable speed system? (Yes/No)",
+        "Variable speed Greater Comfort: Reduced room temperature fluctuation; Better humidity control; Quieter operation due to motor ramping up and down slowly vs on/off",
+        "Variable speed Save Money: Lower energy bills; Improves system heating & cooling performance; Energy Star rated",
+        "Questionnaire: What level of system efficiency are you interested in? (Premium / Best / Better / Good product tiers)",
+        "Questionnaire: Please choose the level of thermostat functionality you are interested in (Premium / Best / Better / Good)",
+        "Lead form: First Name, Last Name, Address, City, Phone, Email, When can we contact you? (Daytime/Evening/Anytime), Are you an existing customer? (Yes/No), Any other concerns / interests?"
+      ],
+      "images": [
+        "Temperature Swing Comparison graph",
+        "System Blower Cycle graph",
+        "Hybrid Heat System diagram",
+        "Energy Star Rated",
+        "Mitsubishi MSZ-FS (FX Deluxe Wall-mounted Indoor Unit)",
+        "American Standard AccuComfort Variable Speed Platinum 20 Heat Pump",
+        "American Standard Platinum 95 Furnace",
+        "American Standard Link UX360 smart thermostat"
+      ],
+      "ctas": [
+        "Contact Us Now -> contact form",
+        "Request Service -> /educational-topics/request-service/",
+        "Please provide us the following information -> on-page lead form"
+      ]
+    },
+    {
+      "slug": "healthier-home",
+      "oldUrl": "/educational-topics/healthier-home/",
+      "title": "Healthier Home",
+      "metaDescription": "We help guide you through all the issues and remedies to help you achieve a healthier home. Houston, TX",
+      "h1": "Healthier Home",
+      "summary": "Indoor air quality guide pairing each pollution problem (smoke/fumes, mold/bacteria, dust/dander, humidity/noise, CO/dry air) with a product solution, then walking through a guided questionnaire on humidification, humidity control, air filtration level, thermostat tier, sound levels, and variable speed before collecting contact info.",
+      "uniqueCopy": [
+        "With today's tightly sealed, well insulated homes, the air inside your home can be two to five times more polluted than the air outside. There are several sources of indoor air quality issues, but luckily we offer several solutions to these problems",
+        "Problematic Dry Air: Too little moisture in your home can cause the following conditions: Increased personal discomfort; Increased breeding ground for viruses; Cracked paint and plaster; Increased static electricity damage; Dried out wood floors and furniture. It is recommended that indoor humidity levels be maintained in the 40-60% range.",
+        "High Humidity: Too much humidity can create a breeding ground for … Bacteria, Mold, Dust Mites …aggravating allergies and asthma.",
+        "Controlling Humidity: Your home comfort system should provide both comfortable temperatures and comfortable humidity levels. It is recommended that indoor humidity be managed to be in the 40-60% range. Humidity System: A system with variable speed blower; A thermostat with humidity control",
+        "Air Filters: Air filters protect you and your family by removing pollutants that are harmful to your health. Improved Air Quality: The quality of your indoor air can be improved significantly by adding an air filter to your heating and cooling system.",
+        "99% of the particles in the air are not visible to the naked eye. These are the particles that are most dangerous to your health: Aggravating allergies and asthma; Contributing to colds and flu. A standard one-inch filter captures less than 5% of the particles in the air. This leaves the other 95% to: Pollute indoor air; Contaminate duct work; Reduce the efficiency of your heating/cooling equipment",
+        "Ventilators: A ventilator will help to dilute: Cooking Odors, Pet Odors, Odors from Paints and Chemicals. Ventilator Benefits: Odor dilution; Introduction of fresh, outside air; Reduces energy loss to a minimum",
+        "Noise Level: Outdoor Unit — The quietest OUTDOOR units have two speeds (high and low) and run on low speed about 80% of the time with longer run cycles for dramatically reduced sound levels and less on/off disturbance.",
+        "Noise Level: Indoor Unit — The quietest INDOOR units have a variable speed motor and run on low speed about 80-90% of the time for whisper quiet operation. They also have longer run cycles and gradual ramping up/down for less on/off disturbance.",
+        "American Standard AccuClean™ Whole-Home Air Filtration System: The most effective whole-home air filtration system in the nation, period.",
+        "American Standard QuikBox™ Air Cleaner: A system that works smarter. For efficient removal of household dust and allergens a QuikBox™ air cleaner is a sensible and affordable solution for all homes. Our perfect fit design filters, available in 7 sizes, match our equipment for neat and easy install."
+      ],
+      "facts": [
+        "The air inside your home can be two to five times more polluted than the air outside",
+        "Recommended indoor humidity level: 40-60% range",
+        "99% of airborne particles are not visible to the naked eye; a standard one-inch filter captures less than 5% of particles",
+        "AccuClean™ is eight times more effective than the best HEPA room appliance and 100 times more effective than a standard one-inch throwaway filter or ionic-type room appliance",
+        "QuikBox™ filters are available in 7 sizes",
+        "Quietest outdoor units run on low speed about 80% of the time; quietest indoor units run on low speed about 80-90% of the time",
+        "Pollution/solution pairs: Smoke, Chemical Fumes, Radon Gas, Cooking Odors, Pollen -> Fresh Air Ventilation; Mold, Bacteria -> Ultra Violet Lights; Lint & Dust, Pet Dander, Plant Spores -> Air Filtration; Humidity, Noise -> Variable Speed System; Carbon Monoxide, Dry Air -> CO Detector & Humidification",
+        "Thermostat lineup: American Standard Link UX360 (Premium), AccuLink™ Platinum 1050 (Best), AccuLink™ Platinum 850 (Better), Gold 824 Control (Good)",
+        "AccuLink™ Platinum 1050 controls over 200 z-wave home automation devices via built-in Nexia Bridge",
+        "Gold 824 Control: Energy Star Certified - 824B models only; creates up to six daily heating and cooling schedules",
+        "American Standard Link UX360: up to four daily heating and cooling schedules, built-in humidity sensor, Z Wave compatible"
+      ],
+      "features": [
+        "Questionnaire: Would you like your system to have a humidifier to maintain comfortable, energy saving humidity levels during the dry heating months? (Yes/No)",
+        "Questionnaire: Would you like your system to effectively control humidity for greater comfort, better air quality and lower energy bills? (Yes/No)",
+        "Questionnaire: Please select the level of air filtration that best fits your needs (Better: AccuClean™ Whole-Home Air Filtration System; Good: QuikBox™ Air Cleaner)",
+        "Questionnaire: Would you like to bring in fresh air and exhaust stale air without the wasted energy and discomfort of an open window? (Yes/No)",
+        "Questionnaire: Please choose the level of thermostat functionality you are interested in (Premium/Best/Better/Good)",
+        "Questionnaire: Please choose the OUTDOOR sound level that best fits your needs (Quietest - less on/off cycling / Quieter operation / Quiet operation)",
+        "Questionnaire: Please choose the INDOOR sound level that best fits your needs (Variable Speed – Quietest / 2-Speed – Quieter / Single Speed – Quiet)",
+        "Questionnaire: Are you interested in a variable speed system? (Yes/No)",
+        "AccuClean features: Eight times more effective than the best HEPA room appliance; 100 times more effective than a standard one-inch throwaway filter or ionic-type room appliance; Delivers cleaner air and more of it; Reusable filter can be cleaned by vacuuming",
+        "QuikBox features: Available in a variety of sizes; Fits in tight spaces and in virtually any position; Heavy-duty construction assures long life and continued reliability",
+        "Lead form: First Name, Last Name, Address, City, Phone, Email, When can we contact you?, Are you an existing customer?, Any other concerns / interests?"
+      ],
+      "images": [
+        "Ventilator",
+        "Ultra Violet Lights",
+        "Air Filtration",
+        "Variable Speed System",
+        "Carbon Monoxide Detector",
+        "Chart: Optimum Humidity Levels",
+        "Chart: Pollutants Size Comparison (in Microns)",
+        "AccuClean™ Whole-Home Air Filtration System",
+        "QuikBox™ Air Cleaner",
+        "American Standard Link UX360",
+        "AccuLink™ Platinum 1050",
+        "Mother and Child in comfortable, healthy home"
+      ],
+      "ctas": [
+        "Contact Us Now -> contact form",
+        "Request Service -> /educational-topics/request-service/",
+        "Please provide us the following information -> on-page lead form"
+      ]
+    },
+    {
+      "slug": "ready-maintenance",
+      "oldUrl": "/educational-topics/ready-maintenance/",
+      "title": "Big Texas Comfort, Ready for Maintenance - Houston, TX",
+      "metaDescription": "We offer maintenance services for your home or business. Please fill out the form! - Houston",
+      "h1": "Ready for Maintenance",
+      "summary": "Maintenance request form page: a short intro plus a detailed form capturing contact info, equipment types needing maintenance, equipment age, and service-contract status/interest.",
+      "uniqueCopy": [
+        "Ready for Maintenance? We want to provide you with the best heating and cooling services available."
+      ],
+      "facts": [
+        "Maintenance can be requested for: Air Conditioner, Furnace/ Fan Coil, Heat Pump, Air Filter, Humidifier, UV Lights, Fresh Air Ventilator",
+        "Equipment age brackets collected: Less than 6 Years, 6-10 Years, 11-20 Years, Over 20 Years, Do not Know",
+        "Form asks whether the customer has a Service Contract and, if not, whether they would be interested in one"
+      ],
+      "features": [
+        "Form fields: First Name, Last Name, Address, City, Phone, Email",
+        "When can we contact you? (Daytime / Evening / Anytime)",
+        "Are you an existing customer? (Yes / No)",
+        "Maintenance requested: Air Conditioner, Furnace/ Fan Coil, Heat Pump, Air Filter, Humidifier, UV Lights, Fresh Air Ventilator",
+        "Equipment Age: Less than 6 Years, 6-10 Years, 11-20 Years, Over 20 Years, Do not Know",
+        "Do you have a Service Contract with us? (Yes / No)",
+        "If not, would you be interested in one? (Yes / No)"
+      ],
+      "images": [],
+      "ctas": [
+        "Please provide us the following information -> on-page maintenance request form"
+      ]
+    },
+    {
+      "slug": "repair-replace",
+      "oldUrl": "/educational-topics/repair-replace/",
+      "title": "Big Texas Comfort, Repair or Replace - Houston, TX",
+      "metaDescription": "Should you repair or replace your air conditioner, heat pump, furnace or boiler? Let us guide you through the decision making process! - Houston, TX",
+      "h1": "Repair or Replace",
+      "summary": "Interactive repair-vs-replace decision guide: a questionnaire on equipment type, age, repair cost, warranty status, SEER/AFUE rating, refrigerant, prior compressor/heat-exchanger replacement, performance symptoms, and length of residency that produces a RECOMMENDATION, with educational sidebars stating the actual decision criteria.",
+      "uniqueCopy": [
+        "Should you repair or replace your air conditioner, heat pump, furnace or boiler? When something breaks down, it's tempting to go the quick route and pay for repairs to get it up and running again. That quick-fix may seem the least expensive route now, but it may not offer the most value in the long run.",
+        "Equipment Age and Life Expectancy: Most equipment is designed for a life expectancy of 15 to 20 years. Older equipment is prone to the following: More expensive repairs, such as compressors or heat exchangers; Much lower energy efficiency vs. today's standards; Reduced performance due to clogged or corroding coils",
+        "Equipment Repair: Repairing existing equipment can be a good decision as long as: The cost of the repair is less than 30% of the cost of new equipment; The rest of the system is in excellent operating condition. Otherwise, the cost of the repair would be better invested in a new system.",
+        "Seasonal Energy Efficiency Ratio: The Seasonal Energy Efficiency Ratio (SEER) is an energy efficiency rating for air conditioners. The higher the SEER, the better the energy performance, the more you save.",
+        "Annual Fuel Utilization Efficiency: The Annual Fuel Utilization Efficiency (AFUE) is a measure of a gas furnace's efficiency in converting fuel to energy, by projecting the average thermal efficiency for a complete heating season. A higher AFUE rating means greater energy efficiency.",
+        "Length of Residency: If you are moving within the next year or two and believe investing in a new home comfort system will improve the value of your home, you should consider making the investment. If you plan to live in your current residence for many years, it may be wise to invest in your future comfort."
+      ],
+      "facts": [
+        "Repair-vs-replace criteria named on page: Age of Equipment, Cost of Repair, Energy Efficiency, Repair History, Moving Soon!, Equipment Performance",
+        "Repair is a good decision only if the repair costs less than 30% of the cost of new equipment AND the rest of the system is in excellent operating condition",
+        "Most equipment is designed for a life expectancy of 15 to 20 years",
+        "Repair cost brackets used in the guide: Less than $100, $100 - $500, $501 - $1000, Over $1000",
+        "SEER brackets used in the guide: 14 and over, 11 - 13, 8 - 10, 5 - 7",
+        "AFUE brackets used in the guide: Over 90, 87 - 90, 80 - 86, 70 - 79",
+        "Refrigerant options listed: R-454b, R-32, Puron Advance, Do Not Know",
+        "Performance red flags asked about: equipment turning on and off repeatedly during the day; problem rooms that never get warm or cool; noticeable/disturbing startup noise or vibrations",
+        "Guide covers Air Conditioner or Heat Pump, Furnace or Boiler, and Gas/Electric Packaged Unit equipment types"
+      ],
+      "features": [
+        "Questionnaire: What type of equipment are you repairing? (Air Conditioner or Heat Pump / Furnace or Boiler / Gas/Electric Packaged Unit)",
+        "Questionnaire: What is the age of your equipment? (Less than 6 Years / 6-10 Years / 11-20 Years / Over 20 Years / Do not Know)",
+        "Questionnaire: What is the estimated cost of needed repairs? (Less than $100 / $100 - $500 / $501 - $1000 / Over $1000)",
+        "Questionnaire: Is the equipment still under warranty? (No / Yes)",
+        "Questionnaire: What is the SEER efficiency rating of your equipment? (14 and over / 11 - 13 / 8 - 10 / 5 - 7)",
+        "Questionnaire: Type of refrigerant used? (R-454b / R-32 / Puron Advance / Do Not Know)",
+        "Questionnaire: Has the air conditioner compressor been replaced recently? (No / Yes)",
+        "Questionnaire: What is the AFUE efficiency rating of your equipment? (Over 90 / 87 - 90 / 80 - 86 / 70 - 79)",
+        "Questionnaire: Has the heat exchanger been replaced recently? (No / Yes)",
+        "Questionnaire: Does your equipment turn on and off repeatedly during the day? (No / Yes)",
+        "Questionnaire: Do you have problem rooms that seem to never get warm or cool? (No / Yes)",
+        "Questionnaire: Is the turning on of your equipment noticeable, disturbing or causing annoying vibrations in your home? (No / Yes)",
+        "Questionnaire: How long do you expect to stay in this home? (Less than 2 years / 2-5 years / 6-10 years / Over 10 years)",
+        "Output: RECOMMENDATION section based on answers",
+        "System type explainers: Air Conditioner split, Heat Pump split, Furnace, Boiler (circulates water to your radiators), Packaged System",
+        "Lead form: First Name, Last Name, Address, City, Phone, Email, When can we contact you?, Are you an existing customer?, Any other concerns / interests?"
+      ],
+      "images": [
+        "Old Air Conditioner",
+        "Air Conditioner Condensing Unit",
+        "Stack of Money - Repair or Replace",
+        "Gas Boiler",
+        "Packaged System",
+        "Home: Residential Heating / Cooling System"
+      ],
+      "ctas": [
+        "Contact Us Now -> contact form",
+        "Request Service -> /educational-topics/request-service/",
+        "Please provide us the following information -> on-page lead form"
+      ]
+    },
+    {
+      "slug": "request-service",
+      "oldUrl": "/educational-topics/request-service/",
+      "title": "Big Texas Comfort, Request Service - Houston, TX",
+      "metaDescription": "It could be time to schedule a repair. Fill out the form and we will give you a call! - Houston, TX",
+      "h1": "Request Service",
+      "summary": "Service request form page that urges phone contact for faster service and collects contact details plus whether the problem is with heating, cooling, or something else.",
+      "uniqueCopy": [
+        "For faster service, please call (832) 888-5166"
+      ],
+      "facts": [
+        "Faster-service phone number promoted on page: (832) 888-5166",
+        "Form asks separately about heating problems and cooling problems"
+      ],
+      "features": [
+        "Form fields: First Name, Last Name, Address, City, Phone, Email",
+        "When can we contact you? (Daytime / Evening / Anytime)",
+        "Are you an existing customer? (Yes / No)",
+        "Do you have a problem with your heat? (Yes / No)",
+        "Do you have a problem with your cooling? (Yes / No)",
+        "Any other problems? (free text)"
+      ],
+      "images": [],
+      "ctas": [
+        "For faster service, please call (832) 888-5166 -> tel:8328885166",
+        "Please provide us the following information -> on-page service request form"
+      ]
+    },
+    {
+      "slug": "select-new-system",
+      "oldUrl": "/educational-topics/select-new-system/",
+      "title": "Select a New System",
+      "metaDescription": "Let us guide you through all the latest options when deciding on selecting a new air conditioner, heat pump, furnace, boiler, duct-free or geothermal system! - Houston",
+      "h1": "Select a New System",
+      "summary": "The 'New System Guide': a long interactive selection wizard that frames the decision around comfort, thermostat control, energy savings, indoor air quality and total cost of ownership, then steps through space, energy source, system type, residency length, Hybrid Heat, variable speed, sound levels, efficiency tier (with full Mitsubishi Electric and American Standard product lineups), extended warranty, service agreement, thermostat tier, humidity, and air filtration questions.",
+      "uniqueCopy": [
+        "Whether you are building a new home or retrofitting your current home, there are several issues to consider when designing the benefits you want into a new system:",
+        "New System Guide: As you can see, a new system decision is impacted by many factors. This guide will present your options and your answers will help us design the best system to meet your needs. So let's get started!",
+        "Heating and Cooling Systems: To help us with your evaluation, we need to know what type of system you have in your home. Review the system types below, and chose the one that best represents the system you have in your home. Click on any image for more details about that system type.",
+        "Length of Residency: If you are moving within the next year or two and believe investing in a new home comfort system will improve the value of your home, you should consider making the investment. If you plan to live in your current residence for many years, it may be wise to invest in your future comfort.",
+        "Maximum Comfort & Efficiency for Maximum Savings — Save throughout the year with a Hybrid Heat® Dual Fuel system. With a traditional heating and cooling system, if you wanted to save more, you had to use less. But a Hybrid Heat® Dual Fuel system combines the benefits of intelligent control for both gas and electric heating to create an intuitive system that can actually react to changing conditions. No matter what the temperature is outside, a Hybrid Heat® Dual Fuel system will automatically select the fuel source most efficient for your home, which means you'll stay warm in the winter and cool in the summer.",
+        "Noise Level: Outdoor Unit — The quietest OUTDOOR units have two speeds (high and low) and run on low speed about 80% of the time with longer run cycles for dramatically reduced sound levels and less on/off disturbance.",
+        "Noise Level: Indoor Unit — The quietest INDOOR units have a variable speed motor and run on low speed about 80-90% of the time for whisper quiet operation. They also have longer run cycles and gradual ramping up/down for less on/off disturbance.",
+        "System Efficiency and Savings: The average homeowner spends about $1,900 annually on energy bills. Heating and cooling accounts for as much as half of a home's energy use.",
+        "Ductless Mini-Split Systems: This is a system that doesn't require ductwork in your home. You still have product that resides inside and outside your home: Heat Pump or Air Conditioner - Cools and/or heats refrigerant; A Compact Fan Coil - Converts refrigerant and circulates air; Refrigerant Tubing and Wires - Connects outdoor unit to fan coil; Control or Thermostat; Optional Air Quality Accessories",
+        "Mitsubishi Electric FX Deluxe Wall-mounted Indoor Unit: With a sleek, modern design, the FX Deluxe Wall-mounted Indoor Unit is our most advanced indoor unit yet. The Wi-Fi enabled FX provides precise comfort and exceptional energy efficiency to any space, with convenient control options and premium features",
+        "Mitsubishi Electric M-Series Deluxe outdoor heat pump: H2i Sumo™ offers 100% heating capacity at an outdoor temperature of -10° F with guaranteed operation down to -22° F.",
+        "American Standard Platinum 95 Furnace: Stay warm and comfortable inside with a gas furnace featuring fully modulating heating. Provides fully modulating heating, operating between 40 percent and 100 percent firing rates for ultimate efficiency and comfort",
+        "American Standard AccuClean™ Whole-Home Air Filtration System: The most effective whole-home air filtration system in the nation, period."
+      ],
+      "facts": [
+        "Selection criteria framed on page — Comfort: Temperature Control, Humidity Control; Thermostat Control: settings by time of day, day of week, and different areas of the home; Energy Savings: Heating Efficiency, Cooling Efficiency, Programmable Thermostat Controls; Indoor Air Quality: Air Filtration, Humidity Control, Bacterial Virus Control, Fresh Air Ventilation; How to Minimize Total Cost of Ownership: Equipment Cost, Monthly Energy Cost, Yearly Maintenance Cost, Warranties and Extended Warranties, Repair Costs, Return On Your Investment (ROI)",
+        "Mitsubishi Electric FX Deluxe Wall-mounted Indoor Unit and M-Series Deluxe single-zone heat pump: cooling efficiency up to 33.1 SEER",
+        "H2i Sumo™: 100% heating capacity at -10° F outdoor temperature with guaranteed operation down to -22° F; feature bullet also states 100% heating performance down to 5° F with guaranteed heating down to -13° F",
+        "Mitsubishi GX Premier Wall-mounted Indoor Unit: cooling efficiency up to 18.10; MUZ-GX heat pump has Blue Fin anti-corrosion coating",
+        "Mitsubishi HX Wall-mounted Indoor Unit: up to 18 SEER; P-Series SUZ Universal Heat Pump: up to 17.5 SEER",
+        "Mitsubishi WX Wall-mounted Indoor Unit: up to 16 SEER; Multi-zone Heat Pump Outdoor Unit: up to 20.0 SEER with up to 8 zone heating and cooling",
+        "Mitsubishi Single-zone Universal Air Conditioner Outdoor Model (PUY): up to 21.1 SEER; PKA Wall Mounted Air Conditioner Indoor Unit: up to 24.6 SEER",
+        "American Standard Platinum 95 Furnace: up to 97.3% AFUE, fully modulating between 40 and 100 percent firing rates",
+        "American Standard Gold S9V2-VS Gas Furnace: up to 97% AFUE",
+        "American Standard Silver 9X1 Gas Furnace: up to 96% AFUE, certified 1% airtight",
+        "American Standard Platinum 80 Gas Furnace: 80% AFUE with AccuLink™ connectivity",
+        "American Standard AccuComfort™ Variable Speed Platinum 20 Heat Pump / Air Conditioner: 10-year limited warranty on outdoor coil; can improve heating capacity by as much as 20%; quietest at 4dB below the nearest competitor minimum (AC)",
+        "American Standard Gold 15 Packaged Heat Pump System: 20-year limited warranty on heat exchanger, 10-year limited warranty on coil",
+        "American Standard Gold 15 Gas/Electric Packaged System and Silver 14 Packaged Gas/Electric System: up to 81% AFUE",
+        "American Standard Gold 15 EarthWise™ Packaged Hybrid: up to 81% AFUE, three stages of heating and two fuel choices",
+        "AccuClean™: eight times more effective than the best HEPA room appliance; 100 times more effective than a standard one-inch throwaway filter",
+        "QuikBox™ Air Cleaner: perfect fit design filters available in 7 sizes",
+        "Recommended indoor humidity: 40-60% range",
+        "Thermostat tiers: American Standard Link UX360 (Premium), AccuLink™ Platinum 1050 (Best, controls over 200 z-wave devices), AccuLink™ Platinum 850 (Better), Gold 824 Control (Good, Energy Star Certified 824B models only)",
+        "Brands featured: Mitsubishi Electric and American Standard"
+      ],
+      "features": [
+        "Questionnaire: What type of space do you need to heat and / or cool? (Whole House / Specific Room(s))",
+        "Questionnaire: Which energy source do you want to use to heat your home? (Electric Only / Electricity and Natural Gas / Propane)",
+        "Questionnaire: What type of system would you like in your home? (Heat Pump Split System, Air Conditioner Only, Packaged System variants, Furnace / Air Conditioner Split, Furnace / Heat Pump Split, Furnace Only, Packaged Gas/Electric, Packaged Hybrid)",
+        "System type explainers: Heat Pump Split System, Air Conditioner Only, Packaged System, Furnace / Air Conditioner Split System, Furnace / Heat Pump Split System, Furnace Only System, Ductless Mini-Split Systems",
+        "Questionnaire: How long do you expect to stay in this home? (Less than 2 years / 2 - 5 years / 6 - 10 years / Over 10 years)",
+        "Questionnaire: Are you interested in the advantages of a Hybrid Heat® Dual Fuel system? (Yes/No)",
+        "Questionnaire: Are you interested in a variable speed system? (Yes/No) — Greater Comfort, Improved Indoor Air Quality, Save Money advantages",
+        "Questionnaire: Please choose the OUTDOOR sound level (Quietest - less on/off cycling / Quieter operation / Quiet operation)",
+        "Questionnaire: Please choose the INDOOR sound level (Variable Speed – Quietest / 2-Speed – Quieter / Single Speed – Quiet)",
+        "Questionnaire: What level of system efficiency are you interested in? (Premium / Best / Better / Good tiers for every system type, with Mitsubishi Electric ductless products and American Standard split, packaged, furnace and hybrid products)",
+        "Questionnaire: Would you like to manage your financial risk with an Extended Warranty? (Yes/No)",
+        "Questionnaire: Would you be interested in an Annual Service Agreement to protect your system? (Yes/No)",
+        "Questionnaire: Please choose the level of thermostat functionality (Premium: Link UX360 / Best: AccuLink Platinum 1050 / Better: AccuLink Platinum 850 / Good: Gold 824 Control)",
+        "Questionnaire: Would you like your system to have a humidifier for the dry heating months? (Yes/No)",
+        "Questionnaire: Would you like your system to effectively control humidity? (Yes/No)",
+        "Questionnaire: Please select the level of air filtration (Better: AccuClean™ / Good: QuikBox™)",
+        "Product lineup highlights: Mitsubishi FX Deluxe (triple-action filtration: Nano Platinum Filter, Deodorizing Filter, Electrostatic Anti-Allergy Enzyme Filter; Hot-Start Technology; Absence Detection), GX Premier (Powerful Mode, Econo Cool, built-in Wi-Fi), HX, WX, MSY-GS (Dual Barrier Coating), PKA, PUY, Multi-zone (Hyper-Heating INVERTER™)",
+        "American Standard lineup: ForeFront™ Platinum 5TAMX/TAMX air handler, AccuComfort™ Variable Speed Platinum 20 and Platinum 18 Heat Pumps/Air Conditioners, ForeFront™ Gold 5TAM5/GAM5 (Vortica™ Advanced Airflow System), 120V Modular Variable Speed Air Handler (Comfort-R™), Gold 17 Multi-Speed Heat Pump/Air Conditioner, Silver TEM4/5TEM4 Air Handler, Silver 15 Heat Pump (Spine Fin™ coil, Durabase™ basepan), Silver 14 Air Conditioner, Platinum 95 / Gold S9V2-VS / Silver 9X1 / Platinum 80 furnaces, Gold 15 / Silver 14 / Silver 13.4 packaged systems, Silver 13.4 Ultra-Low NOx Packaged Units, Silver 14 3-Phase Packaged Gas/Electric System, Gold 15 EarthWise™ Packaged Hybrid"
+      ],
+      "images": [
+        "Residential Home: Heating and Cooling System",
+        "Hybrid Heat System (diagram)",
+        "Graph: Temperature Swing Comparison",
+        "Graph: System Blower Cycle",
+        "FX Deluxe Wall-mounted Indoor Unit (Mitsubishi)",
+        "GX Premier Wall-mounted Indoor Unit (Mitsubishi)",
+        "AccuComfort™ Variable Speed Platinum 20 Heat Pump (American Standard)",
+        "Platinum 95 Furnace (American Standard)",
+        "Gold 15 EarthWise™ Packaged Hybrid (American Standard)",
+        "American Standard Link UX360 (Smart Thermostat)",
+        "AccuClean™ Whole-Home Air Filtration System",
+        "QuikBox™ Air Cleaner",
+        "Chart: Pollutants Size Comparison (in Microns)"
+      ],
+      "ctas": [
+        "Contact Us Now -> contact form",
+        "Request Service -> /educational-topics/request-service/",
+        "Extended Warranties -> /services/extended-warranties/",
+        "Service Agreements -> /services/service-agreements/"
+      ]
+    }
+  ]
+}

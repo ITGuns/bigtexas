@@ -1,0 +1,168 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { site } from '@/data/site'
+
+const story = [
+  'At Big Texas Comfort we’re passionate about providing the greater Houston area with the best heating and air conditioning repair service, sales, and installations. We treat every furnace and air conditioner repair and install as if we were working for our own families.',
+  'What makes Big Texas Comfort the leading Houston air conditioning and heating contractor? It’s our people. You’ll be thrilled with our heating and air conditioning service from the whole Big Texas family.',
+  'We’re not a one-size-fits-all type of company. We recognize that every home and business is different. We have the expertise to do it right. We’re passionate about service and we know that the details make the difference. We analyze your needs and then recommend the best products for your home and lifestyle.',
+  'We’ll always recommend the most environmentally friendly, reliable and energy-efficient heating and cooling equipment on the market today.',
+]
+---
+
+<Base
+  title="About Us | Big Texas Comfort, Houston, TX"
+  description="Big Texas Comfort is Houston's expert heating and cooling company. Meet the team, our mission, and the certifications behind our customer-for-life service. TX License TACLA28370C."
+>
+  <PageHero
+    eyebrow="About us"
+    lede="Houston's expert heating and cooling company, built around one idea: earn a customer for life on every single visit."
+    crumbs={[{ label: 'About' }]}
+  >
+    The whole Big Texas family, at your service.
+  </PageHero>
+
+  <section class="about">
+    <div class="container-site">
+      <div class="about-story">
+        {story.map((p) => <p class="about-para" data-reveal>{p}</p>)}
+      </div>
+
+      <div class="about-mv" data-reveal-group>
+        <div class="about-mv-card surface" data-reveal-child>
+          <p class="type-label type-label--heat">Mission</p>
+          <p class="about-mv-text">{site.mission}</p>
+        </div>
+        <div class="about-mv-card surface" data-reveal-child>
+          <p class="type-label type-label--cool">Vision</p>
+          <p class="about-mv-text">{site.vision}</p>
+        </div>
+      </div>
+
+      <div class="about-quals">
+        <h2 class="type-h2" data-reveal>Qualifications</h2>
+        <p class="about-quals-lede" data-reveal>
+          We maintain a high level of quality among our staff. All of our installers and
+          technicians are trained on a regular, ongoing basis, and we are certified by the
+          following industry organizations.
+        </p>
+        <div class="about-quals-badges" data-reveal>
+          <img src="/images/badge-as-dealer.png" alt="American Standard Customer Care Dealer and Ductless Pro Contractor badges" width="1200" height="600" loading="lazy" />
+        </div>
+        <ul class="about-quals-list" data-reveal-group>
+          {
+            site.credentials.map((c) => (
+              <li class="about-qual surface" data-reveal-child>
+                <h3 class="about-qual-name">{c.name}</h3>
+                <p class="about-qual-blurb">{c.blurb}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="about-links" data-reveal>
+        <a href="/about/gallery/" class="btn btn--night">Photo gallery <span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a href="/reviews/" class="btn btn--ghost">Customer reviews</a>
+        <a href="/refer-a-friend/" class="btn btn--ghost">Refer a friend</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Meet us on your doorstep." />
+</Base>
+
+<style>
+  .about {
+    padding-bottom: var(--spacing-section);
+  }
+  .about-story {
+    max-width: 46rem;
+  }
+  .about-para {
+    margin-bottom: 1.4rem;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+  .about-para:first-of-type {
+    font-size: 1.2rem;
+    color: var(--color-ink);
+  }
+  .about-mv {
+    margin-top: 3rem;
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .about-mv {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .about-mv-card {
+    padding: 1.75rem 1.9rem;
+  }
+  .about-mv-text {
+    margin-top: 0.9rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 560;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+  .about-quals {
+    margin-top: 5rem;
+  }
+  .about-quals-lede {
+    margin-top: 1.2rem;
+    max-width: 46rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .about-quals-badges {
+    margin-top: 2rem;
+    max-width: 30rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: #fdfdfb;
+    padding: 1.5rem;
+  }
+  .about-quals-badges img {
+    width: 100%;
+    height: auto;
+  }
+  .about-quals-list {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .about-quals-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .about-qual {
+    padding: 1.5rem 1.6rem;
+  }
+  .about-qual-name {
+    font-family: var(--font-display);
+    font-weight: 620;
+    font-size: 1.08rem;
+    letter-spacing: -0.01em;
+  }
+  .about-qual-blurb {
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+  .about-links {
+    margin-top: 3.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+export const prerender = false
+
+import Admin from '@/layouts/Admin.astro'
+import { isAuthed, LOGIN_PATH } from '@/lib/auth'
+import { listLeads, leadCounts, LEAD_STATUSES, type LeadStatus } from '@/lib/db'
+import { fmtWhen, statusLabel } from '@/lib/format'
+
+if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
+
+const url = Astro.url
+const filter = url.searchParams.get('status') as LeadStatus | null
+const valid = filter && LEAD_STATUSES.includes(filter) ? filter : undefined
+const q = (url.searchParams.get('q') ?? '').trim().toLowerCase()
+
+let leads = await listLeads(valid)
+if (q) {
+  leads = leads.filter((l) =>
+    [l.first_name, l.last_name, l.phone, l.email, l.city, l.message, l.service]
+      .join(' ')
+      .toLowerCase()
+      .includes(q),
+  )
+}
+
+// CSV export shares this route so filters carry through
+if (url.searchParams.get('export') === 'csv') {
+  const cols = [
+    'id', 'created_at', 'first_name', 'last_name', 'phone', 'email',
+    'address', 'city', 'service', 'urgency', 'status', 'message', 'notes',
+  ] as const
+  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`
+  const csv = [
+    cols.join(','),
+    ...leads.map((l) => cols.map((c) => esc((l as unknown as Record<string, unknown>)[c])).join(',')),
+  ].join('\n')
+  return new Response(csv, {
+    headers: {
+      'content-type': 'text/csv; charset=utf-8',
+      'content-disposition': `attachment; filename="big-texas-comfort-leads.csv"`,
+    },
+  })
+}
+
+const counts = await leadCounts()
+const total = Object.values(counts).reduce((a, b) => a + b, 0)
+---
+
+<Admin title="Leads" active="leads">
+  <div class="admin-head">
+    <div>
+      <h1 class="admin-title">Leads</h1>
+      <p class="admin-sub">
+        {leads.length} shown{valid ? ` in ${statusLabel(valid)}` : ''}{q ? ` matching “${q}”` : ''} of {total} total.
+      </p>
+    </div>
+    <a href={`/admin/leads/?export=csv${valid ? `&status=${valid}` : ''}`} class="btn btn--ghost btn--sm">
+      Export CSV
+    </a>
+  </div>
+
+  <form class="inline-form" method="GET" style="margin-bottom:1.25rem;gap:.6rem">
+    <input
+      class="admin-input"
+      type="search"
+      name="q"
+      value={q}
+      placeholder="Search name, phone, city, message"
+      style="max-width:22rem"
+    />
+    <select class="admin-select" name="status">
+      <option value="">All statuses</option>
+      {LEAD_STATUSES.map((s) => <option value={s} selected={valid === s}>{statusLabel(s)} ({counts[s]})</option>)}
+    </select>
+    <button type="submit" class="btn btn--primary btn--sm">Filter</button>
+    {(q || valid) && <a href="/admin/leads/" class="btn btn--ghost btn--sm">Clear</a>}
+  </form>
+
+  {
+    leads.length === 0 ? (
+      <div class="admin-panel">
+        <div class="admin-empty">
+          <strong>No leads match</strong>
+          Try clearing the filter, or wait for the next request from the website.
+        </div>
+      </div>
+    ) : (
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Service</th>
+              <th>Status</th>
+              <th>Received</th>
+              <th>Move to</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leads.map((l) => (
+              <tr>
+                <td>
+                  <a href={`/admin/leads/${l.id}/`}>
+                    {l.first_name} {l.last_name}
+                  </a>
+                  {l.urgency === 'emergency' && (
+                    <span class="pill pill--urgent" style="margin-left:.4rem">Emergency</span>
+                  )}
+                  <div class="cell-muted">{l.city || l.address || 'No location given'}</div>
+                </td>
+                <td>
+                  {l.phone && (
+                    <a href={`tel:${l.phone.replace(/\D/g, '')}`} style="color:var(--color-cool-bright)">
+                      {l.phone}
+                    </a>
+                  )}
+                  <div class="cell-muted">{l.email}</div>
+                </td>
+                <td class="cell-muted">{l.service || 'Not specified'}</td>
+                <td>
+                  <span class:list={['pill', `pill--${l.status}`]}>{statusLabel(l.status)}</span>
+                </td>
+                <td class="cell-mono">{fmtWhen(l.created_at)}</td>
+                <td>
+                  <form class="inline-form" method="POST" action="/api/admin/update/">
+                    <input type="hidden" name="action" value="lead-status" />
+                    <input type="hidden" name="id" value={l.id} />
+                    <select class="admin-select" name="status" onchange="this.form.submit()">
+                      {LEAD_STATUSES.map((s) => (
+                        <option value={s} selected={l.status === s}>{statusLabel(s)}</option>
+                      ))}
+                    </select>
+                    <noscript><button type="submit" class="btn btn--ghost btn--sm">Set</button></noscript>
+                  </form>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+</Admin>

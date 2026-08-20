@@ -1,0 +1,197 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import GoogleMap from '@/components/GoogleMap.astro'
+import { cities } from '@/data/cities'
+import { cityContent, combosForCity } from '@/data/extracted'
+import { getService } from '@/data/services'
+import { site } from '@/data/site'
+
+export function getStaticPaths() {
+  return cities
+    .filter((c) => c.id !== 'houston')
+    .map((c) => ({ params: { city: c.id }, props: { city: c } }))
+}
+
+const { city } = Astro.props
+const pages = cityContent(city.id)
+const main = pages[0]
+const cityCombos = combosForCity(city.id)
+  .map((c) => ({ svc: getService(c.serviceId), cityId: c.cityId }))
+  .filter((c) => !!c.svc)
+
+const branch = site.branches.find((b) => b.city.toLowerCase().replace(' ', '-') === city.id)
+
+const paragraphs = pages.flatMap((p) => p.uniqueCopy).slice(0, 8)
+const title = main?.title || `HVAC in ${city.name}, TX | Big Texas Comfort`
+const description =
+  main?.metaDescription ||
+  `Heating and air conditioning service in ${city.name}, TX from Big Texas Comfort. Licensed, factory-trained technicians serving all makes and models. Call ${site.phone}.`
+---
+
+<Base title={title} description={description}>
+  <PageHero
+    eyebrow={`Service area · ${city.tier === 'primary' ? 'Primary' : 'Extended'}`}
+    lede={main?.summary}
+    crumbs={[{ label: 'Service Area', href: '/service-area/' }, { label: city.name }]}
+  >
+    {main?.h1 ?? `Heating & Air Conditioning in ${city.name}, TX`}
+  </PageHero>
+
+  <section class="cty">
+    <div class="container-site cty-grid">
+      <article class="cty-article">
+        {paragraphs.map((p) => <p class="cty-para" data-reveal>{p}</p>)}
+
+        {
+          branch && (
+            <div class="cty-branch surface" data-reveal>
+              <p class="type-label type-label--heat">Local office</p>
+              <p class="cty-branch-name">{branch.name}</p>
+              <p class="cty-branch-addr">
+                {branch.street}, {branch.city}, {branch.state} {branch.zip} ·{' '}
+                <a href={branch.phoneHref} class="link-under">{branch.phone}</a>
+              </p>
+            </div>
+          )
+        }
+
+        {
+          cityCombos.length > 0 && (
+            <nav class="cty-services" aria-label={`Services in ${city.name}`} data-reveal>
+              <h2 class="type-h3">Services in {city.name}</h2>
+              <ul class="cty-svc-grid">
+                {cityCombos.map(({ svc }) => (
+                  <li>
+                    <a href={`/services/${svc!.id}/${city.id}/`} class="cty-svc surface card-hover">
+                      <span>{svc!.name}</span>
+                      <span class="btn-arrow" aria-hidden="true">→</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+      </article>
+
+      <aside class="cty-rail">
+        <GoogleMap query={`${city.name}, TX`} zoom={12} label={`HVAC service in ${city.name}`} sublabel={`${city.name}, Texas`} ratio="4 / 3" />
+        <div class="cty-rail-card surface">
+          <p class="type-label">Dispatch</p>
+          <a href={site.phoneHref} class="cty-rail-phone">{site.phoneDisplay}</a>
+          <p class="cty-rail-hours">{site.hours.regular}<br />{site.hours.emergency}</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand title={`Need a hand in ${city.name}? We're close.`} />
+</Base>
+
+<style>
+  .cty {
+    padding-bottom: var(--spacing-section);
+  }
+  .cty-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .cty-grid {
+      grid-template-columns: 1fr 22rem;
+      gap: 5rem;
+    }
+  }
+  .cty-article {
+    max-width: 46rem;
+  }
+  .cty-para {
+    margin-bottom: 1.4rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+    font-size: 1.02rem;
+  }
+  .cty-para:first-of-type {
+    color: var(--color-ink);
+    font-size: 1.12rem;
+  }
+  .cty-branch {
+    margin-block: 2rem;
+    padding: 1.4rem 1.6rem;
+  }
+  .cty-branch-name {
+    margin-top: 0.5rem;
+    font-weight: 640;
+  }
+  .cty-branch-addr {
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+  .cty-services {
+    margin-top: 2.5rem;
+  }
+  .cty-svc-grid {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 0.7rem;
+  }
+  @media (min-width: 40rem) {
+    .cty-svc-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .cty-svc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1.2rem;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .cty-svc .btn-arrow {
+    color: var(--color-ink-faint);
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .cty-svc:hover .btn-arrow {
+    transform: translateX(4px);
+    color: var(--color-heat);
+  }
+  .cty-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-self: start;
+    position: sticky;
+    top: 6rem;
+  }
+  .cty-rail-card {
+    padding: 1.4rem 1.6rem;
+  }
+  .cty-rail-phone {
+    display: block;
+    margin-top: 0.7rem;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 640;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .cty-rail-phone:hover {
+    color: var(--color-heat);
+  }
+  .cty-rail-hours {
+    margin-top: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    line-height: 1.7;
+    color: var(--color-ink-faint);
+  }
+</style>

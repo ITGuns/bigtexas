@@ -1,0 +1,77 @@
+---
+import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/instrument-sans'
+import '@fontsource-variable/jetbrains-mono'
+import '@/styles/global.css'
+import '@/styles/admin.css'
+import { usingDefaultPassword } from '@/lib/auth'
+
+interface Props {
+  title: string
+  active?: 'dashboard' | 'leads' | 'bookings'
+}
+const { title, active } = Astro.props
+
+const nav = [
+  { id: 'dashboard', label: 'Dashboard', href: '/admin/' },
+  { id: 'leads', label: 'Leads', href: '/admin/leads/' },
+  { id: 'bookings', label: 'Bookings', href: '/admin/bookings/' },
+]
+---
+
+<!doctype html>
+<html lang="en" class="admin-root">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Big Texas Comfort Admin</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="admin-body">
+    <header class="admin-bar edge-lit">
+      <div class="admin-bar-inner">
+        <a href="/admin/" class="admin-brand">
+          <span class="admin-logo-plate">
+            <img src="/images/logo.png" alt="Big Texas Comfort" width="411" height="85" />
+          </span>
+          <span class="admin-brand-tag">Control Panel</span>
+        </a>
+
+        <nav class="admin-nav" aria-label="Admin sections">
+          {
+            nav.map((n) => (
+              <a
+                href={n.href}
+                class:list={['admin-nav-link', { 'is-active': active === n.id }]}
+                aria-current={active === n.id ? 'page' : undefined}
+              >
+                {n.label}
+              </a>
+            ))
+          }
+        </nav>
+
+        <div class="admin-bar-actions">
+          <a href="/" class="admin-view-site" target="_blank" rel="noopener">View site</a>
+          <form method="POST" action="/admin/logout/">
+            <button type="submit" class="btn btn--ghost btn--sm">Sign out</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    {
+      usingDefaultPassword && (
+        <p class="admin-warn">
+          This panel is using the built-in default password. Set <code>ADMIN_PASSWORD</code> and{' '}
+          <code>ADMIN_SECRET</code> in the environment before putting it online.
+        </p>
+      )
+    }
+
+    <main class="admin-main">
+      <slot />
+    </main>
+  </body>
+</html>

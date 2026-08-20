@@ -1,0 +1,291 @@
+---
+import { site } from '@/data/site'
+import { getProductImage } from '@/data/productImages'
+
+const categories = [
+  { slug: 'air-conditioners', name: 'Air Conditioners', href: '/products/air-conditioners/', note: 'Up to 24 SEER2 cooling' },
+  { slug: 'heat-pumps', name: 'Heat Pumps', href: '/products/heat-pumps/', note: 'Heating and cooling in one' },
+  { slug: 'gas-furnaces', name: 'Gas Furnaces', href: '/products/gas-furnaces/', note: 'Up to 97.3% AFUE' },
+  { slug: 'duct-free-systems', name: 'Ductless Mini-Splits', href: '/products/duct-free-systems/', note: 'Room-by-room comfort' },
+  { slug: 'indoor-air-quality', name: 'Indoor Air Quality', href: '/products/indoor-air-quality/', note: 'Filtration and humidity' },
+  { slug: 'thermostats-zoning', name: 'Thermostats & Zoning', href: '/products/thermostats-zoning/', note: 'Control and precision' },
+].map((c) => ({ ...c, img: getProductImage(c.slug) }))
+---
+
+<section class="section products" aria-labelledby="products-title" data-prodband>
+  <div class="container-site">
+    <div class="prod-grid">
+      <div class="prod-intro">
+        <p class="type-label type-label--heat eyebrow" data-reveal="fade">American Standard® dealer</p>
+        <h2 class="type-h2" id="products-title" data-reveal>
+          Equipment that earns its reputation the hard way.
+        </h2>
+        <p class="type-lede" data-reveal data-reveal-delay="0.1">
+          As an independent American Standard dealer we carry a complete line of indoor comfort
+          equipment: air conditioners, heat pumps, gas furnaces, thermostats, humidifiers,
+          ductless systems, air cleaners, UV lights, ventilators and zoning products.
+        </p>
+
+        <!-- hover/focus preview of the highlighted product -->
+        <figure class="prod-stage" data-reveal="scale" data-reveal-delay="0.14">
+          <div class="prod-stage-plate">
+            {
+              categories.map((c, i) => (
+                <img
+                  src={c.img.src}
+                  alt={c.img.alt}
+                  class:list={['prod-stage-img', { 'is-active': i === 0 }]}
+                  data-stage-img={c.slug}
+                  loading="lazy"
+                  decoding="async"
+                  width="320"
+                  height="320"
+                />
+              ))
+            }
+          </div>
+          <figcaption class="prod-stage-cap">
+            <span class="type-label type-label--cool" data-stage-name>{categories[0].name}</span>
+            <span class="prod-stage-note" data-stage-note>{categories[0].note}</span>
+          </figcaption>
+        </figure>
+
+        <p class="prod-all-brands" data-reveal data-reveal-delay="0.2">
+          <strong>We service all brands.</strong> Repair and maintenance cover every make and
+          model, not just the ones we install.
+        </p>
+        <ul class="prod-pdfs" data-reveal data-reveal-delay="0.22">
+          <li><a class="link-under" href={site.pdfs.seet} target="_blank" rel="noopener">About SEET (PDF)</a></li>
+          <li><a class="link-under" href={site.pdfs.awards} target="_blank" rel="noopener">Product awards (PDF)</a></li>
+          <li><a class="link-under" href={site.pdfs.rebates} target="_blank" rel="noopener">CenterPoint rebates (PDF)</a></li>
+        </ul>
+      </div>
+
+      <ul class="prod-list" data-reveal-group>
+        {
+          categories.map((c, i) => (
+            <li data-reveal-child>
+              <a
+                href={c.href}
+                class="prod-row card-hover surface"
+                data-stage-trigger={c.slug}
+                data-stage-note-text={c.note}
+                data-stage-name-text={c.name}
+                aria-current={i === 0 ? 'true' : undefined}
+              >
+                <span class="prod-thumb">
+                  <img src={c.img.src} alt="" width="72" height="72" loading="lazy" decoding="async" />
+                </span>
+                <span class="prod-row-body">
+                  <span class="prod-row-name">{c.name}</span>
+                  <span class="prod-row-note">{c.note}</span>
+                </span>
+                <span class="prod-row-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .prod-grid {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .prod-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+  .prod-intro h2 {
+    margin-top: 1.4rem;
+    max-width: 20ch;
+  }
+  .prod-intro .type-lede {
+    margin-top: 1.5rem;
+  }
+
+  /* product stage */
+  .prod-stage {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .prod-stage-plate {
+    position: relative;
+    width: 9.5rem;
+    height: 9.5rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line);
+    background:
+      radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.95), transparent 62%),
+      linear-gradient(158deg, #ffffff 0%, #f3f0e8 100%);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    box-shadow: 0 14px 34px -22px rgba(22, 20, 26, 0.45);
+  }
+  .prod-stage-plate::after {
+    content: '';
+    position: absolute;
+    inset-inline: 12%;
+    bottom: 10%;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(22, 20, 26, 0.22), transparent 70%);
+  }
+  .prod-stage-img {
+    position: absolute;
+    max-width: 74%;
+    max-height: 74%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    transition:
+      opacity 0.45s var(--ease-out-expo),
+      transform 0.45s var(--ease-out-expo);
+  }
+  .prod-stage-img.is-active {
+    opacity: 1;
+    transform: none;
+  }
+  .prod-stage-cap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .prod-stage-note {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    max-width: 18ch;
+  }
+
+  .prod-all-brands {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+    border-left: 2px solid;
+    border-image: var(--grad-temperature) 1;
+    padding-left: 1rem;
+  }
+  .prod-pdfs {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.5rem;
+  }
+  .prod-pdfs a {
+    font-size: 0.88rem;
+    color: var(--color-cool);
+  }
+
+  .prod-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .prod-row {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 0.95rem 1.3rem;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+  /* temperature wash sweeps in on hover */
+  .prod-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, color-mix(in srgb, var(--color-heat) 8%, transparent), transparent 62%);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-swift);
+  }
+  .prod-row:hover::before,
+  .prod-row:focus-visible::before {
+    opacity: 1;
+  }
+  .prod-thumb {
+    position: relative;
+    width: 3.1rem;
+    height: 3.1rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(160deg, #ffffff, #f2efe7);
+    border: 1px solid var(--color-line-soft);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .prod-thumb img {
+    max-width: 76%;
+    max-height: 76%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.45s var(--ease-out-expo);
+  }
+  .prod-row:hover .prod-thumb img {
+    transform: scale(1.09);
+  }
+  .prod-row-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+  }
+  .prod-row-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+  .prod-row-note {
+    font-size: 0.84rem;
+    color: var(--color-ink-faint);
+  }
+  .prod-row-arrow {
+    position: relative;
+    color: var(--color-ink-faint);
+    transition: transform 0.3s var(--ease-out-expo), color 0.2s;
+  }
+  .prod-row:hover .prod-row-arrow {
+    transform: translateX(4px);
+    color: var(--color-heat);
+  }
+</style>
+
+<script>
+  const band = document.querySelector('[data-prodband]')
+  if (band) {
+    const imgs = [...band.querySelectorAll<HTMLElement>('[data-stage-img]')]
+    const nameEl = band.querySelector<HTMLElement>('[data-stage-name]')
+    const noteEl = band.querySelector<HTMLElement>('[data-stage-note]')
+
+    for (const trigger of band.querySelectorAll<HTMLElement>('[data-stage-trigger]')) {
+      const show = () => {
+        const slug = trigger.dataset.stageTrigger
+        for (const img of imgs) img.classList.toggle('is-active', img.dataset.stageImg === slug)
+        if (nameEl) nameEl.textContent = trigger.dataset.stageNameText ?? ''
+        if (noteEl) noteEl.textContent = trigger.dataset.stageNoteText ?? ''
+      }
+      trigger.addEventListener('mouseenter', show)
+      trigger.addEventListener('focus', show)
+    }
+  }
+</script>

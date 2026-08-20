@@ -1,0 +1,231 @@
+---
+import { site } from '@/data/site'
+import VideoBackdrop from '@/components/VideoBackdrop.astro'
+
+const steps = [
+  {
+    time: '9:42 PM',
+    title: 'The AC quits',
+    detail: 'Mid-August, house warming fast. You don’t wait for morning.',
+  },
+  {
+    time: '9:44 PM',
+    title: 'You call. We answer.',
+    detail: `${site.phoneDisplay}. Emergency service runs 24 hours a day, seven days a week.`,
+  },
+  {
+    time: 'Same night',
+    title: 'A technician is dispatched',
+    detail: 'Factory-trained, and versed in every major make and model, not just the ones we sell.',
+  },
+  {
+    time: 'Diagnosis',
+    title: '$89.50 service call',
+    detail: 'The diagnostic includes the first hour of labor. Transparent pricing before work begins.',
+  },
+]
+---
+
+<section class="section on-night emergency" aria-labelledby="emergency-title">
+  <VideoBackdrop
+    src="/video/video-loop.mp4"
+    poster="/images/video/field-poster.jpg"
+    opacity={0.34}
+    scrim="side"
+    tone="heat"
+    objectPosition="60% center"
+  />
+
+  <div class="container-site emergency-inner">
+    <div class="em-head">
+      <p class="type-label type-label--heat eyebrow" data-reveal="fade">24/7 emergency service</p>
+      <h2 class="type-h2" id="emergency-title" data-reveal>
+        When it fails at night,<br />the clock matters.
+      </h2>
+    </div>
+
+    <ol class="em-steps" data-em-steps>
+      <div class="em-line" aria-hidden="true"><span class="em-line-fill" data-em-line></span></div>
+      {
+        steps.map((s, i) => (
+          <li class="em-step" data-em-step>
+            <span class="em-dot" aria-hidden="true" />
+            <span class="em-time type-label">{s.time}</span>
+            <h3 class="em-title">{s.title}</h3>
+            <p class="em-detail">{s.detail}</p>
+            {i === 1 && (
+              <a href={site.phoneHref} class="btn btn--primary btn--sm em-call">
+                Call now
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="em-foot" data-reveal>
+      Regular hours run Monday to Saturday, 7:00 AM to 9:00 PM. After that, the emergency line takes over.
+    </p>
+  </div>
+</section>
+
+<style>
+  .emergency {
+    position: relative;
+    overflow: clip;
+    isolation: isolate;
+  }
+  .emergency-inner {
+    position: relative;
+    z-index: 1;
+  }
+  .em-head h2 {
+    margin-top: 1.4rem;
+  }
+  .em-steps {
+    position: relative;
+    margin-top: clamp(3rem, 6vw, 5rem);
+    display: grid;
+    gap: 2.75rem;
+    padding-left: 2rem;
+  }
+  @media (min-width: 64rem) {
+    .em-steps {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2.5rem;
+      padding-left: 0;
+      padding-top: 2.2rem;
+    }
+  }
+
+  /* connective line */
+  .em-line {
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-night-line);
+    overflow: hidden;
+  }
+  @media (min-width: 64rem) {
+    .em-line {
+      left: 0;
+      right: 0;
+      top: 5px;
+      bottom: auto;
+      width: auto;
+      height: 2px;
+    }
+  }
+  .em-line-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-heat-bright), var(--color-heat));
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  @media (min-width: 64rem) {
+    .em-line-fill {
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+  }
+
+  .em-step {
+    position: relative;
+  }
+  .em-dot {
+    position: absolute;
+    left: -2rem;
+    top: 0.15rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-night);
+    border: 2px solid var(--color-night-line);
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+  @media (min-width: 64rem) {
+    .em-dot {
+      left: 0;
+      top: -2.2rem;
+    }
+  }
+  .em-step.is-lit .em-dot {
+    border-color: var(--color-heat-bright);
+    background: var(--color-heat);
+  }
+  .em-time {
+    color: var(--color-heat-bright);
+  }
+  .em-title {
+    margin-top: 0.6rem;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .em-detail {
+    margin-top: 0.5rem;
+    font-size: 0.93rem;
+    line-height: 1.55;
+    color: var(--color-night-ink-soft);
+    max-width: 30ch;
+  }
+  .em-call {
+    margin-top: 1rem;
+  }
+  .em-foot {
+    margin-top: 3.5rem;
+    font-size: 0.9rem;
+    color: var(--color-night-ink-soft);
+    max-width: 48ch;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html.js .em-step {
+      opacity: 0;
+      transform: translateY(20px);
+      transition:
+        opacity 0.7s var(--ease-out-expo),
+        transform 0.7s var(--ease-out-expo);
+    }
+    html.js .em-step.is-lit {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  gsap.registerPlugin(ScrollTrigger)
+
+  const wrap = document.querySelector('[data-em-steps]')
+  const line = document.querySelector('[data-em-line]')
+  const steps = [...document.querySelectorAll('[data-em-step]')]
+  const motionOK = window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+
+  if (wrap && line && steps.length) {
+    if (!motionOK || document.visibilityState === 'hidden') {
+      steps.forEach((s) => s.classList.add('is-lit'))
+      ;(line as HTMLElement).style.transform = 'none'
+    } else {
+      const desktop = window.matchMedia('(min-width: 64rem)').matches
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: wrap, start: 'top 72%', once: true },
+      })
+      tl.to(line, {
+        [desktop ? 'scaleX' : 'scaleY']: 1,
+        duration: 1.6,
+        ease: 'power2.inOut',
+      })
+      steps.forEach((s, i) => {
+        tl.add(() => s.classList.add('is-lit'), 0.18 + i * 0.38)
+      })
+    }
+  }
+</script>

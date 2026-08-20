@@ -1,0 +1,150 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { get } from '@/data/extracted'
+
+const guideMap = [
+  { slug: 'select-new-system', source: 'select-new-system', name: 'Selecting a New System' },
+  { slug: 'repair-or-replace', source: 'repair-replace', name: 'Repair or Replace?' },
+  { slug: 'energy-bill-concerns', source: 'energy-bill-concerns', name: 'Energy Bill Concerns' },
+  { slug: 'healthier-home', source: 'healthier-home', name: 'A Healthier Home' },
+  { slug: 'ready-maintenance', source: 'ready-maintenance', name: 'Ready for Maintenance' },
+]
+
+export function getStaticPaths() {
+  const map = [
+    { slug: 'select-new-system', source: 'select-new-system', name: 'Selecting a New System' },
+    { slug: 'repair-or-replace', source: 'repair-replace', name: 'Repair or Replace?' },
+    { slug: 'energy-bill-concerns', source: 'energy-bill-concerns', name: 'Energy Bill Concerns' },
+    { slug: 'healthier-home', source: 'healthier-home', name: 'A Healthier Home' },
+    { slug: 'ready-maintenance', source: 'ready-maintenance', name: 'Ready for Maintenance' },
+  ]
+  return map.map((g) => ({ params: { slug: g.slug }, props: { meta: g } }))
+}
+
+const { meta } = Astro.props
+const page = get('support', meta.source)
+const others = guideMap.filter((g) => g.slug !== meta.slug)
+---
+
+<Base
+  title={page?.title || `${meta.name} | Big Texas Comfort`}
+  description={page?.metaDescription || `${meta.name}: practical HVAC guidance from Big Texas Comfort in Houston, TX.`}
+>
+  <PageHero
+    eyebrow="Quick help guide"
+    tone="cool"
+    lede={page?.summary}
+    crumbs={[{ label: 'Support', href: '/support/' }, { label: meta.name }]}
+  >
+    {page?.h1 ?? meta.name}
+  </PageHero>
+
+  <section class="guide">
+    <div class="container-site guide-grid">
+      <article class="guide-article">
+        {(page?.uniqueCopy ?? []).map((p) => <p class="guide-para" data-reveal>{p}</p>)}
+
+        {
+          (page?.features?.length ?? 0) > 0 && (
+            <ul class="guide-points" data-reveal>
+              {page!.features!.map((f) => (
+                <li>
+                  <span class="guide-tick" aria-hidden="true">★</span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </article>
+
+      <aside class="guide-rail">
+        <p class="type-label">More guides</p>
+        <ul class="guide-rail-list">
+          {
+            others.map((g) => (
+              <li>
+                <a href={`/guides/${g.slug}/`} class="link-under">{g.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="type-label guide-rail-more">Hands-on help</p>
+        <ul class="guide-rail-list">
+          <li><a href="/support/" class="link-under">DIY troubleshooting</a></li>
+          <li><a href="/contact/" class="link-under">Request service</a></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand title="Want a professional read on it?" />
+</Base>
+
+<style>
+  .guide {
+    padding-bottom: var(--spacing-section);
+  }
+  .guide-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .guide-grid {
+      grid-template-columns: 1fr 16rem;
+      gap: 5rem;
+    }
+  }
+  .guide-article {
+    max-width: 46rem;
+  }
+  .guide-para {
+    margin-bottom: 1.4rem;
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+  .guide-para:first-of-type {
+    font-size: 1.12rem;
+    color: var(--color-ink);
+  }
+  .guide-points {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .guide-points li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: baseline;
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+  .guide-tick {
+    color: var(--color-cool);
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+  .guide-rail {
+    align-self: start;
+    position: sticky;
+    top: 6rem;
+  }
+  .guide-rail-list {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .guide-rail-list a {
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+  }
+  .guide-rail-more {
+    margin-top: 2rem;
+  }
+</style>

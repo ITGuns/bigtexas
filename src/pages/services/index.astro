@@ -1,0 +1,139 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { serviceCategories, services } from '@/data/services'
+---
+
+<Base
+  title="HVAC Services in Houston, TX | Big Texas Comfort"
+  description="Comprehensive HVAC services in Houston, TX: repair, installation and preventive maintenance for cooling, heating, air quality and ductwork. 24/7 emergency service. Call 832-888-5166."
+>
+  <PageHero
+    eyebrow="Services"
+    lede="Whether you need a new heating and air conditioning system, a repair, or preventive maintenance, our skilled technicians handle the job, for every make and model."
+    crumbs={[{ label: 'Services' }]}
+  >
+    Comprehensive HVAC services,<br />one accountable crew.
+  </PageHero>
+
+  <section class="section services-list">
+    <div class="container-site">
+      {
+        serviceCategories.map((cat) => (
+          <div class="svc-group" id={cat.id}>
+            <div class="svc-group-head" data-reveal>
+              <h2 class="type-h3">{cat.name}</h2>
+              <p class="svc-group-blurb">{cat.blurb}</p>
+            </div>
+            <ul class="svc-grid" data-reveal-group>
+              {services
+                .filter((s) => s.category === cat.id)
+                .map((s) => (
+                  <li data-reveal-child>
+                    <a href={`/services/${s.id}/`} class="svc-card surface card-hover">
+                      <span class="svc-card-name">
+                        {s.name}
+                        {s.emergency && <span class="svc-badge">24/7</span>}
+                      </span>
+                      <span class="svc-card-short">{s.short}</span>
+                      <span class="svc-card-cta">
+                        Details <span class="btn-arrow" aria-hidden="true">→</span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaBand title="Not sure which service you need?" note="Describe the problem and we'll point you the right way. Free estimates and second opinions." />
+</Base>
+
+<style>
+  .services-list {
+    padding-top: 0;
+  }
+  .svc-group {
+    padding-block: 2.5rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .svc-group-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem 2.5rem;
+    margin-bottom: 1.75rem;
+  }
+  .svc-group-blurb {
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+    max-width: 52ch;
+  }
+  .svc-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .svc-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .svc-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .svc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    height: 100%;
+    padding: 1.5rem 1.6rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .svc-card-name {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 620;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .svc-badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--color-paper);
+    background: var(--color-heat);
+    border-radius: 4px;
+    padding: 0.18rem 0.4rem;
+  }
+  .svc-card-short {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+    flex: 1;
+  }
+  .svc-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-heat);
+  }
+  .svc-card .btn-arrow {
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+  .svc-card:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+</style>

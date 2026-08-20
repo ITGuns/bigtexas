@@ -1,0 +1,365 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { productPages } from '@/data/extracted'
+import { videos, runtime } from '@/data/videos'
+import { site } from '@/data/site'
+import { getProductImage } from '@/data/productImages'
+
+export function getStaticPaths() {
+  return productPages
+    .filter((p) => !['heating', 'cooling'].includes(p.slug))
+    .map((p) => ({ params: { slug: p.slug }, props: { page: p } }))
+}
+
+const { page } = Astro.props
+
+/** pair equipment pages with their real explainer video where one exists */
+const videoMatch: Record<string, string> = {
+  'air-conditioners': 'air-conditioner',
+  'heat-pumps': 'heat-pump',
+  'air-handlers': 'air-handler',
+  'gas-furnaces': 'gas-furnace',
+  'hybrid-heat': 'hybrid-heat',
+}
+const video = videos.find((v) => v.id === videoMatch[page.slug])
+
+const name = page.h1 ?? page.slug
+const models = page.models ?? []
+const hero = getProductImage(page.slug)
+---
+
+<Base
+  title={page.title || `${name} | Big Texas Comfort`}
+  description={page.metaDescription || page.summary || `${name} from Big Texas Comfort, independent American Standard dealer in Houston, TX.`}
+>
+  <PageHero
+    eyebrow="Products"
+    tone="cool"
+    crumbs={[{ label: 'Products', href: '/products/' }, { label: name }]}
+  >
+    {name}
+  </PageHero>
+
+  <section class="prod-body">
+    <div class="container-site prod-layout">
+      <article class="prod-article">
+        {page.uniqueCopy.map((p) => <p class="prod-para" data-reveal>{p}</p>)}
+
+        {
+          models.length > 0 && (
+            <div class="prod-models" data-reveal>
+              <h2 class="type-h3">Models &amp; series</h2>
+              <div class="prod-models-grid" data-reveal-group>
+                {models.map((m) => (
+                  <div class="prod-model surface" data-reveal-child>
+                    <p class="prod-model-name">{m.name}</p>
+                    <ul class="prod-model-specs">
+                      {m.specs.map((s) => (
+                        <li>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        }
+
+        {
+          video && (
+            <div class="prod-video" data-reveal>
+              <h2 class="type-h3">How does it work?</h2>
+              <p class="prod-video-blurb">{video.blurb}</p>
+              <div class="video-card" data-video={video.vimeoId} data-video-title={video.title}>
+                <div class="video-shot">
+                  <img
+                    class="video-poster"
+                    src={video.poster}
+                    alt=""
+                    width="1280"
+                    height="720"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="video-time">{runtime(video)}</span>
+                  <button class="video-trigger" type="button" aria-label={`Play ${video.title}, ${runtime(video)}`}>
+                    <span class="video-play" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M4.5 2.8v10.4c0 .6.7 1 1.2.7l8.2-5.2c.5-.3.5-1 0-1.3L5.7 2.1c-.5-.3-1.2 0-1.2.7Z" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </article>
+
+      <aside class="prod-rail">
+        {
+          hero && (
+            <figure class="prod-hero-shot" data-reveal="scale">
+              <img src={hero.src} alt={hero.alt} width="360" height="360" loading="eager" decoding="async" />
+            </figure>
+          )
+        }
+        <div class="prod-rail-card surface">
+          <p class="type-label">Which one fits your home?</p>
+          <p class="prod-rail-copy">
+            Sizing and efficiency depend on the house. New-system estimates are free, and so are
+            second opinions on quotes you already have.
+          </p>
+          <a href={site.phoneHref} class="btn btn--primary prod-rail-btn">Call {site.phone}</a>
+          <a href="/guides/select-new-system/" class="link-under prod-rail-link">Guide: selecting a new system</a>
+          <a href="/financing/" class="link-under prod-rail-link">Financing options</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand title="Want numbers for your exact square footage?" />
+</Base>
+
+<style>
+  .prod-body {
+    padding-bottom: var(--spacing-section);
+  }
+  .prod-layout {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 64rem) {
+    .prod-layout {
+      grid-template-columns: 1fr 19rem;
+      gap: 5rem;
+    }
+  }
+  .prod-article {
+    max-width: 48rem;
+  }
+  .prod-para {
+    margin-bottom: 1.4rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+    font-size: 1.02rem;
+  }
+  .prod-para:first-of-type {
+    color: var(--color-ink);
+    font-size: 1.12rem;
+  }
+  .prod-models {
+    margin-top: 3rem;
+  }
+  .prod-models-grid {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 48rem) {
+    .prod-models-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .prod-model {
+    padding: 1.3rem 1.4rem;
+  }
+  .prod-model-name {
+    font-family: var(--font-display);
+    font-weight: 620;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+  .prod-model-specs {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .prod-model-specs li {
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+  .prod-model-specs li::before {
+    content: '•';
+    color: var(--color-cool);
+    flex-shrink: 0;
+  }
+
+  .prod-video {
+    margin-top: 3rem;
+  }
+  .prod-video-blurb {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+  }
+  .video-card {
+    position: relative;
+    margin-top: 1.2rem;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-night);
+    border: 1px solid var(--color-night-line);
+    transition: border-color 0.3s var(--ease-swift);
+  }
+  .video-card:hover {
+    border-color: var(--color-heat);
+  }
+  .video-shot {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .video-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease-out-expo);
+  }
+  .video-card:hover .video-poster {
+    transform: scale(1.04);
+  }
+  .video-trigger {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .video-play {
+    width: 3.3rem;
+    height: 3.3rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    padding-left: 3px;
+    background: color-mix(in srgb, var(--color-night) 55%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    transition: background-color 0.3s, transform 0.4s var(--ease-out-expo), border-color 0.3s;
+  }
+  .video-card:hover .video-play,
+  .video-trigger:focus-visible .video-play {
+    background: var(--color-heat);
+    border-color: var(--color-heat);
+    transform: scale(1.08);
+  }
+  .video-time {
+    position: absolute;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: rgba(10, 13, 24, 0.8);
+    padding: 0.2rem 0.45rem;
+    border-radius: 5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .video-card.is-playing .video-time {
+    display: none;
+  }
+  /* injected by JS, so it never carries Astro's scope attribute */
+  .video-shot :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .prod-rail {
+    align-self: start;
+    position: sticky;
+    top: 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .prod-hero-shot {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line);
+    background:
+      radial-gradient(circle at 50% 20%, #ffffff, transparent 62%),
+      linear-gradient(158deg, #ffffff 0%, #f2efe7 100%);
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    aspect-ratio: 1;
+    box-shadow: 0 16px 38px -26px rgba(22, 20, 26, 0.45);
+    overflow: hidden;
+  }
+  .prod-hero-shot img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+  .prod-hero-shot:hover img {
+    transform: scale(1.05);
+  }
+  .prod-rail-card {
+    padding: 1.6rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .prod-rail-copy {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+  .prod-rail-btn {
+    margin-top: 1.2rem;
+  }
+  .prod-rail-link {
+    margin-top: 0.9rem;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+    align-self: flex-start;
+  }
+</style>
+
+<script>
+  for (const card of document.querySelectorAll<HTMLElement>('[data-video]')) {
+    const btn = card.querySelector('button')
+    btn?.addEventListener('click', () => {
+      if (card.classList.contains('is-playing')) return
+      const shot = card.querySelector('.video-shot')
+      if (!shot) return
+      const id = card.dataset.video
+      const title = card.dataset.videoTitle ?? 'Equipment video'
+      const iframe = document.createElement('iframe')
+      iframe.src = `https://player.vimeo.com/video/${id}?byline=0&portrait=0&autoplay=1`
+      iframe.title = `${title}: how does it work?`
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture'
+      iframe.setAttribute('allowfullscreen', '')
+      // swap only the picture area so the card keeps its dimensions
+      shot.replaceChildren(iframe)
+      card.classList.add('is-playing')
+    })
+  }
+</script>

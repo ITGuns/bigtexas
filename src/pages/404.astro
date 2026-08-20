@@ -1,0 +1,52 @@
+---
+import Base from '@/layouts/Base.astro'
+import { site } from '@/data/site'
+---
+
+<Base
+  title="Page Not Found | Big Texas Comfort"
+  description="That page has moved or never existed. Head back to Big Texas Comfort's homepage or call 832-888-5166."
+  navTheme="night"
+>
+  <section class="nf on-night">
+    <div class="container-site nf-inner">
+      <p class="type-label type-label--heat eyebrow">404</p>
+      <h1 class="type-h1 nf-title">This page went<br />out for parts.</h1>
+      <p class="type-lede nf-lede">
+        The address may have changed in the redesign. The important stuff is one click away.
+      </p>
+      <div class="nf-actions">
+        <a href="/" class="btn btn--primary btn--lg">Back to home</a>
+        <a href="/services/" class="btn btn--ghost btn--lg">Browse services</a>
+        <a href={site.phoneHref} class="btn btn--ghost btn--lg">Call {site.phone}</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 82svh;
+    display: flex;
+    align-items: center;
+    background:
+      radial-gradient(50rem 30rem at 80% 20%, rgba(43, 76, 140, 0.2), transparent 65%),
+      var(--color-night);
+  }
+  .nf-inner {
+    padding-block: 8rem 4rem;
+  }
+  .nf-title {
+    margin-top: 1.4rem;
+  }
+  .nf-lede {
+    margin-top: 1.4rem;
+    max-width: 34rem;
+  }
+  .nf-actions {
+    margin-top: 2.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+</style>

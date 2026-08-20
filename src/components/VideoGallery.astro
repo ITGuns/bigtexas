@@ -1,0 +1,318 @@
+---
+/**
+ * Video grid with real Vimeo poster frames. Facade pattern: the poster is a
+ * plain image until the visitor presses play, so no third-party request is
+ * made before then.
+ *
+ * Two layouts, because the two sets of posters differ:
+ *  - ads       photographic stills, so the caption overlays the image
+ *  - overviews title cards that already carry text, so the caption sits below
+ */
+import { videos, adVideos, runtime, type SiteVideo } from '@/data/videos'
+
+interface Props {
+  set?: 'overviews' | 'ads'
+  heading?: boolean
+  title?: string
+  eyebrow?: string
+  lede?: string
+}
+const {
+  set = 'overviews',
+  heading = true,
+  eyebrow = set === 'ads' ? 'Watch' : 'Product knowledge',
+  title = set === 'ads' ? 'The spots that tell it faster.' : 'How the equipment actually works.',
+  lede = set === 'ads'
+    ? 'Short commercials and promos from American Standard and Mitsubishi Electric, the brands we install.'
+    : 'In-depth walkthroughs of the systems we install, explained from the inside.',
+} = Astro.props
+
+const isAds = set === 'ads'
+const list: SiteVideo[] = isAds ? adVideos : videos
+---
+
+<section
+  class:list={['videos', isAds ? 'videos--ads' : 'videos--stacked']}
+  aria-labelledby={heading ? `videos-title-${set}` : undefined}
+>
+  <div class="container-site">
+    {
+      heading && (
+        <div class="videos-head">
+          <p class:list={['type-label', isAds ? 'type-label--heat' : 'type-label--cool']} data-reveal="fade">
+            {eyebrow}
+          </p>
+          <h2 class="type-h2" id={`videos-title-${set}`} data-reveal>{title}</h2>
+          <p class="type-lede videos-lede" data-reveal data-reveal-delay="0.1">{lede}</p>
+        </div>
+      )
+    }
+
+    <div class="videos-grid" data-reveal-group>
+      {
+        list.map((v) => (
+          <article class="video-card" data-video={v.vimeoId} data-video-title={v.title} data-reveal-child>
+            <div class="video-shot">
+              <img class="video-poster" src={v.poster} alt="" width="1280" height="720" loading="lazy" decoding="async" />
+              <span class="video-veil" aria-hidden="true" />
+              <span class="video-time">{runtime(v)}</span>
+              {/* overlay trigger: kept a sibling of the picture so the player
+                  that replaces it is never nested inside a button */}
+              <button class="video-trigger" type="button" aria-label={`Play ${v.title}, ${runtime(v)}`}>
+                <span class="video-play" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M4.5 2.8v10.4c0 .6.7 1 1.2.7l8.2-5.2c.5-.3.5-1 0-1.3L5.7 2.1c-.5-.3-1.2 0-1.2.7Z" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+            <div class="video-meta">
+              <span class="video-name">{v.title}</span>
+              <span class="video-blurb">{v.blurb}</span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="videos-note" data-reveal="fade">
+      Videos are hosted on Vimeo by Big Texas Comfort and load only when you press play.
+    </p>
+  </div>
+</section>
+
+<style>
+  .videos {
+    padding-block: var(--spacing-section);
+  }
+  .videos--ads {
+    background: var(--grad-night-soft);
+    color: var(--color-night-ink);
+  }
+  .videos--ads .type-lede {
+    color: var(--color-night-ink-soft);
+  }
+  .videos-head h2 {
+    margin-top: 1.4rem;
+  }
+  .videos-lede {
+    margin-top: 1.2rem;
+    max-width: 46rem;
+  }
+
+  .videos-grid {
+    margin-top: 2.5rem;
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) {
+    .videos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    /* four ads sit two-up so each spot stays cinematic */
+    .videos--ads .videos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    /* five overviews on a six-column grid: three, then two wider, no gaps */
+    .videos--stacked .videos-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .videos--stacked .video-card {
+      grid-column: span 2;
+    }
+    .videos--stacked .video-card:nth-child(4),
+    .videos--stacked .video-card:nth-child(5) {
+      grid-column: span 3;
+    }
+  }
+
+  .video-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-night);
+    border: 1px solid var(--color-night-line);
+    transition: border-color 0.3s var(--ease-swift), transform 0.45s var(--ease-out-expo);
+  }
+  .video-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-heat);
+  }
+  .video-shot {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .video-trigger {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    color: inherit;
+  }
+  .video-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease-out-expo), filter 0.4s;
+    filter: saturate(0.92);
+  }
+  .video-card:hover .video-poster {
+    transform: scale(1.045);
+    filter: saturate(1.05);
+  }
+  .video-play {
+    width: 3.3rem;
+    height: 3.3rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: color-mix(in srgb, var(--color-night) 55%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    padding-left: 3px;
+    transition: background-color 0.3s, transform 0.4s var(--ease-out-expo), border-color 0.3s;
+  }
+  .video-card:hover .video-play,
+  .video-trigger:focus-visible .video-play {
+    background: var(--color-heat);
+    border-color: var(--color-heat);
+    transform: scale(1.08);
+  }
+  .video-time {
+    position: absolute;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: rgba(10, 13, 24, 0.8);
+    padding: 0.2rem 0.45rem;
+    border-radius: 5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- ads: caption over a photographic still ---- */
+  .videos--ads .video-veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(10, 13, 24, 0.95) 0%,
+      rgba(10, 13, 24, 0.62) 32%,
+      rgba(10, 13, 24, 0.08) 64%,
+      rgba(10, 13, 24, 0.28) 100%
+    );
+  }
+  .videos--ads .video-card {
+    position: relative;
+  }
+  .videos--ads .video-meta {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    padding: 1.1rem 1.2rem;
+    pointer-events: none;
+  }
+  .videos--ads .video-time {
+    bottom: auto;
+    top: 0.7rem;
+  }
+
+  /* ---- overviews: poster stays clean, caption sits below it ---- */
+  .videos--stacked .video-veil {
+    display: none;
+  }
+  .videos--stacked .video-meta {
+    display: block;
+    padding: 1rem 1.15rem 1.15rem;
+    border-top: 1px solid var(--color-night-line);
+  }
+
+  .video-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    color: #fff;
+  }
+  .video-name {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 630;
+    letter-spacing: -0.012em;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .video-blurb {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.87rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 46ch;
+  }
+  /* the iframe is created in JS, so it never carries Astro's scope attribute:
+     it has to be targeted globally or it falls back to the default 300x150 */
+  .video-shot :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  /* while playing, the overlay caption would sit on top of the picture */
+  .videos--ads .video-card.is-playing .video-meta,
+  .video-card.is-playing .video-veil,
+  .video-card.is-playing .video-time {
+    display: none;
+  }
+  .video-card.is-playing {
+    transform: none;
+  }
+  .videos-note {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--color-ink-faint);
+  }
+  .videos--ads .videos-note {
+    color: var(--color-night-ink-soft);
+  }
+</style>
+
+<script>
+  for (const card of document.querySelectorAll<HTMLElement>('[data-video]')) {
+    const btn = card.querySelector('button')
+    btn?.addEventListener('click', () => {
+      if (card.classList.contains('is-playing')) return
+      const shot = card.querySelector('.video-shot')
+      if (!shot) return
+
+      const iframe = document.createElement('iframe')
+      iframe.src = `https://player.vimeo.com/video/${card.dataset.video}?byline=0&portrait=0&autoplay=1`
+      iframe.title = card.dataset.videoTitle ?? 'Video'
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture'
+      iframe.setAttribute('allowfullscreen', '')
+
+      // swap only the picture area so the card keeps its size and caption
+      shot.replaceChildren(iframe)
+      card.classList.add('is-playing')
+    })
+  }
+</script>

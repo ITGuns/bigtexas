@@ -1,0 +1,162 @@
+---
+export const prerender = false
+
+import Admin from '@/layouts/Admin.astro'
+import { isAuthed, LOGIN_PATH } from '@/lib/auth'
+import { getLead, bookingsForLead, LEAD_STATUSES, BOOKING_STATUSES } from '@/lib/db'
+import { fmtDate, fmtDateTime, statusLabel } from '@/lib/format'
+import { services } from '@/data/services'
+
+if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
+
+const id = Number(Astro.params.id)
+const lead = Number.isFinite(id) ? await getLead(id) : undefined
+if (!lead) return new Response('Lead not found', { status: 404 })
+
+const bookings = await bookingsForLead(lead.id)
+const telHref = `tel:${lead.phone.replace(/\D/g, '')}`
+const smsBody = encodeURIComponent(
+  `Hi ${lead.first_name}, this is Big Texas Comfort following up on your service request.`,
+)
+---
+
+<Admin title={`${lead.first_name} ${lead.last_name}`} active="leads">
+  <div class="admin-head">
+    <div>
+      <p class="admin-label" style="margin-bottom:.5rem">
+        <a href="/admin/leads/" style="color:var(--color-cool-bright);text-decoration:none">Back to leads</a>
+      </p>
+      <h1 class="admin-title">{lead.first_name} {lead.last_name}</h1>
+      <p class="admin-sub">
+        <span class:list={['pill', `pill--${lead.status}`]}>{statusLabel(lead.status)}</span>
+        {lead.urgency === 'emergency' && <span class="pill pill--urgent" style="margin-left:.4rem">Emergency</span>}
+        <span style="margin-left:.6rem">Received {fmtDateTime(lead.created_at)}</span>
+      </p>
+    </div>
+    <div class="admin-actions" style="margin:0">
+      {lead.phone && <a href={telHref} class="btn btn--primary btn--sm">Call {lead.phone}</a>}
+      {lead.phone && <a href={`sms:${lead.phone.replace(/\D/g, '')}?&body=${smsBody}`} class="btn btn--ghost btn--sm">Text</a>}
+      {lead.email && <a href={`mailto:${lead.email}`} class="btn btn--ghost btn--sm">Email</a>}
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div>
+      <section class="admin-panel">
+        <h2 class="admin-panel-title">Request</h2>
+        <dl class="detail-list">
+          <div class="detail-row"><dt>Phone</dt><dd>{lead.phone ? <a href={telHref}>{lead.phone}</a> : 'Not given'}</dd></div>
+          <div class="detail-row"><dt>Email</dt><dd>{lead.email ? <a href={`mailto:${lead.email}`}>{lead.email}</a> : 'Not given'}</dd></div>
+          <div class="detail-row"><dt>Address</dt><dd>{[lead.address, lead.city].filter(Boolean).join(', ') || 'Not given'}</dd></div>
+          <div class="detail-row"><dt>Service</dt><dd>{lead.service || 'Not specified'}</dd></div>
+          <div class="detail-row"><dt>Source</dt><dd>{lead.source || 'website'}</dd></div>
+        </dl>
+        {lead.message && <div class="detail-message">{lead.message}</div>}
+      </section>
+
+      <section class="admin-panel" style="margin-top:1.25rem">
+        <h2 class="admin-panel-title">Bookings</h2>
+        {
+          bookings.length === 0 ? (
+            <p class="cell-muted" style="margin-bottom:1.25rem">No booking scheduled for this lead yet.</p>
+          ) : (
+            <div class="detail-list" style="margin-bottom:1.25rem">
+              {bookings.map((b) => (
+                <div class="pipe-card" style="margin:0">
+                  <span class="pipe-card-name">
+                    {b.service || 'Service visit'}
+                    <span class:list={['pill', `pill--${b.status}`]} style="margin-left:.5rem">
+                      {statusLabel(b.status)}
+                    </span>
+                  </span>
+                  <span class="pipe-card-meta">
+                    {b.preferred_date ? fmtDate(b.preferred_date) : 'No date'}
+                    {b.preferred_slot && ` · ${b.preferred_slot}`}
+                  </span>
+                  <form class="inline-form" method="POST" action="/api/admin/update/" style="margin-top:.6rem">
+                    <input type="hidden" name="action" value="booking-status" />
+                    <input type="hidden" name="id" value={b.id} />
+                    <select class="admin-select" name="status" onchange="this.form.submit()">
+                      {BOOKING_STATUSES.map((s) => (
+                        <option value={s} selected={b.status === s}>{statusLabel(s)}</option>
+                      ))}
+                    </select>
+                  </form>
+                </div>
+              ))}
+            </div>
+          )
+        }
+
+        <form method="POST" action="/api/admin/update/">
+          <input type="hidden" name="action" value="booking-create" />
+          <input type="hidden" name="leadId" value={lead.id} />
+          <div class="admin-field">
+            <label for="bservice">Service</label>
+            <select id="bservice" class="admin-select" name="service">
+              <option value="">Choose a service</option>
+              {services.map((s) => <option value={s.name} selected={lead.service === s.name}>{s.name}</option>)}
+            </select>
+          </div>
+          <div class="admin-field">
+            <label for="bdate">Date</label>
+            <input id="bdate" class="admin-input" type="date" name="preferredDate" required />
+          </div>
+          <div class="admin-field">
+            <label for="bslot">Arrival window</label>
+            <select id="bslot" class="admin-select" name="preferredSlot">
+              <option value="Morning (7am to 12pm)">Morning (7am to 12pm)</option>
+              <option value="Afternoon (12pm to 5pm)">Afternoon (12pm to 5pm)</option>
+              <option value="Evening (5pm to 9pm)">Evening (5pm to 9pm)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn--primary btn--sm">Book this job</button>
+        </form>
+      </section>
+    </div>
+
+    <div>
+      <section class="admin-panel">
+        <h2 class="admin-panel-title">Pipeline stage</h2>
+        <form method="POST" action="/api/admin/update/">
+          <input type="hidden" name="action" value="lead-status" />
+          <input type="hidden" name="id" value={lead.id} />
+          <div class="admin-field">
+            <label for="status">Status</label>
+            <select id="status" class="admin-select" name="status">
+              {LEAD_STATUSES.map((s) => (
+                <option value={s} selected={lead.status === s}>{statusLabel(s)}</option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" class="btn btn--primary btn--sm">Update status</button>
+        </form>
+      </section>
+
+      <section class="admin-panel" style="margin-top:1.25rem">
+        <h2 class="admin-panel-title">Internal notes</h2>
+        <form method="POST" action="/api/admin/update/">
+          <input type="hidden" name="action" value="lead-notes" />
+          <input type="hidden" name="id" value={lead.id} />
+          <div class="admin-field">
+            <label for="notes" class="admin-label">Only your team sees this</label>
+            <textarea id="notes" class="admin-textarea" name="notes" rows="7">{lead.notes}</textarea>
+          </div>
+          <button type="submit" class="btn btn--primary btn--sm">Save notes</button>
+        </form>
+      </section>
+
+      <section class="admin-panel" style="margin-top:1.25rem">
+        <h2 class="admin-panel-title">Danger zone</h2>
+        <form method="POST" action="/api/admin/update/" onsubmit="return confirm('Delete this lead permanently? This cannot be undone.')">
+          <input type="hidden" name="action" value="lead-delete" />
+          <input type="hidden" name="id" value={lead.id} />
+          <p class="cell-muted" style="margin-bottom:.9rem">
+            Deleting removes the lead and any bookings attached to it.
+          </p>
+          <button type="submit" class="btn btn--ghost btn--sm">Delete lead</button>
+        </form>
+      </section>
+    </div>
+  </div>
+</Admin>

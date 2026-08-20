@@ -1,0 +1,115 @@
+---
+/**
+ * Decorative looping video behind a section.
+ * Loads only when scrolled into view, pauses when out of view or the tab is
+ * hidden, and never loads at all under reduced-motion or Save-Data, where the
+ * poster stands in. Muted and inert, so it carries no information the copy
+ * does not already state.
+ */
+interface Props {
+  src: string
+  poster: string
+  /** how much of the footage shows through */
+  opacity?: number
+  /** scrim direction: 'side' keeps the left column readable, 'full' dims evenly */
+  scrim?: 'side' | 'full'
+  /** accent wash colour mixed into the scrim */
+  tone?: 'heat' | 'cool'
+  objectPosition?: string
+}
+const { src, poster, opacity = 0.4, scrim = 'side', tone = 'heat', objectPosition = 'center' } = Astro.props
+---
+
+<div
+  class:list={['vbg', `vbg--${scrim}`, `vbg--${tone}`]}
+  style={`--vbg-opacity:${opacity}; --vbg-pos:${objectPosition}`}
+  aria-hidden="true"
+>
+  <video class="vbg-video" data-vbg-src={src} poster={poster} muted loop playsinline preload="none"></video>
+  <span class="vbg-scrim"></span>
+</div>
+
+<style>
+  .vbg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .vbg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--vbg-pos);
+    opacity: var(--vbg-opacity);
+    filter: saturate(0.7) contrast(1.04);
+  }
+  .vbg-scrim {
+    position: absolute;
+    inset: 0;
+  }
+  /* tone wash first, directional dim underneath it */
+  .vbg--side.vbg--heat .vbg-scrim {
+    background:
+      radial-gradient(42rem 26rem at 10% 55%, rgba(191, 31, 46, 0.26), transparent 70%),
+      linear-gradient(100deg, rgba(13, 17, 32, 0.94) 0%, rgba(13, 17, 32, 0.74) 44%, rgba(13, 17, 32, 0.36) 74%, rgba(13, 17, 32, 0.26) 100%);
+  }
+  .vbg--side.vbg--cool .vbg-scrim {
+    background:
+      radial-gradient(46rem 30rem at 88% 30%, rgba(43, 76, 140, 0.34), transparent 70%),
+      linear-gradient(100deg, rgba(13, 17, 32, 0.94) 0%, rgba(13, 17, 32, 0.74) 44%, rgba(13, 17, 32, 0.36) 74%, rgba(13, 17, 32, 0.26) 100%);
+  }
+  .vbg--full.vbg--heat .vbg-scrim {
+    background:
+      radial-gradient(42rem 26rem at 12% 60%, rgba(191, 31, 46, 0.24), transparent 70%),
+      linear-gradient(180deg, rgba(13, 17, 32, 0.84), rgba(13, 17, 32, 0.94));
+  }
+  .vbg--full.vbg--cool .vbg-scrim {
+    background:
+      radial-gradient(46rem 30rem at 85% 24%, rgba(43, 76, 140, 0.3), transparent 70%),
+      linear-gradient(180deg, rgba(13, 17, 32, 0.84), rgba(13, 17, 32, 0.94));
+  }
+
+  @media (max-width: 48rem) {
+    .vbg-video {
+      opacity: calc(var(--vbg-opacity) * 0.7);
+    }
+    .vbg--side .vbg-scrim {
+      background:
+        radial-gradient(24rem 18rem at 50% 26%, rgba(191, 31, 46, 0.2), transparent 70%),
+        linear-gradient(180deg, rgba(13, 17, 32, 0.82), rgba(13, 17, 32, 0.95)) !important;
+    }
+  }
+</style>
+
+<script>
+  const motionOK = window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+  // @ts-expect-error saveData is not in every lib.dom
+  const saveData = navigator.connection?.saveData === true
+
+  if (motionOK && !saveData) {
+    for (const video of document.querySelectorAll<HTMLVideoElement>('[data-vbg-src]')) {
+      let loaded = false
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            if (!loaded) {
+              video.src = video.dataset.vbgSrc ?? ''
+              loaded = true
+            }
+            void video.play().catch(() => {})
+          } else {
+            video.pause()
+          }
+        },
+        { threshold: 0.05 },
+      )
+      io.observe(video)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) video.pause()
+        else if (loaded) void video.play().catch(() => {})
+      })
+    }
+  }
+</script>

@@ -1,0 +1,33 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import VideoGallery from '@/components/VideoGallery.astro'
+---
+
+<Base
+  title="Equipment Videos | How HVAC Systems Work | Big Texas Comfort"
+  description="Animated videos of the best HVAC systems including gas furnaces, air conditioners, heat pumps, air handlers and hybrid heat, from Big Texas Comfort in Houston, TX."
+>
+  <PageHero
+    eyebrow="Videos"
+    tone="cool"
+    lede="Today's heating and cooling equipment offers advanced technology that dramatically improves energy efficiency and comfort. Watch the spots, then see how each system does its job from the inside."
+    crumbs={[{ label: 'Videos' }]}
+  >
+    Every film, in one place.
+  </PageHero>
+
+  <div class="videos-page">
+    <VideoGallery set="ads" />
+    <VideoGallery set="overviews" />
+  </div>
+
+  <CtaBand title="Seen how it works? Now let's size one for your home." />
+</Base>
+
+<style>
+  .videos-page {
+    padding-bottom: var(--spacing-section);
+  }
+</style>

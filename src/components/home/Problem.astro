@@ -1,0 +1,140 @@
+---
+/**
+ * Editorial narrative drawn from the existing site's own framing:
+ * Houston heat overworks cooling systems; small faults compound;
+ * a dependable contractor is the fix.
+ */
+---
+
+<section class="section problem" id="story" aria-labelledby="problem-title">
+  <div class="container-site">
+    <p class="type-label type-label--heat eyebrow" data-reveal="fade">The Houston problem</p>
+
+    <h2 class="type-h1 problem-title" id="problem-title" data-reveal>
+      Houston summers don’t <em>break</em> air conditioners.
+      They <em>find</em> the weak point, then work on it all season long.
+    </h2>
+
+    <div class="problem-grid">
+      <p class="type-lede" data-reveal data-reveal-delay="0.1">
+        Hot weather forces a system to run longer. Filters clog faster, debris builds at the
+        outdoor fan, and the whole system overworks just to hold temperature. It shows up first
+        on your utility bill, then in lost cooling power.
+      </p>
+      <p class="type-lede" data-reveal data-reveal-delay="0.18">
+        Slight malfunctions worsen when ignored, and the damage spreads to other components.
+        The earlier a trained eye sees it, the smaller the repair. That’s the whole case for
+        having one dependable crew who knows your system.
+      </p>
+    </div>
+
+    <div class="problem-temps" data-reveal-group aria-hidden="true">
+      <div class="temp-scale">
+        <div class="temp-bar" data-reveal-child>
+          <span class="temp-fill temp-fill--outside"></span>
+        </div>
+        <div class="temp-labels">
+          <span class="type-label">Outside · Houston August</span>
+          <span class="temp-num temp-num--heat"><span data-count="98" data-count-suffix="°">0°</span></span>
+        </div>
+      </div>
+      <div class="temp-arrow" data-reveal-child>
+        <span class="type-label">One working system</span>
+        <svg width="52" height="20" viewBox="0 0 52 20" fill="none"><path d="M2 10h44m0 0-7-7m7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="temp-scale">
+        <div class="temp-bar" data-reveal-child>
+          <span class="temp-fill temp-fill--inside"></span>
+        </div>
+        <div class="temp-labels">
+          <span class="type-label">Inside · your living room</span>
+          <span class="temp-num temp-num--cool"><span data-count="72" data-count-suffix="°">0°</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .problem-title {
+    max-width: 24ch;
+    margin-top: 1.5rem;
+  }
+  .problem-title em {
+    font-style: normal;
+    color: var(--color-heat);
+  }
+  .problem-grid {
+    margin-top: 3rem;
+    display: grid;
+    gap: 1.75rem;
+    max-width: 70rem;
+  }
+  @media (min-width: 48rem) {
+    .problem-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+  }
+
+  .problem-temps {
+    margin-top: 4.5rem;
+    display: grid;
+    gap: 2rem;
+    align-items: end;
+  }
+  @media (min-width: 48rem) {
+    .problem-temps {
+      grid-template-columns: 1fr auto 1fr;
+      gap: 3rem;
+    }
+  }
+  .temp-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-line-soft);
+    overflow: hidden;
+  }
+  .temp-fill {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+  }
+  .temp-fill--outside {
+    width: 96%;
+    background: linear-gradient(90deg, var(--color-warn), var(--color-heat));
+  }
+  .temp-fill--inside {
+    width: 44%;
+    background: linear-gradient(90deg, var(--color-cool-bright), var(--color-cool));
+  }
+  .temp-labels {
+    margin-top: 0.9rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .temp-num {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 640;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .temp-num--heat {
+    color: var(--color-heat);
+  }
+  .temp-num--cool {
+    color: var(--color-cool);
+  }
+  .temp-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-ink-faint);
+    padding-bottom: 1rem;
+  }
+</style>

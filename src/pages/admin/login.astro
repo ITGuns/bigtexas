@@ -1,0 +1,74 @@
+---
+export const prerender = false
+
+import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/instrument-sans'
+import '@fontsource-variable/jetbrains-mono'
+import '@/styles/global.css'
+import '@/styles/admin.css'
+import { checkPassword, issueSession, isAuthed, authUnconfigured } from '@/lib/auth'
+
+if (isAuthed(Astro.cookies)) return Astro.redirect('/admin/')
+
+let error = ''
+if (Astro.request.method === 'POST') {
+  if (authUnconfigured) {
+    error = 'This panel is not configured yet. Set ADMIN_PASSWORD and ADMIN_SECRET, then redeploy.'
+  } else {
+    const data = await Astro.request.formData()
+    const pw = String(data.get('password') ?? '')
+    if (checkPassword(pw)) {
+      issueSession(Astro.cookies)
+      return Astro.redirect('/admin/')
+    }
+    error = 'That password did not match. Try again.'
+  }
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign in · Big Texas Comfort Admin</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="admin-body">
+    <div class="login-wrap">
+      <form class="login-card" method="POST">
+        <span class="login-logo">
+          <img src="/images/logo.png" alt="Big Texas Comfort" width="411" height="85" />
+        </span>
+        <h1 class="login-title">Control panel</h1>
+        <p class="login-sub">Leads, bookings and the service pipeline.</p>
+
+        {error && <p class="login-error">{error}</p>}
+        {
+          authUnconfigured && !error && (
+            <p class="login-error">
+              Locked: <code>ADMIN_PASSWORD</code> and <code>ADMIN_SECRET</code> are not set on this
+              deployment.
+            </p>
+          )
+        }
+
+        <div class="admin-field">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            class="admin-input"
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+            autofocus
+          />
+        </div>
+
+        <button type="submit" class="btn btn--primary" style="width:100%">Sign in</button>
+      </form>
+    </div>
+  </body>
+</html>

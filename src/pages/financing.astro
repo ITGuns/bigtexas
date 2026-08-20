@@ -1,0 +1,132 @@
+---
+import Base from '@/layouts/Base.astro'
+import PageHero from '@/components/PageHero.astro'
+import CtaBand from '@/components/CtaBand.astro'
+import { site } from '@/data/site'
+---
+
+<Base
+  title="Financing Your New Air Conditioning or Heating Equipment | Big Texas Comfort"
+  description="Consumer financing for new heating and air conditioning equipment near Houston, TX through Wells Fargo Bank, N.A. and FTL Finance, with approved credit."
+>
+  <PageHero
+    eyebrow="Financing"
+    tone="cool"
+    lede="Invest in your home's comfort, or respond to an unexpected heating and cooling need, without breaking your monthly budget. Two partners, several options, all with approved credit."
+    crumbs={[{ label: 'Financing' }]}
+  >
+    Financing your new equipment purchase
+  </PageHero>
+
+  <section class="fin">
+    <div class="container-site">
+      <div class="fin-partners" data-reveal-group>
+        {
+          site.financing.partners.map((p) => (
+            <div class="fin-partner surface" data-reveal-child>
+              <h2 class="fin-partner-name">{p.name}</h2>
+              <p class="fin-partner-blurb">{p.blurb}</p>
+              <p class="type-label fin-partner-label">With approved credit you get</p>
+              <ul class="fin-partner-points">
+                {p.points.map((pt) => (
+                  <li>{pt}</li>
+                ))}
+              </ul>
+              {'applyUrl' in p && p.applyUrl ? (
+                <a href={p.applyUrl} target="_blank" rel="noopener" class="btn btn--primary fin-apply">
+                  Apply online <span class="btn-arrow" aria-hidden="true">→</span>
+                </a>
+              ) : (
+                <a href={site.phoneHref} class="btn btn--ghost fin-apply">
+                  Call to discuss options
+                </a>
+              )}
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="fin-note" data-reveal>
+        By taking advantage of financing, you won’t use up your existing funding sources, like a
+        home equity line of credit, another credit card or your bank account. They’ll still be
+        available when you need them. Contact us to find out which financing options and special
+        promotions are available to you.
+      </p>
+      <p class="fin-note-small" data-reveal>
+        We also accept {site.payments.slice(0, 6).join(', ')}.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="Talk numbers before you commit." note={`Free estimates on new systems. Call ${site.phoneDisplay} and we'll walk through the options.`} />
+</Base>
+
+<style>
+  .fin {
+    padding-bottom: var(--spacing-section);
+  }
+  .fin-partners {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 48rem) {
+    .fin-partners {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .fin-partner {
+    padding: 2rem 2rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .fin-partner-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 630;
+    letter-spacing: -0.015em;
+  }
+  .fin-partner-blurb {
+    margin-top: 0.9rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .fin-partner-label {
+    margin-top: 1.5rem;
+  }
+  .fin-partner-points {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+  }
+  .fin-partner-points li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: baseline;
+    font-size: 0.95rem;
+  }
+  .fin-partner-points li::before {
+    content: '★';
+    font-size: 0.7rem;
+    color: var(--color-cool);
+    flex-shrink: 0;
+  }
+  .fin-apply {
+    margin-top: 1.5rem;
+    align-self: flex-start;
+  }
+  .fin-note {
+    margin-top: 2.5rem;
+    max-width: 60rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+  }
+  .fin-note-small {
+    margin-top: 1rem;
+    font-size: 0.88rem;
+    color: var(--color-ink-faint);
+  }
+</style>
