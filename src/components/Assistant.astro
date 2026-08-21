@@ -223,6 +223,32 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     color: #fff;
     border-bottom-right-radius: 6px;
   }
+  .asst-log :global(.asst-thinking) {
+    display: flex;
+    gap: 0.28rem;
+    align-items: center;
+  }
+  .asst-log :global(.asst-thinking span) {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-night-ink-soft);
+    animation: asst-blink 1.2s infinite ease-in-out both;
+  }
+  .asst-log :global(.asst-thinking span:nth-child(2)) {
+    animation-delay: 0.18s;
+  }
+  .asst-log :global(.asst-thinking span:nth-child(3)) {
+    animation-delay: 0.36s;
+  }
+  @keyframes asst-blink {
+    0%, 80%, 100% {
+      opacity: 0.25;
+    }
+    40% {
+      opacity: 1;
+    }
+  }
   .asst-log :global(.asst-links) {
     display: flex;
     flex-wrap: wrap;
@@ -391,6 +417,7 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     let online = true
     let poller = null
     let restored = false
+    let handoffPending = false
 
     const store = {
       get() {
@@ -439,6 +466,23 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       bubble('asst-msg--agent', '<span class="asst-who">Big Texas Comfort</span>' + esc(text))
     }
 
+    /*
+     * The first request of a session pays for a cold function and a database
+     * round trip, which can run to several seconds. Without something on
+     * screen the panel looks broken, so show the usual three dots and take
+     * them away when the answer lands.
+     */
+    let thinkingEl = null
+    function thinking(on) {
+      if (on) {
+        if (thinkingEl) return
+        thinkingEl = bubble('asst-msg--bot asst-thinking', '<span></span><span></span><span></span>')
+      } else if (thinkingEl) {
+        thinkingEl.remove()
+        thinkingEl = null
+      }
+    }
+
     /** Draw one stored message. Visitor lines we already drew are skipped. */
     function draw(m, skipVisitor) {
       if (m.id > lastId) lastId = m.id
@@ -463,8 +507,12 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
               : ''
       statusEl.textContent = label
       statusEl.hidden = !label
-      handoffBtn.disabled = !online || status !== 'bot'
-      handoffBtn.textContent = status === 'bot' ? 'Talk to a person' : 'Office notified'
+      // leave the button alone while a handoff is on its way, or it flips back
+      // to "Talk to a person" mid flight and invites a second press
+      if (!handoffPending) {
+        handoffBtn.disabled = !online || status !== 'bot'
+        handoffBtn.textContent = status === 'bot' ? 'Talk to a person' : 'Office notified'
+      }
       managePolling()
     }
 
@@ -693,6 +741,7 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
           // Wait for the write so lastId moves past this line. Fire and forget
           // would leave the poller to fetch it back and draw it a second time.
           const res = await api({ action: 'send', token, text })
+          thinking(false)
           for (const m of res.messages ?? []) draw(m, true)
           if (res.status !== status) setStatus(res.status)
         } catch {
@@ -716,8 +765,10 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       }
 
       try {
+        thinking(true)
         await ensureChat()
         const res = await api({ action: 'send', token, text })
+        thinking(false)
         for (const m of res.messages ?? []) draw(m, true)
         if (res.status !== status) setStatus(res.status)
         if (res.capture) {
@@ -726,6 +777,7 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
         }
       } catch {
         // one failure is enough to stop trying for this page view
+        thinking(false)
         online = false
         setStatus(status)
         answerLocally(text)
@@ -733,18 +785,23 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     }
 
     async function requestPerson() {
+      if (handoffPending) return
+      handoffPending = true
       handoffBtn.disabled = true
+      handoffBtn.textContent = 'Notifying the office'
       capture = null // a coordinator will ask for whatever they need
       try {
         await ensureChat()
         const res = await api({ action: 'handoff', token })
+        handoffPending = false
         for (const m of res.messages ?? []) draw(m, false)
         setStatus(res.status)
       } catch {
+        handoffPending = false
         say(`I could not reach the office from here. Please call ${phone} and someone will pick up.`, [
           { label: `Call ${phone}`, href: phoneHref },
         ])
-        handoffBtn.disabled = false
+        setStatus(status)
       }
     }
 

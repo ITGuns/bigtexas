@@ -171,6 +171,47 @@ ok(
 )
 await racer.close()
 
+/* ---------------- behaviour under a slow network ---------------- */
+/*
+ * The first request of a session pays for a cold function and a database round
+ * trip, several seconds in the worst case. The panel has to show that it is
+ * working, and the handoff button must not flip back and invite a second press
+ * while its request is still in the air.
+ */
+const slow = await (await browser.newContext()).newPage()
+await slow.route('**/api/chat/**', async (route) => {
+  await new Promise((r) => setTimeout(r, 1200))
+  await route.continue()
+})
+await slow.goto(`${base}/`, { waitUntil: 'networkidle' })
+await slow.locator('[data-asst-open]').click()
+await slow.waitForTimeout(400)
+const slowInput = slow.locator('[data-asst-input]')
+await slowInput.fill('what are your hours')
+await slowInput.press('Enter')
+await slow.waitForTimeout(500)
+ok((await slow.locator('.asst-thinking').count()) === 1, 'chat: nothing tells the visitor the answer is on its way')
+await slow.waitForTimeout(4000)
+ok((await slow.locator('.asst-thinking').count()) === 0, 'chat: the waiting indicator was left on screen')
+ok(/regular hours/i.test(await slow.locator('[data-asst-log]').innerText()), 'chat: slow answer never arrived')
+
+await slowInput.fill('another question')
+await slowInput.press('Enter')
+await slow.waitForTimeout(200)
+await slow.locator('[data-asst-handoff]').click()
+await slow.waitForTimeout(400)
+ok(
+  /notifying/i.test(await slow.locator('[data-asst-handoff]').innerText()),
+  'chat: the handoff button did not show that it was working',
+)
+await slow.waitForTimeout(5000)
+ok(
+  /office notified/i.test(await slow.locator('[data-asst-handoff]').innerText()),
+  'chat: the handoff button did not settle once the office was told',
+)
+ok(/passed this to the office/i.test(await slow.locator('[data-asst-log]').innerText()), 'chat: slow handoff was lost')
+await slow.close()
+
 /* ---------------- rate limit ---------------- */
 // A made-up forwarded-for gives this test its own bucket, so hammering the
 // endpoint here cannot use up the allowance the other suites need.
