@@ -21,6 +21,18 @@ function sweep(now: number, windowMs: number) {
   }
 }
 
+/**
+ * The window a limit is measured over.
+ *
+ * Ten minutes is right for the public site. It is wrong for a dev server,
+ * where the whole test suite shares one address: the allowance would carry
+ * over between runs and start refusing legitimate requests. Development keeps
+ * the same ceiling over a much shorter window, so the limiter is still
+ * exercised but never bleeds from one run into the next.
+ */
+export const windowFor = (productionMs: number): number =>
+  import.meta.env.PROD ? productionMs : 30_000
+
 export interface RateVerdict {
   ok: boolean
   /** seconds the caller should wait before trying again */
@@ -46,14 +58,30 @@ export function rateLimit(key: string, limit: number, windowMs: number): RateVer
 }
 
 /**
- * Best available caller address. Vercel sets x-forwarded-for; the first entry
- * is the client, the rest are proxies. Falls back to a constant so a missing
- * header shares one bucket rather than bypassing the limit entirely.
+ * Who is calling.
+ *
+ * x-forwarded-for is a request header, so anyone can send one. Trusting it
+ * blindly turns the limit into a formality: rotate the header, get a fresh
+ * allowance every time. It is only meaningful when something in front is known
+ * to overwrite it, which on Vercel it does.
+ *
+ * So: take the forwarded header on Vercel, and everywhere else prefer the
+ * socket address the adapter reports, which the caller cannot set. Behind a
+ * different proxy, set TRUST_PROXY=1, and make sure that proxy overwrites
+ * x-forwarded-for rather than appending to it.
  */
-export function clientIp(request: Request): string {
-  const fwd = request.headers.get('x-forwarded-for')
-  if (fwd) return fwd.split(',')[0]!.trim()
-  return request.headers.get('x-real-ip')?.trim() || 'unknown'
+export function clientIp(request: Request, socketAddress?: string): string {
+  const proxied = !!process.env.VERCEL || process.env.TRUST_PROXY === '1'
+  if (proxied) {
+    const fwd = request.headers.get('x-forwarded-for')
+    if (fwd) return fwd.split(',')[0]!.trim()
+    const real = request.headers.get('x-real-ip')
+    if (real) return real.trim()
+  }
+  // Not behind a proxy we trust: the connection is the only honest signal.
+  // Falling back to one shared bucket is deliberate. It throttles everyone
+  // together, which is wrong but safe; per-header buckets would be no limit.
+  return socketAddress?.trim() || 'direct'
 }
 
 /** JSON 429 with the header clients and crawlers expect. */

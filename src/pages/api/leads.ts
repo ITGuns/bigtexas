@@ -2,7 +2,7 @@ export const prerender = false
 
 import type { APIRoute } from 'astro'
 import { createLead, createBooking, storageReady } from '@/lib/db'
-import { clientIp, rateLimit, tooMany } from '@/lib/ratelimit'
+import { clientIp, rateLimit, tooMany, windowFor } from '@/lib/ratelimit'
 
 const clean = (v: FormDataEntryValue | null, max = 2000) =>
   typeof v === 'string' ? v.trim().slice(0, max) : ''
@@ -14,10 +14,10 @@ const clean = (v: FormDataEntryValue | null, max = 2000) =>
  * lock the machine out of its own dev server.
  */
 const LIMIT = 12
-const WINDOW_MS = 10 * 60 * 1000
+const WINDOW_MS = windowFor(10 * 60 * 1000)
 
-export const POST: APIRoute = async ({ request }) => {
-  const gate = rateLimit(`leads:${clientIp(request)}`, LIMIT, WINDOW_MS)
+export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const gate = rateLimit(`leads:${clientIp(request, clientAddress)}`, LIMIT, WINDOW_MS)
   if (!gate.ok) {
     return tooMany(
       gate.retryAfter,
@@ -68,6 +68,19 @@ export const POST: APIRoute = async ({ request }) => {
   if (!first_name || (!phone && !email)) {
     return new Response(
       JSON.stringify({ ok: false, error: 'A name and either a phone number or email are required.' }),
+      { status: 422, headers: { 'content-type': 'application/json' } },
+    )
+  }
+
+  /*
+   * The form's type=email catches this in the browser, so this only fires for
+   * something posting straight at the API. Worth refusing anyway: an address
+   * that is not an address makes the follow-up and review drafts in the admin
+   * open to nobody, and the office would not find out until it mattered.
+   */
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    return new Response(
+      JSON.stringify({ ok: false, error: 'That email address does not look right. Please check it, or leave it blank and give us a phone number.' }),
       { status: 422, headers: { 'content-type': 'application/json' } },
     )
   }

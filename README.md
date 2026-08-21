@@ -145,7 +145,7 @@ picks them up with no code change.
 - **Bookings**: every appointment with its date, arrival window and status.
 - **Chats**: every conversation held in the website assistant, and a reply box to answer personally.
 
-The public contact form posts to `/api/leads`. A hidden honeypot field silently absorbs bot submissions, and a requested date turns a lead into a booking automatically.
+The public contact form posts to `/api/leads`. A hidden honeypot field silently absorbs bot submissions, and a requested date turns a lead into a booking automatically. An email address that is not one is refused with a `422`: the browser's `type=email` catches it first, so this only fires for something posting straight at the API, and an address that cannot receive mail would leave the follow-up drafts in the admin opening to nobody.
 
 ## Tests
 
@@ -190,22 +190,43 @@ How it fits together:
   tab is hidden, because Vercel gives no socket to hold open.
 - Statuses are `bot`, `waiting`, `live` and `closed`. Handing it back to `bot`
   lets the assistant answer again.
+- Writing to a **closed** conversation reopens it as `waiting` rather than
+  handing it back to the bot. Somebody who was told the conversation was
+  finished and replied anyway needs a person, not an assistant talking over
+  them where nobody is watching.
+- The browser reports which lead it just created so the two can be linked, but
+  that claim is only honoured when the lead's phone number matches the one on
+  the conversation. Taken on trust, any id would do, and a stranger could pin
+  their chat to a real customer's record.
 
 Chat needs the `chats` and `chat_messages` tables. They are in
 [`supabase/schema.sql`](supabase/schema.sql); SQLite creates them by itself.
 
 ## Rate limiting
 
-`POST /api/leads` and the chat endpoints are limited per IP address by
+`POST /api/leads` and the chat endpoints are limited per caller by
 [`src/lib/ratelimit.ts`](src/lib/ratelimit.ts): twelve lead submissions per ten
 minutes, and separate allowances for starting, sending and polling a chat. Over
 the limit returns `429` with a `Retry-After` header and a message telling the
 customer to phone instead.
 
+**Who a caller is matters more than the number.** `x-forwarded-for` is a request
+header, so anyone can send one, and a limiter keyed on it blindly is decoration:
+rotate the header, get a fresh allowance. It is only meaningful when something
+in front is known to overwrite it. So the header is trusted on Vercel, which
+does overwrite it, and everywhere else the socket address the adapter reports is
+used instead. Behind a different proxy set `TRUST_PROXY=1`, and make sure that
+proxy overwrites `x-forwarded-for` rather than appending to it.
+
 The window lives in memory. On serverless each instance keeps its own, so the
 real ceiling is a little higher than the number suggests. That is the right
 trade here: it stops a script hammering the form, and the alternative, a row
 written per attempt, would hand an attacker exactly the cost we are avoiding.
+
+In development the ceiling is the same but the window is thirty seconds, because
+the whole test suite shares one address and a ten minute window would carry over
+between runs and start refusing legitimate requests. The production build
+compiles that branch away.
 
 ## Security headers
 

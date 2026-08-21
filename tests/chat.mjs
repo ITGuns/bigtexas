@@ -145,6 +145,42 @@ await admin.waitForLoadState('networkidle')
 ok(/closed/i.test(await admin.locator('.admin-sub').innerText()), 'chat: closing the conversation did not stick')
 ok(await admin.locator('[data-chat-input]').isDisabled(), 'chat: reply box stayed enabled on a closed conversation')
 
+/*
+ * A customer who writes back after being told the conversation is finished
+ * must reach a person. Letting the assistant pick up would talk over someone
+ * nobody is watching, and the office would never know they wrote.
+ */
+await visitor.goto(`${base}/contact/`, { waitUntil: 'networkidle' })
+await visitor.locator('[data-asst-open]').click()
+await visitor.waitForTimeout(1500)
+const reopened = await ask('actually, one more thing')
+ok(
+  /reopened this for the office/i.test(reopened),
+  `chat: a message after closing was not put back in front of a person -> ${reopened.slice(0, 90)}`,
+)
+await admin.reload({ waitUntil: 'networkidle' })
+ok(/waiting for you/i.test(await admin.locator('.admin-sub').innerText()), 'chat: the reopened conversation is not flagged for the office')
+
+/*
+ * The browser says which lead it just created. Taken on trust, any id would
+ * do, and a stranger could pin their conversation to a real customer's record.
+ */
+const token = await visitor.evaluate(() => sessionStorage.getItem('btc-chat-token'))
+const victim = await adminCtx.request.post(`${base}/api/leads/`, {
+  headers: { origin: base, 'content-type': 'application/json' },
+  data: { firstName: 'Real', lastName: 'Customer', phone: '713-555-2222' },
+})
+const victimId = (await victim.json()).id
+await adminCtx.request.post(`${base}/api/chat/`, {
+  headers: { 'content-type': 'application/json' },
+  data: { action: 'profile', token, name: 'Impostor', phone: '000-000-0000', leadId: victimId },
+})
+await admin.reload({ waitUntil: 'networkidle' })
+ok(
+  (await admin.locator('a:has-text("Open lead")').count()) === 0,
+  'chat: a conversation was linked to a lead whose phone number it does not know',
+)
+
 /* ---------------- one visitor, one conversation ---------------- */
 /*
  * Asking a question and pressing "Talk to a person" before the first round
@@ -212,21 +248,58 @@ ok(
 ok(/passed this to the office/i.test(await slow.locator('[data-asst-log]').innerText()), 'chat: slow handoff was lost')
 await slow.close()
 
+/* ---------------- lead validation ---------------- */
+// Runs before the flood below, which uses up the rest of the allowance.
+const badEmail = await adminCtx.request.post(`${base}/api/leads/`, {
+  headers: { origin: base, 'content-type': 'application/json' },
+  data: { firstName: 'Typo', email: 'definitely not an email' },
+})
+ok(badEmail.status() === 422, `chat: a malformed email was accepted (${badEmail.status()})`)
+
+const goodEmail = await adminCtx.request.post(`${base}/api/leads/`, {
+  headers: { origin: base, 'content-type': 'application/json' },
+  data: { firstName: 'Fine', email: 'real.person@example.com' },
+})
+ok(goodEmail.status() === 201, `chat: a valid email was refused (${goodEmail.status()})`)
+
 /* ---------------- rate limit ---------------- */
-// A made-up forwarded-for gives this test its own bucket, so hammering the
-// endpoint here cannot use up the allowance the other suites need.
-const floodIp = `203.0.113.${Math.floor(Date.now() / 1000) % 250}`
+/*
+ * Buckets are keyed by the connection, not by a header, so this shares the
+ * allowance with every other suite and with the previous run. Restart the dev
+ * server if a back to back run trips it early; the window is held in memory.
+ */
 const flood = []
 for (let i = 0; i < 16; i++) {
   const res = await adminCtx.request.post(`${base}/api/leads/`, {
-    headers: { origin: base, 'content-type': 'application/json', 'x-forwarded-for': floodIp },
+    headers: { origin: base, 'content-type': 'application/json' },
     data: { firstName: `Flood${i}`, phone: '713-555-0000' },
   })
   flood.push(res.status())
 }
-ok(flood.includes(201), 'chat: the lead endpoint refused a legitimate first submission')
 ok(flood.includes(429), `chat: the lead endpoint never rate limited a flood (${flood.join(',')})`)
-ok(flood.indexOf(429) >= 12, `chat: rate limit tripped too early, at request ${flood.indexOf(429) + 1}`)
+
+/*
+ * x-forwarded-for is a request header, so a bot can send whatever it likes.
+ * Unless something in front is known to overwrite it, a rotating header must
+ * not buy a fresh allowance, or the limit above is decoration.
+ */
+const spoofed = []
+for (let i = 0; i < 4; i++) {
+  const res = await adminCtx.request.post(`${base}/api/leads/`, {
+    headers: {
+      origin: base,
+      'content-type': 'application/json',
+      'x-forwarded-for': `198.51.100.${i}`,
+    },
+    data: { firstName: `Spoof${i}`, phone: '713-555-0000' },
+  })
+  spoofed.push(res.status())
+}
+ok(
+  spoofed.every((s) => s === 429),
+  `chat: rotating x-forwarded-for bought a fresh rate limit allowance (${spoofed.join(',')})`,
+)
+
 
 /* ---------------- security headers ---------------- */
 const page = await adminCtx.request.get(`${base}/`)
