@@ -168,11 +168,43 @@ const testName = `QA${stamp}`
     'booking: lead was not moved to Booked',
   )
 
+  // email follow-up and review request. These write follow_up_at and
+  // review_sent_at, columns the SQLite schema once lacked, so the buttons
+  // answered 500 on every backend except Supabase.
+  const mail = page.locator('.mail-actions')
+  ok((await mail.count()) === 1, 'email: follow-up panel missing on lead detail')
+  const composeLinks = await mail.locator('a').evaluateAll((a) => a.map((x) => x.getAttribute('href')))
+  ok(
+    composeLinks.length === 2 && composeLinks.every((h) => h?.startsWith('mailto:')),
+    'email: both compose links should be mailto drafts',
+  )
+  ok((await page.locator('a[href^="sms:"]').count()) === 0, 'email: no sms links should exist')
+
+  // read through a catch: a failed write lands on /api/admin/update/ with a
+  // bare "Update failed", where .mail-actions does not exist at all
+  const mailText = async () => page.locator('.mail-actions').innerText().catch(() => '')
+
+  await page.locator('form:has(input[value="lead-followup-sent"]) button[type=submit]').click()
+  await page.waitForLoadState('networkidle')
+  ok(page.url().includes('/admin/leads/'), 'email: marking follow-up sent left the lead page')
+  ok(/Sent /.test(await mailText()), 'email: follow-up sent time not recorded')
+
+  await page.locator('form:has(input[value="lead-review-sent"]) button[type=submit]').click()
+  await page.waitForLoadState('networkidle')
+  ok(
+    ((await mailText()).match(/Sent /g) ?? []).length === 2,
+    'email: review request sent time not recorded',
+  )
+
   // CSV export
   const csv = await page.request.get(`${base}/admin/leads/?export=csv`)
   const text = await csv.text()
   ok(csv.headers()['content-type']?.includes('text/csv'), 'export: wrong content type')
   ok(text.includes(testName), 'export: lead missing from CSV')
+  ok(
+    !text.split('\n').some((l) => /^"[=+@]/.test(l) || l.includes(',"=') || l.includes(',"+') || l.includes(',"@')),
+    'export: a field starting with = + or @ must be escaped against spreadsheet formula injection',
+  )
 
   // sign out
   await page.goto(`${base}/admin/logout/`, { waitUntil: 'networkidle' })
@@ -183,3 +215,4 @@ const testName = `QA${stamp}`
 
 await browser.close()
 console.log(fails.length ? `FAILURES (${fails.length}):\n` + fails.map((f) => '  ✗ ' + f).join('\n') : 'ADMIN E2E PASSES')
+if (fails.length) process.exitCode = 1

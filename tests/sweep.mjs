@@ -53,7 +53,11 @@ for (const [route, name] of routes) {
     })
     const tag = `${name}@${vp.tag}`
     page.on('console', (m) => {
-      if (m.type() === 'error') problems.push(`${tag} CONSOLE: ${m.text()}`)
+      if (m.type() !== 'error') return
+      // the 404 page is supposed to answer with HTTP 404, and the browser logs
+      // that document response as a console error. Not a fault.
+      if (name === '404' && /status of 404/.test(m.text())) return
+      problems.push(`${tag} CONSOLE: ${m.text()}`)
     })
     page.on('pageerror', (e) => problems.push(`${tag} PAGEERROR: ${e.message}`))
 
@@ -111,3 +115,4 @@ for (const [route, name] of routes) {
 
 await browser.close()
 console.log(problems.length ? `PROBLEMS (${problems.length}):\n` + problems.join('\n') : 'CLEAN — all routes pass')
+if (problems.length) process.exitCode = 1

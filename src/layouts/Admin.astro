@@ -4,18 +4,31 @@ import '@fontsource-variable/instrument-sans'
 import '@fontsource-variable/jetbrains-mono'
 import '@/styles/global.css'
 import '@/styles/admin.css'
-import { storageReady } from '@/lib/db'
+import { storageReady, listChats } from '@/lib/db'
 
 interface Props {
   title: string
-  active?: 'dashboard' | 'leads' | 'bookings'
+  active?: 'dashboard' | 'leads' | 'bookings' | 'chats'
 }
 const { title, active } = Astro.props
 
+/**
+ * Conversations waiting on a person are the one thing in here that goes stale
+ * in minutes, so the count rides in the nav on every admin page.
+ */
+let waiting = 0
+try {
+  const chats = await listChats()
+  waiting = chats.filter((c) => c.status === 'waiting' || c.agent_unread > 0).length
+} catch {
+  waiting = 0
+}
+
 const nav = [
-  { id: 'dashboard', label: 'Dashboard', href: '/admin/' },
-  { id: 'leads', label: 'Leads', href: '/admin/leads/' },
-  { id: 'bookings', label: 'Bookings', href: '/admin/bookings/' },
+  { id: 'dashboard', label: 'Dashboard', href: '/admin/', badge: 0 },
+  { id: 'leads', label: 'Leads', href: '/admin/leads/', badge: 0 },
+  { id: 'bookings', label: 'Bookings', href: '/admin/bookings/', badge: 0 },
+  { id: 'chats', label: 'Chats', href: '/admin/chats/', badge: waiting },
 ]
 ---
 
@@ -47,6 +60,7 @@ const nav = [
                 aria-current={active === n.id ? 'page' : undefined}
               >
                 {n.label}
+                {n.badge > 0 && <span class="admin-nav-badge">{n.badge}</span>}
               </a>
             ))
           }

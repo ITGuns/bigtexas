@@ -37,6 +37,8 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       </button>
     </header>
 
+    <p class="asst-status" data-asst-status hidden></p>
+
     <div class="asst-log" data-asst-log role="log" aria-live="polite"></div>
 
     <div class="asst-chips" data-asst-chips>
@@ -60,9 +62,10 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       </button>
     </form>
 
-    <p class="asst-foot">
-      Prefer a person? <a href={site.phoneHref}>{site.phoneDisplay}</a>
-    </p>
+    <div class="asst-foot">
+      <button type="button" class="asst-handoff" data-asst-handoff>Talk to a person</button>
+      <span>or call <a href={site.phoneHref}>{site.phoneDisplay}</a></span>
+    </div>
   </section>
 </div>
 
@@ -194,7 +197,13 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     gap: 0.75rem;
     scrollbar-width: thin;
   }
-  .asst-msg {
+  /*
+   * These elements are built by the script below, so Astro never stamps them
+   * with the data-astro-cid attribute its scoped selectors match. Anchor each
+   * rule to .asst-log, which is server rendered and does carry the attribute,
+   * and mark the JS-made part global.
+   */
+  .asst-log :global(.asst-msg) {
     max-width: 88%;
     padding: 0.7rem 0.9rem;
     border-radius: var(--radius-md);
@@ -202,25 +211,25 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     line-height: 1.5;
     white-space: pre-wrap;
   }
-  .asst-msg--bot {
+  .asst-log :global(.asst-msg--bot) {
     align-self: flex-start;
     background: color-mix(in srgb, var(--color-night-ink) 9%, transparent);
     border: 1px solid var(--color-night-line);
     border-bottom-left-radius: 6px;
   }
-  .asst-msg--user {
+  .asst-log :global(.asst-msg--user) {
     align-self: flex-end;
     background: var(--grad-heat);
     color: #fff;
     border-bottom-right-radius: 6px;
   }
-  .asst-links {
+  .asst-log :global(.asst-links) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
     margin-top: 0.55rem;
   }
-  .asst-links a {
+  .asst-log :global(.asst-links a) {
     font-size: 0.8rem;
     font-weight: 600;
     padding: 0.35rem 0.7rem;
@@ -229,7 +238,7 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     color: var(--color-cool-bright);
     text-decoration: none;
   }
-  .asst-links a:hover {
+  .asst-log :global(.asst-links a:hover) {
     background: color-mix(in srgb, var(--color-cool-bright) 18%, transparent);
   }
 
@@ -289,12 +298,65 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     flex-shrink: 0;
   }
   .asst-foot {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     padding: 0 1.1rem 0.9rem;
     font-size: 0.76rem;
     color: var(--color-night-ink-soft);
   }
   .asst-foot a {
     color: var(--color-cool-bright);
+  }
+  .asst-handoff {
+    font: inherit;
+    font-weight: 640;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-cool-bright);
+    background: none;
+    color: var(--color-cool-bright);
+    cursor: pointer;
+  }
+  .asst-handoff:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-cool-bright) 18%, transparent);
+  }
+  .asst-handoff:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  /* a line above the transcript saying who is on the other end */
+  .asst-status {
+    margin: 0 1.1rem;
+    margin-top: 0.75rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--color-cool) 30%, transparent);
+    border: 1px solid var(--color-night-line);
+    font-size: 0.76rem;
+    color: var(--color-night-ink);
+  }
+  .asst-status[hidden] {
+    display: none;
+  }
+
+  /* a real person, kept visually distinct from the assistant */
+  .asst-log :global(.asst-msg--agent) {
+    align-self: flex-start;
+    background: color-mix(in srgb, var(--color-cool) 38%, transparent);
+    border: 1px solid var(--color-cool-bright);
+    border-bottom-left-radius: 6px;
+    color: #fff;
+  }
+  .asst-log :global(.asst-who) {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 0.25rem;
   }
 </style>
 
@@ -311,34 +373,184 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
     let capture = null
     let greeted = false
 
+    /* ------------------------------------------------------------------
+     * Conversation state.
+     *
+     * The thread lives on the server so the office can read it and answer.
+     * `token` is the visitor's key to their own thread, kept in sessionStorage
+     * so walking to another page does not start the conversation over.
+     * If the API is unreachable the assistant falls back to answering locally,
+     * which is what it did before live chat existed.
+     * ------------------------------------------------------------------ */
+    const TOKEN_KEY = 'btc-chat-token'
+    const statusEl = root.querySelector('[data-asst-status]')
+    const handoffBtn = root.querySelector('[data-asst-handoff]')
+    let token = null
+    let lastId = 0
+    let status = 'bot'
+    let online = true
+    let poller = null
+    let restored = false
+
+    const store = {
+      get() {
+        try { return sessionStorage.getItem(TOKEN_KEY) } catch { return null }
+      },
+      set(v) {
+        try { sessionStorage.setItem(TOKEN_KEY, v) } catch { /* private mode */ }
+      },
+      clear() {
+        try { sessionStorage.removeItem(TOKEN_KEY) } catch { /* ignore */ }
+      },
+    }
+
     const esc = (s) => {
       const d = document.createElement('div')
       d.textContent = s ?? ''
       return d.innerHTML
     }
 
-    function say(text, links) {
+    function bubble(cls, html) {
       const el = document.createElement('div')
-      el.className = 'asst-msg asst-msg--bot'
-      el.innerHTML =
-        esc(text) +
-        (links?.length
-          ? `<span class="asst-links">${links
-              .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`)
-              .join('')}</span>`
-          : '')
+      el.className = 'asst-msg ' + cls
+      el.innerHTML = html
       log.appendChild(el)
       log.scrollTop = log.scrollHeight
+      return el
+    }
+
+    function say(text, links) {
+      bubble(
+        'asst-msg--bot',
+        esc(text) +
+          (links?.length
+            ? `<span class="asst-links">${links
+                .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`)
+                .join('')}</span>`
+            : ''),
+      )
     }
 
     function you(text) {
-      const el = document.createElement('div')
-      el.className = 'asst-msg asst-msg--user'
-      el.textContent = text
-      log.appendChild(el)
-      log.scrollTop = log.scrollHeight
+      bubble('asst-msg--user', esc(text))
     }
 
+    function agent(text) {
+      bubble('asst-msg--agent', '<span class="asst-who">Big Texas Comfort</span>' + esc(text))
+    }
+
+    /** Draw one stored message. Visitor lines we already drew are skipped. */
+    function draw(m, skipVisitor) {
+      if (m.id > lastId) lastId = m.id
+      if (m.role === 'visitor') {
+        if (!skipVisitor) you(m.body)
+      } else if (m.role === 'agent') {
+        agent(m.body)
+      } else {
+        say(m.body)
+      }
+    }
+
+    function setStatus(next) {
+      if (next) status = next
+      const label =
+        status === 'waiting'
+          ? 'Passed to the office. Someone will reply here shortly.'
+          : status === 'live'
+            ? 'You are talking to someone at Big Texas Comfort.'
+            : status === 'closed'
+              ? 'This conversation has been closed.'
+              : ''
+      statusEl.textContent = label
+      statusEl.hidden = !label
+      handoffBtn.disabled = !online || status !== 'bot'
+      handoffBtn.textContent = status === 'bot' ? 'Talk to a person' : 'Office notified'
+      managePolling()
+    }
+
+    async function api(body) {
+      const res = await fetch('/api/chat/', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok || !json.ok) throw new Error(json.error || 'chat unavailable')
+      return json
+    }
+
+    /** Create the thread on first use, or reattach to the stored one. */
+    async function ensureChat() {
+      if (!online) return null
+      if (token) return token
+      const saved = store.get()
+      if (saved) {
+        token = saved
+        return token
+      }
+      const started = await api({ action: 'start', page: location.pathname })
+      token = started.token
+      store.set(token)
+      // The panel already greeted them locally when it opened. Record the
+      // server's copy so polling starts from the right place, but do not say
+      // hello a second time.
+      for (const m of started.messages ?? []) {
+        if (greeted && m.role === 'bot') {
+          if (m.id > lastId) lastId = m.id
+          continue
+        }
+        draw(m, false)
+      }
+      greeted = true
+      setStatus(started.status)
+      return token
+    }
+
+    /** Replay an existing thread when the panel is reopened on another page. */
+    async function restore() {
+      if (restored || !online) return
+      restored = true
+      const saved = store.get()
+      if (!saved) return
+      try {
+        const res = await fetch(`/api/chat/?token=${encodeURIComponent(saved)}&after=0`)
+        const json = await res.json().catch(() => ({}))
+        if (!res.ok || !json.ok) {
+          store.clear()
+          return
+        }
+        token = saved
+        for (const m of json.messages ?? []) draw(m, false)
+        greeted = (json.messages ?? []).length > 0
+        setStatus(json.status)
+      } catch {
+        store.clear()
+      }
+    }
+
+    function managePolling() {
+      const wanted = !panel.hidden && online && token && (status === 'waiting' || status === 'live')
+      if (wanted && !poller) poller = setInterval(poll, 4000)
+      if (!wanted && poller) {
+        clearInterval(poller)
+        poller = null
+      }
+    }
+
+    async function poll() {
+      if (!token) return
+      try {
+        const res = await fetch(`/api/chat/?token=${encodeURIComponent(token)}&after=${lastId}`)
+        const json = await res.json().catch(() => ({}))
+        if (!res.ok || !json.ok) return
+        for (const m of json.messages ?? []) draw(m, false)
+        if (json.status !== status) setStatus(json.status)
+      } catch {
+        /* a dropped poll is not worth telling the visitor about */
+      }
+    }
+
+    /* ---- local fallback, used only when the API cannot be reached ---- */
     function match(q) {
       const s = q.toLowerCase().trim()
       let best = null
@@ -348,6 +560,22 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
         if (score > 0 && (!best || score > best.score)) best = { k, score }
       }
       return best?.k ?? null
+    }
+
+    function answerLocally(text) {
+      const hit = match(text)
+      if (!hit) {
+        say(`I am not sure about that one, and I would rather not guess. A coordinator can answer properly on ${phone}.`, [
+          { label: `Call ${phone}`, href: phoneHref },
+        ])
+        startCapture('If you would like a call back, what name should we use?')
+        return
+      }
+      say(hit.reply, hit.links)
+      if (hit.capture) {
+        capture = { step: 'name', data: { urgent: hit.id === 'emergency' } }
+        setTimeout(() => say('What name should we use?'), 350)
+      }
     }
 
     function startCapture(prompt) {
@@ -370,9 +598,13 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
         })
         const json = await res.json().catch(() => ({}))
         if (res.ok && json.ok) {
-          say(`Thank you. Your request is logged and a coordinator will call you on ${d.phone}. If it cannot wait, ring ${phone} and someone will pick up.`, [
-            { label: `Call ${phone}`, href: phoneHref },
-          ])
+          const line = `Thank you. Your request is logged and a coordinator will call you on ${d.phone}. If it cannot wait, ring ${phone} and someone will pick up.`
+          say(line, [{ label: `Call ${phone}`, href: phoneHref }])
+          // hang the details on the conversation so the office sees who this is
+          if (token) {
+            void api({ action: 'profile', token, name: d.name, phone: d.phone, leadId: json.id }).catch(() => {})
+            void api({ action: 'send', token, text: line, mode: 'capture' }).catch(() => {})
+          }
         } else {
           throw new Error(json.error || 'could not save')
         }
@@ -383,8 +615,30 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       }
     }
 
+    /**
+     * Someone who asks another question while we are waiting on their name is
+     * still asking a question. Needs three words or more so real names that
+     * start with a question word, Will or May, are not mistaken for one.
+     */
+    function looksLikeQuestion(text) {
+      const t = text.trim()
+      if (t.includes('?')) return true
+      const words = t.split(/\s+/)
+      return words.length >= 3 && /^(what|when|where|how|do|does|did|can|could|is|are|was|will|would|why|who|which)$/i.test(words[0])
+    }
+
     function handleCapture(text) {
       if (capture.step === 'name') {
+        if (looksLikeQuestion(text)) {
+          const hit = match(text)
+          if (hit) say(hit.reply, hit.links)
+          else
+            say(`I am not sure about that one, and I would rather not guess. A coordinator can answer properly on ${phone}.`, [
+              { label: `Call ${phone}`, href: phoneHref },
+            ])
+          setTimeout(() => say('What name should we use?'), 350)
+          return
+        }
         capture.data.name = text.slice(0, 80)
         capture.step = 'phone'
         say(`Thanks ${capture.data.name}. What is the best number to reach you on?`)
@@ -408,29 +662,72 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       void submitLead(d)
     }
 
-    function ask(text) {
+    async function ask(text) {
       you(text)
       chips.hidden = true
 
+      // Once a person is on the way, nothing local should speak: not the bot,
+      // and not the half-finished detail prompts either.
+      const humanHasIt = status === 'waiting' || status === 'live'
+      if (humanHasIt) {
+        capture = null
+        if (!online || !token) return
+        try {
+          // Wait for the write so lastId moves past this line. Fire and forget
+          // would leave the poller to fetch it back and draw it a second time.
+          const res = await api({ action: 'send', token, text })
+          for (const m of res.messages ?? []) draw(m, true)
+          if (res.status !== status) setStatus(res.status)
+        } catch {
+          online = false
+          setStatus(status)
+        }
+        return
+      }
+
+      // Mid capture the prompts are local, but the office should still see
+      // what was typed, so the text is mirrored without a bot answer.
       if (capture) {
         handleCapture(text)
+        if (online && token) void api({ action: 'send', token, text, mode: 'capture' }).catch(() => {})
         return
       }
 
-      const hit = match(text)
-      if (!hit) {
-        say(
-          `I am not sure about that one, and I would rather not guess. A coordinator can answer properly on ${phone}.`,
-          [{ label: `Call ${phone}`, href: phoneHref }],
-        )
-        startCapture('If you would like a call back, what name should we use?')
+      if (!online) {
+        answerLocally(text)
         return
       }
 
-      say(hit.reply, hit.links)
-      if (hit.capture) {
-        capture = { step: 'name', data: { urgent: hit.id === 'emergency' } }
-        setTimeout(() => say('What name should we use?'), 350)
+      try {
+        await ensureChat()
+        const res = await api({ action: 'send', token, text })
+        for (const m of res.messages ?? []) draw(m, true)
+        if (res.status !== status) setStatus(res.status)
+        if (res.capture) {
+          capture = { step: 'name', data: {} }
+          setTimeout(() => say('What name should we use?'), 350)
+        }
+      } catch {
+        // one failure is enough to stop trying for this page view
+        online = false
+        setStatus(status)
+        answerLocally(text)
+      }
+    }
+
+    async function requestPerson() {
+      handoffBtn.disabled = true
+      capture = null // a coordinator will ask for whatever they need
+      try {
+        await ensureChat()
+        const res = await api({ action: 'handoff', token })
+        for (const m of res.messages ?? []) draw(m, false)
+        setStatus(res.status)
+      } catch {
+        say(`I could not reach the office from here. Please call ${phone} and someone will pick up.`, [
+          { label: `Call ${phone}`, href: phoneHref },
+        ])
+        handoffBtn.disabled = false
       }
     }
 
@@ -439,22 +736,28 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       root.classList.toggle('is-open', open)
       root.querySelector('[data-asst-open]').setAttribute('aria-expanded', String(open))
       if (open) {
-        if (!greeted) {
-          say(greeting)
-          greeted = true
-        }
+        void restore().then(() => {
+          if (!greeted) {
+            say(greeting)
+            greeted = true
+          }
+          managePolling()
+        })
         input.focus()
+      } else {
+        managePolling()
       }
     }
 
     root.querySelector('[data-asst-open]').addEventListener('click', () => setOpen(true))
     root.querySelector('[data-asst-close]').addEventListener('click', () => setOpen(false))
+    handoffBtn.addEventListener('click', () => void requestPerson())
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !panel.hidden) setOpen(false)
     })
 
     for (const chip of chips.querySelectorAll('[data-asst-chip]')) {
-      chip.addEventListener('click', () => ask(chip.textContent.trim()))
+      chip.addEventListener('click', () => void ask(chip.textContent.trim()))
     }
 
     form.addEventListener('submit', (e) => {
@@ -462,7 +765,7 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       const v = input.value.trim()
       if (!v) return
       input.value = ''
-      ask(v)
+      void ask(v)
     })
   }
 </script>

@@ -2,11 +2,29 @@ export const prerender = false
 
 import type { APIRoute } from 'astro'
 import { createLead, createBooking, storageReady } from '@/lib/db'
+import { clientIp, rateLimit, tooMany } from '@/lib/ratelimit'
 
 const clean = (v: FormDataEntryValue | null, max = 2000) =>
   typeof v === 'string' ? v.trim().slice(0, max) : ''
 
+/**
+ * A real customer submits once, occasionally twice. Twelve in ten minutes is
+ * far past any honest use while still cutting a script off early, and it
+ * leaves enough headroom that running the test suite twice in a row does not
+ * lock the machine out of its own dev server.
+ */
+const LIMIT = 12
+const WINDOW_MS = 10 * 60 * 1000
+
 export const POST: APIRoute = async ({ request }) => {
+  const gate = rateLimit(`leads:${clientIp(request)}`, LIMIT, WINDOW_MS)
+  if (!gate.ok) {
+    return tooMany(
+      gate.retryAfter,
+      'That is a lot of requests in a short time. Please call 832-888-5166 and we will take the details directly.',
+    )
+  }
+
   // Better to tell the visitor to phone than to accept a request we cannot keep.
   if (!storageReady) {
     return new Response(

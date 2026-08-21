@@ -6,7 +6,7 @@
     "build": "astro build",
     "start": "node ./dist/server/entry.mjs",
     "preview": "astro preview",
-    "test": "node tests/sweep.mjs && node tests/interactions.mjs && node tests/admin.mjs && node tests/linkcheck.mjs"
+    "test": "node tests/sweep.mjs && node tests/interactions.mjs && node tests/admin.mjs && node tests/chat.mjs && node tests/linkcheck.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1"

@@ -297,3 +297,4 @@ const ok = (cond, msg) => (cond ? null : fails.push(msg))
 
 await browser.close()
 console.log(fails.length ? `FAILURES (${fails.length}):\n` + fails.map((f) => '  ✗ ' + f).join('\n') : 'ALL INTERACTIONS PASS')
+if (fails.length) process.exitCode = 1

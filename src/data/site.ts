@@ -91,7 +91,7 @@ export const site = {
   ],
 
   offers: {
-    diagnostic: 'Service calls $89.50 - diagnostic includes first hour of labor',
+    diagnostic: 'Service calls $89.50, first hour of labor included',
     estimates: 'Free estimates on new systems',
     secondOpinions: 'Free second opinions',
     military: 'Military and First Responders friendly. Ask us about our discounts.',

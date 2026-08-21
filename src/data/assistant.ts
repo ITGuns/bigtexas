@@ -86,7 +86,9 @@ export const intents: Intent[] = [
   },
   {
     id: 'services',
-    patterns: ['service', 'what do you do', 'offer', 'repair', 'install', 'maintenance', 'tune up', 'tune-up', 'duct', 'insulation', 'commercial'],
+    // no bare 'offer' here: it outscored the offers intent on "any offers?",
+    // and 'service' already catches "what services do you offer"
+    patterns: ['service', 'what do you do', 'repair', 'install', 'maintenance', 'tune up', 'tune-up', 'duct', 'insulation', 'commercial'],
     answer: () => ({
       reply: `We cover ${serviceCategories.map((c) => c.name.toLowerCase()).join(', ')}. That includes ${serviceNames.slice(0, 6).join(', ')} and more. Which one are you after?`,
       links: [{ label: 'All services', href: '/services/' }],
@@ -134,7 +136,7 @@ export const intents: Intent[] = [
     id: 'offers',
     patterns: ['offer', 'deal', 'discount', 'coupon', 'promo', 'rebate', 'special', 'military', 'veteran', 'first responder'],
     answer: () => ({
-      reply: `Current offers: a ${site.offers.diagnostic.replace('Service calls ', '')}, free estimates on new systems, free second opinions, and seasonal American Standard rebates. ${site.offers.military}`,
+      reply: `Current offers: ${site.offers.diagnostic}, free estimates on new systems, free second opinions, and seasonal American Standard rebates. ${site.offers.military}`,
       links: [{ label: 'Special offers', href: '/special-offers/' }],
     }),
   },

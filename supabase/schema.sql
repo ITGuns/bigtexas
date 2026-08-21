@@ -79,3 +79,47 @@ alter table public.bookings
   add column if not exists completed_at timestamptz;
 
 create index if not exists idx_leads_followup on public.leads (follow_up_at);
+
+-- ---------------------------------------------------------------------------
+-- Live chat: conversations held in the website assistant, and the replies the
+-- office sends back from the control panel.
+--
+-- `token` is the visitor's key to their own thread. It is random and secret,
+-- and the numeric id never reaches the browser, so one visitor cannot read
+-- another's conversation by guessing an id.
+-- ---------------------------------------------------------------------------
+create table if not exists public.chats (
+  id              bigint generated always as identity primary key,
+  token           text        not null unique,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now(),
+  last_message_at timestamptz not null default now(),
+  name            text        not null default '',
+  phone           text        not null default '',
+  email           text        not null default '',
+  page            text        not null default '',
+  status          text        not null default 'bot'
+                    check (status in ('bot', 'waiting', 'live', 'closed')),
+  lead_id         bigint      references public.leads(id) on delete set null,
+  agent_unread    integer     not null default 0
+);
+
+create table if not exists public.chat_messages (
+  id         bigint generated always as identity primary key,
+  chat_id    bigint      not null references public.chats(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  role       text        not null check (role in ('visitor', 'bot', 'agent')),
+  body       text        not null
+);
+
+create index if not exists idx_chats_status   on public.chats (status, last_message_at desc);
+create index if not exists idx_chats_token    on public.chats (token);
+create index if not exists idx_chat_msg_chat  on public.chat_messages (chat_id, id);
+
+alter table public.chats         enable row level security;
+alter table public.chat_messages enable row level security;
+
+drop trigger if exists chats_touch_updated_at on public.chats;
+create trigger chats_touch_updated_at
+  before update on public.chats
+  for each row execute function public.touch_updated_at();

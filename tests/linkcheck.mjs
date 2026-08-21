@@ -44,4 +44,5 @@ if (broken.size === 0) console.log('ALL LINKS OK')
 else {
   console.log(`BROKEN (${broken.size}):`)
   for (const [href, sources] of broken) console.log(`  ${href}  ← ${sources.join(', ')}`)
+  process.exitCode = 1
 }

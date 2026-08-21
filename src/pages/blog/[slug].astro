@@ -11,10 +11,25 @@ export function getStaticPaths() {
 const { post } = Astro.props
 const others = blogPosts.filter((p) => p.slug !== post.slug)
 
-/** paragraphs prefixed with "## " in extraction are section headings */
-const blocks = post.uniqueCopy.map((p) => {
-  const m = p.match(/^#{2,4}\s*(.+)$/)
-  return m ? { type: 'h2' as const, text: m[1] } : { type: 'p' as const, text: p }
+/**
+ * Paragraphs prefixed with "## " in extraction are section headings. Some
+ * paragraphs are really bullet lists the scrape kept as one newline-separated
+ * string; left as a <p> they collapse into run-on prose studded with hyphens.
+ */
+type Block =
+  | { type: 'h2'; text: string }
+  | { type: 'p'; text: string }
+  | { type: 'ul'; items: string[] }
+
+const blocks: Block[] = post.uniqueCopy.map((p) => {
+  const heading = p.match(/^#{2,4}\s*(.+)$/)
+  if (heading) return { type: 'h2', text: heading[1] }
+
+  const lines = p.split('\n').map((l) => l.trim()).filter(Boolean)
+  if (lines.length > 1 && lines.every((l) => /^[-*•]\s+/.test(l))) {
+    return { type: 'ul', items: lines.map((l) => l.replace(/^[-*•]\s+/, '')) }
+  }
+  return { type: 'p', text: p }
 })
 
 const articleSchema = {
@@ -44,6 +59,12 @@ const articleSchema = {
           blocks.map((b) =>
             b.type === 'h2' ? (
               <h2 class="post-h2">{b.text}</h2>
+            ) : b.type === 'ul' ? (
+              <ul class="post-list">
+                {b.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
             ) : (
               <p class="post-para">{b.text}</p>
             ),
@@ -104,6 +125,22 @@ const articleSchema = {
   .post-para:first-child {
     font-size: 1.14rem;
     color: var(--color-ink);
+  }
+  /* Tailwind's reset clears list markers, so ask for them back explicitly */
+  .post-list {
+    margin: 0 0 1.35rem 1.25rem;
+    padding: 0;
+    list-style: disc outside;
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+  .post-list li {
+    margin-bottom: 0.6rem;
+    padding-left: 0.35rem;
+  }
+  .post-list li::marker {
+    color: var(--color-heat);
   }
   .post-rail {
     align-self: start;

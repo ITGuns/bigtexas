@@ -1,0 +1,124 @@
+---
+export const prerender = false
+
+import Admin from '@/layouts/Admin.astro'
+import { isAuthed, LOGIN_PATH } from '@/lib/auth'
+import { listChats, chatCounts, CHAT_STATUSES, type ChatStatus } from '@/lib/db'
+import { fmtWhen } from '@/lib/format'
+
+if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
+
+const filter = Astro.url.searchParams.get('status') as ChatStatus | null
+const valid = filter && CHAT_STATUSES.includes(filter) ? filter : undefined
+const chats = await listChats(valid)
+const counts = await chatCounts()
+
+const label: Record<ChatStatus, string> = {
+  bot: 'Assistant',
+  waiting: 'Needs a reply',
+  live: 'You are in it',
+  closed: 'Closed',
+}
+
+const accent: Record<ChatStatus, string> = {
+  bot: 'linear-gradient(120deg,#8a8a96,#5f5f6b)',
+  waiting: 'var(--grad-heat)',
+  live: 'var(--grad-cool)',
+  closed: 'linear-gradient(120deg,#4e9c68,#2f6b45)',
+}
+
+const needsReply = chats.filter((c) => c.status === 'waiting' || c.agent_unread > 0).length
+---
+
+<Admin title="Chats" active="chats">
+  <div class="admin-head">
+    <div>
+      <h1 class="admin-title">Conversations</h1>
+      <p class="admin-sub">
+        {
+          needsReply > 0
+            ? `${needsReply} waiting on you. The page refreshes itself every 20 seconds.`
+            : 'Nobody is waiting. Every conversation from the website assistant lands here.'
+        }
+      </p>
+    </div>
+    <form class="inline-form" method="GET">
+      <select class="admin-select" name="status" onchange="this.form.submit()">
+        <option value="">All conversations</option>
+        {CHAT_STATUSES.map((s) => <option value={s} selected={valid === s}>{label[s]} ({counts[s]})</option>)}
+      </select>
+      <noscript><button type="submit" class="btn btn--ghost btn--sm">Filter</button></noscript>
+    </form>
+  </div>
+
+  <div class="admin-stats" style="grid-template-columns:repeat(4,1fr)">
+    {
+      CHAT_STATUSES.map((s) => (
+        <a class="stat" href={`/admin/chats/?status=${s}`} style={`--accent:${accent[s]}`}>
+          <p class="stat-label">{label[s]}</p>
+          <p class="stat-value">{counts[s]}</p>
+        </a>
+      ))
+    }
+  </div>
+
+  {
+    chats.length === 0 ? (
+      <div class="admin-panel">
+        <div class="admin-empty">
+          <strong>No conversations yet</strong>
+          When somebody opens the assistant on the website, the whole thread appears here and you
+          can join it.
+        </div>
+      </div>
+    ) : (
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Visitor</th>
+              <th>Last message</th>
+              <th>Status</th>
+              <th>Started on</th>
+              <th>Updated</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {chats.map((c) => (
+              <tr>
+                <td>
+                  <a href={`/admin/chats/${c.id}/`}>{c.name || 'Anonymous visitor'}</a>
+                  {c.agent_unread > 0 && (
+                    <span class="pill pill--urgent" style="margin-left:.4rem">{c.agent_unread} new</span>
+                  )}
+                  <div class="cell-muted">{c.phone || c.email || `${c.message_count} messages`}</div>
+                </td>
+                <td class="cell-muted" style="max-width:26rem">
+                  {c.last_role === 'agent' ? 'You: ' : c.last_role === 'bot' ? 'Assistant: ' : ''}
+                  {c.last_body.length > 90 ? `${c.last_body.slice(0, 90)}…` : c.last_body}
+                </td>
+                <td><span class:list={['pill', `pill--${c.status === 'waiting' ? 'urgent' : c.status}`]}>{label[c.status]}</span></td>
+                <td class="cell-muted">{c.page || '/'}</td>
+                <td class="cell-mono">{fmtWhen(c.last_message_at)}</td>
+                <td>
+                  <a href={`/admin/chats/${c.id}/`} class="btn btn--ghost btn--sm">Open</a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+</Admin>
+
+<script>
+  // Someone waiting on a reply should not have to remember to hit refresh.
+  const stale = 20000
+  let timer = setTimeout(() => location.reload(), stale)
+  document.addEventListener('visibilitychange', () => {
+    clearTimeout(timer)
+    if (document.visibilityState === 'visible') timer = setTimeout(() => location.reload(), stale)
+  })
+</script>

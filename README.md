@@ -73,6 +73,12 @@ Two things that are easy to get wrong here:
 2. Open **SQL Editor > New query**, paste the contents of [`supabase/schema.sql`](supabase/schema.sql), and run it. That creates the `leads` and `bookings` tables, their indexes, and `updated_at` triggers.
 3. Copy the project URL and the **service role** key from **Project Settings > Data API** into the Vercel environment variables above.
 
+The file is written to be re-run safely: every statement is `if not exists` or
+guarded, so applying it again after a schema change adds the new tables and
+columns without touching existing rows. Run it whenever this file gains
+something, for example the `chats` and `chat_messages` tables that live chat
+needs.
+
 Row level security is enabled on both tables with no policies, so anonymous and authenticated clients are denied outright. The app reaches the tables only from server-rendered routes using the service-role key, which bypasses RLS. Keep that key server-side; never give it a `PUBLIC_` prefix.
 
 ## Videos
@@ -135,8 +141,9 @@ picks them up with no code change.
 
 - **Dashboard** with open leads, weekly volume, pending bookings and a six-stage pipeline board.
 - **Leads**: search, filter by stage, change stage inline, export CSV.
-- **Lead detail**: click-to-call and text, internal notes, and booking a job straight from the lead.
+- **Lead detail**: click-to-call, internal notes, prepared follow-up and review-request emails, and booking a job straight from the lead.
 - **Bookings**: every appointment with its date, arrival window and status.
+- **Chats**: every conversation held in the website assistant, and a reply box to answer personally.
 
 The public contact form posts to `/api/leads`. A hidden honeypot field silently absorbs bot submissions, and a requested date turns a lead into a booking automatically.
 
@@ -146,16 +153,76 @@ The public contact form posts to `/api/leads`. A hidden honeypot field silently 
 npm test
 ```
 
-Four Playwright suites, run against the dev server:
+Five Playwright suites, run against the dev server. Each one exits non-zero when it
+finds something, so `npm test` fails the way it should:
 
 | Suite | Covers |
 | --- | --- |
 | `tests/sweep.mjs` | 21 routes × 3 breakpoints: console errors, horizontal overflow, alt text, heading order, titles and meta |
 | `tests/interactions.mjs` | Service explorer, troubleshooting stepper, video players, mobile menu, contact form, FAQ, glossary, background video, rounded corners |
-| `tests/admin.mjs` | Public submission through the full pipeline, plus auth and CSRF refusals |
+| `tests/admin.mjs` | Public submission through the full pipeline, the email follow-up actions, plus auth and CSRF refusals |
+| `tests/chat.mjs` | Live chat end to end in two browsers, plus rate limiting and security headers |
 | `tests/linkcheck.mjs` | Every internal link and asset reference in the build |
 
 Start `npm run dev` in another terminal first. `linkcheck` runs against `dist/`, so build before using it.
+
+## Live chat
+
+The assistant on the public site is not only a lookup table any more. Every
+conversation is stored, the control panel lists them under **Chats**, and
+anyone in the office can answer personally.
+
+How it fits together:
+
+- The visitor's question goes to `POST /api/chat/`, and the **answer is composed
+  on the server**, not in the browser. That way the transcript the office reads
+  is what was actually said. A tampered page can only put words in its own
+  mouth, never in the company's.
+- A visitor is identified by a random 32 character token held in
+  `sessionStorage`, never by the row id. Nobody can read someone else's
+  conversation by counting upwards, and the thread survives walking from one
+  page to another.
+- **Talk to a person** moves the conversation to `waiting` and raises the unread
+  count in the admin nav. From that moment the bot says nothing: the check is
+  made against the stored status, so it holds even if the page is tampered with.
+- The coordinator replies from `/admin/chats/<id>/`. Replying moves the
+  conversation to `live`. Both sides poll every four seconds and stop when the
+  tab is hidden, because Vercel gives no socket to hold open.
+- Statuses are `bot`, `waiting`, `live` and `closed`. Handing it back to `bot`
+  lets the assistant answer again.
+
+Chat needs the `chats` and `chat_messages` tables. They are in
+[`supabase/schema.sql`](supabase/schema.sql); SQLite creates them by itself.
+
+## Rate limiting
+
+`POST /api/leads` and the chat endpoints are limited per IP address by
+[`src/lib/ratelimit.ts`](src/lib/ratelimit.ts): twelve lead submissions per ten
+minutes, and separate allowances for starting, sending and polling a chat. Over
+the limit returns `429` with a `Retry-After` header and a message telling the
+customer to phone instead.
+
+The window lives in memory. On serverless each instance keeps its own, so the
+real ceiling is a little higher than the number suggests. That is the right
+trade here: it stops a script hammering the form, and the alternative, a row
+written per attempt, would hand an attacker exactly the cost we are avoiding.
+
+## Security headers
+
+`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`,
+`Permissions-Policy` and a Content Security Policy are sent from two places on
+purpose:
+
+- [`src/middleware.ts`](src/middleware.ts) covers `npm run dev` and any plain
+  Node deployment.
+- [`vercel.json`](vercel.json) covers Vercel, where the 134 prerendered pages
+  are served from the edge and never reach middleware.
+
+**Change one list and you must change the other.** The policy allows
+`script-src 'unsafe-inline'` because Astro compiles `define:vars` islands to
+inline scripts; the escaping in those components is what actually stops XSS, and
+the rest of the policy still blocks external script hosts, plugins, base tag
+injection and framing.
 
 ## Project layout
 

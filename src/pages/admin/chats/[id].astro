@@ -1,0 +1,250 @@
+---
+export const prerender = false
+
+import Admin from '@/layouts/Admin.astro'
+import { isAuthed, LOGIN_PATH } from '@/lib/auth'
+import { getChat, listMessages, updateChat, CHAT_STATUSES, type ChatStatus } from '@/lib/db'
+import { fmtDateTime } from '@/lib/format'
+
+if (!isAuthed(Astro.cookies)) return Astro.redirect(LOGIN_PATH)
+
+const id = Number(Astro.params.id)
+const chat = Number.isFinite(id) ? await getChat(id) : undefined
+if (!chat) return new Response('Conversation not found', { status: 404 })
+
+const messages = await listMessages(chat.id)
+
+// opening the thread is the same as reading it
+if (chat.agent_unread > 0) await updateChat(chat.id, { agent_unread: 0 })
+
+const label: Record<ChatStatus, string> = {
+  bot: 'Assistant is handling it',
+  waiting: 'Waiting for you',
+  live: 'You are in it',
+  closed: 'Closed',
+}
+const lastId = messages.length ? messages[messages.length - 1].id : 0
+---
+
+<Admin title={chat.name || 'Conversation'} active="chats">
+  <div class="admin-head">
+    <div>
+      <p class="admin-label" style="margin-bottom:.5rem">
+        <a href="/admin/chats/" style="color:var(--color-cool-bright);text-decoration:none">Back to conversations</a>
+      </p>
+      <h1 class="admin-title">{chat.name || 'Anonymous visitor'}</h1>
+      <p class="admin-sub">
+        <span
+          class:list={['pill', `pill--${chat.status === 'waiting' ? 'urgent' : chat.status}`]}
+          data-chat-pill
+          data-status={chat.status}
+        >
+          {label[chat.status]}
+        </span>
+        <span style="margin-left:.6rem">Started {fmtDateTime(chat.created_at)} on {chat.page || '/'}</span>
+      </p>
+    </div>
+    <div class="admin-actions" style="margin:0">
+      {chat.phone && <a href={`tel:${chat.phone.replace(/\D/g, '')}`} class="btn btn--primary btn--sm">Call {chat.phone}</a>}
+      {chat.lead_id && <a href={`/admin/leads/${chat.lead_id}/`} class="btn btn--ghost btn--sm">Open lead</a>}
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div>
+      <div class="chat-shell">
+        <div class="chat-log" data-chat-log data-last={lastId}>
+          {
+            messages.length === 0 ? (
+              <p class="chat-empty">Nothing said yet.</p>
+            ) : (
+              messages.map((m) => (
+                <div class:list={['chat-msg', `chat-msg--${m.role}`]}>
+                  <span class="chat-who">
+                    {m.role === 'agent' ? 'You' : m.role === 'bot' ? 'Assistant' : chat.name || 'Visitor'}
+                    <span class="chat-time">{fmtDateTime(m.created_at)}</span>
+                  </span>
+                  {m.body}
+                </div>
+              ))
+            )
+          }
+        </div>
+
+        <form class="chat-reply" data-chat-form method="POST" action="/api/admin/chat/">
+          <input type="hidden" name="action" value="reply" />
+          <input type="hidden" name="id" value={chat.id} />
+          <textarea
+            name="body"
+            rows="2"
+            placeholder={chat.status === 'closed' ? 'This conversation is closed' : 'Type your reply, Enter to send'}
+            data-chat-input
+            disabled={chat.status === 'closed'}
+            required></textarea>
+          <button type="submit" class="btn btn--primary btn--sm" disabled={chat.status === 'closed'}>Send</button>
+        </form>
+      </div>
+      <p class="cell-muted" style="margin-top:.7rem">
+        Replying puts you in the conversation and stops the assistant answering over you. The
+        visitor sees it within a few seconds, as long as their chat window is still open.
+      </p>
+    </div>
+
+    <div>
+      <section class="admin-panel">
+        <h2 class="admin-panel-title">Visitor</h2>
+        <dl class="detail-list">
+          <div class="detail-row"><dt>Name</dt><dd>{chat.name || 'Not given'}</dd></div>
+          <div class="detail-row"><dt>Phone</dt><dd>{chat.phone || 'Not given'}</dd></div>
+          <div class="detail-row"><dt>Email</dt><dd>{chat.email || 'Not given'}</dd></div>
+          <div class="detail-row"><dt>Started on</dt><dd>{chat.page || '/'}</dd></div>
+          <div class="detail-row"><dt>Messages</dt><dd>{messages.length}</dd></div>
+        </dl>
+        {
+          !chat.phone && !chat.email && (
+            <p class="cell-muted" style="margin-top:.8rem">
+              No contact details yet. Ask for a number in the thread if it looks like a real job.
+            </p>
+          )
+        }
+      </section>
+
+      <section class="admin-panel" style="margin-top:1.25rem">
+        <h2 class="admin-panel-title">Conversation</h2>
+        <form method="POST" action="/api/admin/chat/">
+          <input type="hidden" name="action" value="status" />
+          <input type="hidden" name="id" value={chat.id} />
+          <div class="admin-field">
+            <label for="cstatus">Status</label>
+            <select id="cstatus" class="admin-select" name="status">
+              {CHAT_STATUSES.map((s) => <option value={s} selected={chat.status === s}>{label[s]}</option>)}
+            </select>
+          </div>
+          <button type="submit" class="btn btn--primary btn--sm">Update</button>
+        </form>
+        <p class="cell-muted" style="margin-top:.9rem">
+          Handing it back to the assistant lets the bot answer again. Closing it tells the visitor
+          the conversation is finished.
+        </p>
+      </section>
+    </div>
+  </div>
+</Admin>
+
+<script>
+  /*
+   * Poll for the visitor's side of the conversation. Vercel gives no socket to
+   * hold open, so a short poll is the honest way to do this: cheap, and it
+   * stops the moment the tab goes to the background.
+   */
+  const logEl = document.querySelector('[data-chat-log]')
+  const form = document.querySelector('[data-chat-form]')
+  if (logEl && form) {
+    const chatId = form.querySelector('input[name="id"]').value
+    const input = form.querySelector('[data-chat-input]')
+    let last = Number(logEl.dataset.last || 0)
+    let timer = null
+
+    const esc = (s) => {
+      const d = document.createElement('div')
+      d.textContent = s ?? ''
+      return d.innerHTML
+    }
+
+    const stamp = (iso) => {
+      const d = new Date(iso)
+      return isNaN(d) ? '' : d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+    }
+
+    function add(m) {
+      const empty = logEl.querySelector('.chat-empty')
+      if (empty) empty.remove()
+      const who = m.role === 'agent' ? 'You' : m.role === 'bot' ? 'Assistant' : 'Visitor'
+      const el = document.createElement('div')
+      el.className = `chat-msg chat-msg--${m.role}`
+      el.innerHTML = `<span class="chat-who">${esc(who)}<span class="chat-time">${esc(stamp(m.created_at))}</span></span>${esc(m.body)}`
+      logEl.appendChild(el)
+      logEl.scrollTop = logEl.scrollHeight
+      if (m.id > last) last = m.id
+    }
+
+    /* Replying moves the conversation to live, and the visitor may close it
+     * from their side, so keep the header honest without a reload. */
+    const pill = document.querySelector('[data-chat-pill]')
+    const statusSelect = document.querySelector('#cstatus')
+    const LABEL = {
+      bot: 'Assistant is handling it',
+      waiting: 'Waiting for you',
+      live: 'You are in it',
+      closed: 'Closed',
+    }
+
+    function showStatus(next) {
+      if (!next || !pill || pill.dataset.status === next) return
+      pill.dataset.status = next
+      pill.textContent = LABEL[next] ?? next
+      pill.className = `pill pill--${next === 'waiting' ? 'urgent' : next}`
+      if (statusSelect) statusSelect.value = next
+      // the nav badge counts conversations waiting on a person
+      if (next !== 'waiting') document.querySelector('.admin-nav-badge')?.remove()
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch(`/api/admin/chat/?id=${chatId}&after=${last}`)
+        if (!res.ok) return
+        const json = await res.json()
+        for (const m of json.messages ?? []) add(m)
+        showStatus(json.status)
+      } catch {
+        /* transient, the next tick will catch up */
+      }
+    }
+
+    function run(on) {
+      if (on && !timer) timer = setInterval(poll, 4000)
+      if (!on && timer) {
+        clearInterval(timer)
+        timer = null
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => run(document.visibilityState === 'visible'))
+    run(document.visibilityState === 'visible')
+
+    // send without losing the scroll position or the poll
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const body = input.value.trim()
+      if (!body) return
+      input.value = ''
+      const data = new FormData()
+      data.set('action', 'reply')
+      data.set('id', chatId)
+      data.set('body', body)
+      try {
+        const res = await fetch('/api/admin/chat/', {
+          method: 'POST',
+          headers: { accept: 'application/json' },
+          body: data,
+        })
+        const json = await res.json()
+        if (json.ok && json.message) {
+          add(json.message)
+          showStatus('live')
+        } else input.value = body
+      } catch {
+        input.value = body
+      }
+    })
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        form.requestSubmit()
+      }
+    })
+
+    logEl.scrollTop = logEl.scrollHeight
+  }
+</script>

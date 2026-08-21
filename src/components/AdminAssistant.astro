@@ -139,7 +139,8 @@ const { snapshot } = Astro.props
     flex-direction: column;
     gap: 0.6rem;
   }
-  .aa-msg {
+  /* built by the script below, so it never gets Astro's scoping attribute */
+  .aa-log :global(.aa-msg) {
     max-width: 90%;
     padding: 0.6rem 0.8rem;
     border-radius: var(--radius-sm);
@@ -147,17 +148,17 @@ const { snapshot } = Astro.props
     line-height: 1.5;
     white-space: pre-wrap;
   }
-  .aa-msg--bot {
+  .aa-log :global(.aa-msg--bot) {
     align-self: flex-start;
     background: color-mix(in srgb, var(--color-night-ink) 8%, transparent);
     border: 1px solid var(--color-night-line);
   }
-  .aa-msg--user {
+  .aa-log :global(.aa-msg--user) {
     align-self: flex-end;
     background: color-mix(in srgb, var(--color-cool) 45%, transparent);
     color: #fff;
   }
-  .aa-msg a {
+  .aa-log :global(.aa-msg a) {
     color: var(--color-cool-bright);
   }
   .aa-chips {
@@ -234,6 +235,12 @@ const { snapshot } = Astro.props
     const days = (iso) => (Date.now() - new Date(iso).getTime()) / 864e5
     const today = new Date().toISOString().slice(0, 10)
     const inDays = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10)
+    /** 2026-08-24 reads as Mon, Aug 24, matching the tables on this page */
+    const fmtDay = (d) => {
+      const [y, m, day] = String(d).split('-').map(Number)
+      if (!y || !m || !day) return String(d)
+      return new Date(y, m - 1, day).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+    }
 
     function answer(q) {
       const s = q.toLowerCase()
@@ -263,7 +270,7 @@ const { snapshot } = Astro.props
         const wk = inDays(7)
         const b = bookings.filter((x) => x.date && x.date >= today && x.date <= wk && x.status !== 'cancelled')
         return b.length
-          ? `${b.length} ${b.length === 1 ? 'booking' : 'bookings'} in the next 7 days:<br>${list(b, (x) => `${esc(x.date)} · ${esc(x.name || 'unlinked')} · ${esc(x.service || 'service visit')} · ${esc(x.status)}`)}`
+          ? `${b.length} ${b.length === 1 ? 'booking' : 'bookings'} in the next 7 days:<br>${list(b, (x) => `${esc(fmtDay(x.date))} · ${esc(x.name || 'unlinked')} · ${esc(x.service || 'service visit')} · ${esc(x.status)}`)}`
           : 'Nothing booked in the next 7 days.'
       }
 
@@ -296,10 +303,22 @@ const { snapshot } = Astro.props
       }
 
       // name or phone lookup
-      const hit = leads.find((l) => s.includes(l.name.toLowerCase()) || (l.phone && s.includes(l.phone.replace(/\D/g, ''))))
-      if (hit) {
-        return `${link(hit)} · ${esc(hit.status)} · ${esc(hit.service || 'no service set')} · ${esc(hit.city || 'no city')}<br>${esc(hit.phone || '')} ${esc(hit.email || '')}`
+      const card = (l) =>
+        `${link(l)} · ${esc(l.status)} · ${esc(l.service || 'no service set')} · ${esc(l.city || 'no city')}<br>${esc(l.phone || '')} ${esc(l.email || '')}`
+      let hit = leads.find((l) => s.includes(l.name.toLowerCase()) || (l.phone && s.includes(l.phone.replace(/\D/g, ''))))
+      if (!hit) {
+        // the owner types "Dana", not "Dana Whitfield". Match a whole first or
+        // last name; anything shorter than three letters is too loose.
+        const words = new Set(s.replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter((w) => w.length >= 3))
+        const partial = leads.filter((l) =>
+          l.name.toLowerCase().split(/\s+/).some((w) => w.length >= 3 && words.has(w)),
+        )
+        if (partial.length === 1) hit = partial[0]
+        else if (partial.length > 1) {
+          return `${partial.length} leads match that name:<br>${list(partial, (l) => `${link(l)} · ${esc(l.city || 'no city')} · ${esc(l.status)}`)}`
+        }
       }
+      if (hit) return card(hit)
 
       return 'I can answer on leads by status, emergencies, stale leads, follow-ups, review requests, bookings this week, and leads by city. You can also type a customer name.'
     }

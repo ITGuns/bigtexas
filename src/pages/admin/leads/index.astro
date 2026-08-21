@@ -29,7 +29,14 @@ if (url.searchParams.get('export') === 'csv') {
     'id', 'created_at', 'first_name', 'last_name', 'phone', 'email',
     'address', 'city', 'service', 'urgency', 'status', 'message', 'notes',
   ] as const
-  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`
+  // Anyone can put "=HYPERLINK(...)" in the public contact form. Excel and
+  // Sheets treat a leading = + @ - or tab as a formula, so neutralise it with a
+  // leading apostrophe before quoting.
+  const esc = (v: unknown) => {
+    const s = String(v ?? '')
+    const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s
+    return `"${safe.replace(/"/g, '""')}"`
+  }
   const csv = [
     cols.join(','),
     ...leads.map((l) => cols.map((c) => esc((l as unknown as Record<string, unknown>)[c])).join(',')),
