@@ -19,6 +19,20 @@ if (!PW) {
 
 const browser = await chromium.launch()
 
+/** How many conversations exist, read through a signed-in admin session. */
+const counter = await browser.newContext()
+async function adminCount() {
+  await counter.request.post(`${base}/admin/login/`, {
+    form: { password: PW },
+    headers: { origin: base },
+  })
+  const page = await counter.newPage()
+  await page.goto(`${base}/admin/chats/`, { waitUntil: 'networkidle' })
+  const n = await page.locator('table tbody tr').count()
+  await page.close()
+  return n
+}
+
 /* ---------------- visitor ---------------- */
 const visitor = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage()
 visitor.on('pageerror', (e) => fails.push('chat visitor PAGEERROR: ' + e.message))
@@ -57,6 +71,7 @@ await ask('<img src=x onerror=alert(1)> my ac is broken')
 await visitor.locator('[data-asst-handoff]').click()
 await visitor.waitForTimeout(1200)
 ok(/passed this to the office/i.test(await log.innerText()), 'chat: handoff was not confirmed to the visitor')
+
 ok(await visitor.locator('[data-asst-handoff]').isDisabled(), 'chat: handoff button stayed enabled')
 
 // with a person on the way, the bot must stop answering
@@ -129,6 +144,32 @@ await admin.locator('form:has(input[value="status"]) button[type=submit]').click
 await admin.waitForLoadState('networkidle')
 ok(/closed/i.test(await admin.locator('.admin-sub').innerText()), 'chat: closing the conversation did not stick')
 ok(await admin.locator('[data-chat-input]').isDisabled(), 'chat: reply box stayed enabled on a closed conversation')
+
+/* ---------------- one visitor, one conversation ---------------- */
+/*
+ * Asking a question and pressing "Talk to a person" before the first round
+ * trip lands used to open two conversations, handing the office an empty one
+ * while the question sat in the other. Both calls have to be started in the
+ * same tick or the race never opens on a fast local server.
+ */
+const before = await adminCount()
+const racer = await (await browser.newContext()).newPage()
+await racer.goto(`${base}/`, { waitUntil: 'networkidle' })
+await racer.locator('[data-asst-open]').click()
+await racer.waitForTimeout(400)
+await racer.evaluate(() => {
+  const input = document.querySelector('[data-asst-input]')
+  input.value = 'do you have any offers'
+  document.querySelector('[data-asst-form]').requestSubmit()
+  document.querySelector('[data-asst-handoff]').click()
+})
+await racer.waitForTimeout(2500)
+const after = await adminCount()
+ok(
+  after - before === 1,
+  `chat: a single visitor opened ${after - before} conversations at once`,
+)
+await racer.close()
 
 /* ---------------- rate limit ---------------- */
 // A made-up forwarded-for gives this test its own bucket, so hammering the

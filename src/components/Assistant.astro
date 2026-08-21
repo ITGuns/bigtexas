@@ -479,7 +479,15 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
       return json
     }
 
-    /** Create the thread on first use, or reattach to the stored one. */
+    /**
+     * Create the thread on first use, or reattach to the stored one.
+     *
+     * Two callers can arrive before the first round trip finishes: asking a
+     * question and pressing "Talk to a person" a moment later. Without holding
+     * the in-flight promise, both would open a conversation, and the office
+     * would be handed an empty one while the question sat in the other.
+     */
+    let starting = null
     async function ensureChat() {
       if (!online) return null
       if (token) return token
@@ -488,6 +496,15 @@ const knowledge = intents.map((i) => ({ id: i.id, patterns: i.patterns, ...i.ans
         token = saved
         return token
       }
+      if (!starting) {
+        starting = openChat().finally(() => {
+          starting = null
+        })
+      }
+      return starting
+    }
+
+    async function openChat() {
       const started = await api({ action: 'start', page: location.pathname })
       token = started.token
       store.set(token)
